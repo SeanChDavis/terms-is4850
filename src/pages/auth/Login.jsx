@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { login } from "../../firebase/auth";
+import {createUserDocument, getUserDocument} from '../../firebase/firestore';
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -14,17 +15,29 @@ const Login = () => {
 
         try {
             const userCredential = await login(email, password);
-            const userEmail = userCredential.user.email;
+            const uid = userCredential.user.uid;
 
-            // TEMPORARY ROLE INFERENCE
-            if (userEmail.includes('manager')) {
+            let userDoc = await getUserDocument(uid);
+
+            if (!userDoc) {
+                // No document at all — fallback (edge case)
+                userDoc = { email, role: 'employee' };
+                await createUserDocument(uid, userDoc);
+            } else if (!userDoc.role) {
+                // Has a user doc but no role field
+                userDoc.role = 'employee';
+                await createUserDocument(uid, userDoc); // Overwrites safely
+            }
+
+            // Redirect based on role
+            if (userDoc.role === 'manager') {
                 navigate('/manager/dashboard');
             } else {
                 navigate('/employee/dashboard');
             }
 
         } catch (err) {
-            setError(`Firebase: ${err.message}`);
+            setError(err.message);
         }
     };
 

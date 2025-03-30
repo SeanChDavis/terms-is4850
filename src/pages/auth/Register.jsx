@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signUp } from '../../firebase/auth';
+import { createUserDocument } from '../../firebase/firestore';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -14,16 +15,19 @@ const Register = () => {
         setError('');
 
         try {
-            await signUp(email, password);
+            const userCredential = await signUp(email, password);
+            const uid = userCredential.user.uid;
 
-            // Redirect based on hardcoded role
-            if (role === 'manager') {
-                navigate('/manager/dashboard');
-            } else {
-                navigate('/employee/dashboard');
-            }
+            // Save to Firestore
+            await createUserDocument(uid, {
+                email,
+                role,
+            });
+
+            // Redirect
+            navigate(role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
         } catch (err) {
-            setError(`Firebase: ${err.message}`);
+            setError(err.message);
         }
     };
 
