@@ -32,12 +32,12 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen bg-light-gray flex items-center justify-center p-4">
+        <div className="min-h-screen bg-primary flex items-center justify-center p-4">
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-full max-w-md">
 
-                <h2 className="text-2xl font-bold mb-7">Register</h2>
+                <h2 className="text-2xl font-bold mb-4">Register</h2>
 
-                <label className="block mb-2 font-medium">Email</label>
+                <label className="block mb-1 font-medium">Email</label>
                 <input
                     type="email"
                     value={email}
@@ -46,7 +46,7 @@ const Register = () => {
                     required
                 />
 
-                <label className="block mb-2 font-medium">Password</label>
+                <label className="block mb-1 font-medium">Password</label>
                 <input
                     type="password"
                     value={password}
@@ -55,9 +55,9 @@ const Register = () => {
                     required
                 />
 
-                <label className="block mb-2 font-medium">Role</label>
+                <label className="block mb-1 font-medium">Role</label>
                 <p className="text-sm text-gray-600 mb-2">
-                    <strong>Note:</strong> Select your role. This will determine your access level. This is just for development purposes. In a real application, the role would be determined by the backend or admin settings.
+                    Determine your access level. <strong>Note:</strong> This is just for dev purposes. In the final app, the role will be known by auth context and controlled by admin settings.
                 </p>
                 <select
                     value={role}

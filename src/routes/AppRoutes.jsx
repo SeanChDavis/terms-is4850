@@ -13,12 +13,12 @@ import RoleProtectedRoute from '../components/auth/RoleProtectedRoute';
 const AppRoutes = () => {
     return (
         <Routes>
+
             {/* Public Auth Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
             {/* Protected Employee Routes */}
-
             <Route
                 path="/employee"
                 element={

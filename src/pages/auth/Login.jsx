@@ -42,12 +42,12 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen bg-light-gray flex items-center justify-center p-4">
+        <div className="min-h-screen bg-primary flex items-center justify-center p-4">
             <form onSubmit={handleLogin} className="space-y-4 bg-white p-8 rounded shadow-md w-full max-w-md">
 
-                <h2 className="text-2xl font-bold mb-7">Login</h2>
+                <h2 className="text-2xl font-bold mb-4">Login</h2>
 
-                <label className="block mb-2 font-medium">Email</label>
+                <label className="block mb-1 font-medium">Email</label>
                 <input
                     type="email"
                     className="w-full mb-4 p-2 border-2 border-border-gray rounded"
@@ -56,7 +56,7 @@ const Login = () => {
                     required
                 />
 
-                <label className="block mb-2 font-medium">Password</label>
+                <label className="block mb-1 font-medium">Password</label>
                 <input
                     type="password"
                     className="w-full mb-4 p-2 border-2 border-border-gray rounded"

@@ -1,7 +1,8 @@
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { HiOutlineMenuAlt3 } from 'react-icons/hi';
 
-const Header = () => {
+const Header = ({ toggleSidebar }) => {
     const { logout } = useAuth();
     const navigate = useNavigate();
 
@@ -16,7 +17,17 @@ const Header = () => {
 
     return (
         <header className="bg-primary text-white ps-4 pe-6 py-4 flex justify-between items-center">
-            <span className="text-xl font-bold">🟢 TERMS</span>
+
+            <button
+                onClick={toggleSidebar}
+                className="md:hidden text-white text-2xl focus:outline-none"
+                aria-label="Toggle Sidebar"
+            >
+                <HiOutlineMenuAlt3 />
+            </button>
+
+            <span className="text-xl font-extrabold">🟢 TERMS</span>
+
             <button
                 onClick={handleLogout}
                 className="text-white font-medium hover:underline cursor-pointer"
