@@ -1,0 +1,87 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { signUp } from '../../firebase/auth';
+
+const Register = () => {
+    const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [role, setRole] = useState('employee'); // Hardcoded toggle for now
+    const [error, setError] = useState('');
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        try {
+            await signUp(email, password);
+
+            // Redirect based on hardcoded role
+            if (role === 'manager') {
+                navigate('/manager/dashboard');
+            } else {
+                navigate('/employee/dashboard');
+            }
+        } catch (err) {
+            setError(`Firebase: ${err.message}`);
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-light-gray flex items-center justify-center p-4">
+            <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-full max-w-md">
+
+                <h2 className="text-2xl font-bold mb-7">Register</h2>
+
+                <label className="block mb-2 font-medium">Email</label>
+                <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full mb-4 p-2 border-2 border-border-gray rounded"
+                    required
+                />
+
+                <label className="block mb-2 font-medium">Password</label>
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full mb-4 p-2 border-2 border-border-gray rounded"
+                    required
+                />
+
+                <label className="block mb-2 font-medium">Role</label>
+                <p className="text-sm text-gray-600 mb-2">
+                    <strong>Note:</strong> Select your role. This will determine your access level. This is just for development purposes. In a real application, the role would be determined by the backend or admin settings.
+                </p>
+                <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="w-full mb-4 p-2 border-2 border-border-gray rounded"
+                >
+                    <option value="employee">Employee</option>
+                    <option value="manager">Manager</option>
+                </select>
+
+                {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+
+                <button
+                    type="submit"
+                    className="mt-2 w-full bg-primary text-white py-2 rounded hover:bg-opacity-90 transition"
+                >
+                    Create Account
+                </button>
+
+                <p className="mt-4 text-sm text-gray-600">
+                    Already have an account?{' '}
+                    <a href="/login" className="text-primary hover:underline">
+                        Log In
+                    </a>
+                </p>
+            </form>
+        </div>
+    );
+};
+
+export default Register;
