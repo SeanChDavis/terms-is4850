@@ -52,7 +52,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                                 `block py-2 ps-4 pe-3 border-r-4 border-light-gray font-bold hover:text-black 
                             ${ isActive
                                     ? 'border-primary bg-light-gray-alt text-black hover:bg-light-gray-alt hover:border-primary'
-                                    : 'text-darker-gray'
+                                    : 'text-darker-gray hover:border-light-gray-alt'
                                 }`
                             }
                         >
