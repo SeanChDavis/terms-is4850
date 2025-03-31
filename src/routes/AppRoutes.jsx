@@ -4,11 +4,7 @@ import Register from '../pages/auth/Register';
 import MainLayout from '../components/layout/MainLayout';
 import EmployeeDashboard from '../pages/employee/Dashboard';
 import ManagerDashboard from '../pages/manager/Dashboard';
-
-// Handle route protection
-import ProtectedRoute from '../components/auth/ProtectedRoute';
 import RoleProtectedRoute from '../components/auth/RoleProtectedRoute';
-
 
 const AppRoutes = () => {
     return (

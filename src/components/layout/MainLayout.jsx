@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import { Outlet } from 'react-router-dom';
+import {Outlet} from 'react-router-dom';
+import {useAuth} from "../../context/AuthContext.jsx";
 
 const MainLayout = () => {
+    const {user} = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const toggleSidebar = () => {
@@ -15,17 +17,21 @@ const MainLayout = () => {
         <div className="flex flex-col h-screen">
 
             {/* Header always on top */}
-            <Header toggleSidebar={toggleSidebar} />
+            <Header toggleSidebar={toggleSidebar}/>
 
             {/* Main content wrapper */}
             <div className="flex flex-1 overflow-hidden">
 
                 {/* Sidebar: visibility controlled by screen size + state */}
-                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>
 
                 {/* Main content */}
                 <main className="flex-1 overflow-y-auto bg-white p-6 md:p-8 xl:ps-10">
-                    <Outlet />
+                    {/* User info - TODO: Bring back once we have a cleaner display name */}
+                    {/*<div className="text-right text-sm text-subtle-text border-b-1 border-light-gray-alt pb-3 mb-5">*/}
+                    {/*    <p className={`mb-0`}>Logged in as <span className="font-semibold">{user?.email}</span></p>*/}
+                    {/*</div>*/}
+                    <Outlet/>
                 </main>
             </div>
         </div>

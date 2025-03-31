@@ -2,6 +2,7 @@ import { useState } from "react";
 import { login } from "../../firebase/auth";
 import {createUserDocument, getUserDocument} from '../../firebase/firestore';
 import { useNavigate } from "react-router-dom";
+import SiteLogo from "../../components/ui/SiteLogo.jsx";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -45,7 +46,9 @@ const Login = () => {
         <div className="min-h-screen bg-primary flex items-center justify-center p-4">
             <form onSubmit={handleLogin} className="space-y-4 bg-white p-8 rounded shadow-md w-full max-w-md">
 
-                <h2 className="text-2xl font-bold mb-4">Login</h2>
+                <SiteLogo variant="color" className={`mb-6`} />
+
+                <h2 className="text-xl font-bold mb-4">Log Into Your Account</h2>
 
                 <label className="block mb-1 font-medium">Email</label>
                 <input

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signUp } from '../../firebase/auth';
 import { createUserDocument } from '../../firebase/firestore';
+import SiteLogo from "../../components/ui/SiteLogo.jsx";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -35,7 +36,9 @@ const Register = () => {
         <div className="min-h-screen bg-primary flex items-center justify-center p-4">
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-full max-w-md">
 
-                <h2 className="text-2xl font-bold mb-4">Register</h2>
+                <SiteLogo variant="color" className={`mb-6`} />
+
+                <h2 className="text-xl font-bold mb-4">Register a New Account</h2>
 
                 <label className="block mb-1 font-medium">Email</label>
                 <input
@@ -55,9 +58,9 @@ const Register = () => {
                     required
                 />
 
-                <label className="block mb-1 font-medium">Role</label>
+                <label className="block mb-1 font-medium">Select Role</label>
                 <p className="text-sm text-gray-600 mb-2">
-                    Determine your access level. <strong>Note:</strong> This is just for dev purposes. In the final app, the role will be known by auth context and controlled by admin settings.
+                    This is for dev purposes. In the final app, the role will be known by auth context and controlled by admin settings.
                 </p>
                 <select
                     value={role}
