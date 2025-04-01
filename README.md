@@ -16,6 +16,6 @@ A project by Sean Davis, Oladimeji Bada, Jaleah Carrawell, Joseph Huynh, and Jas
    ```bash
     npm run dev
     ```
-4. Open your browser and navigate to `http://localhost:5173/`
+4. Open your browser and navigate to `http://localhost:####/` (see the terminal output to find the exact port number, typically it is `3000` or `5173`).
 5. Make changes to the code and see them reflected in the browser
 6. When you're done, stop the server with `Ctrl + C` in the terminal

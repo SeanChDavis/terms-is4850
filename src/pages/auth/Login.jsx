@@ -72,7 +72,7 @@ const Login = () => {
 
                 <button
                     type="submit"
-                    className="mt-2 w-full bg-primary text-white py-2 rounded hover:bg-opacity-90 transition"
+                    className="mt-2 w-full bg-primary text-white py-2 rounded hover:bg-primary-dark transition cursor-pointer"
                 >
                     Log In
                 </button>
