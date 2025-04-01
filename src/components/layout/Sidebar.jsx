@@ -38,11 +38,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     <div className="text-sm px-4 pb-6 font-bold text-subtle-text">
                         {basePath === '/manager' ? 'Manager Portal' : 'Employee Portal'}
                     </div>
-                    {/* User info - TODO: Bring back once we have a cleaner display name */}
-                    {/*<div className="px-4 pb-6 text-sm text-subtle-text">*/}
-                    {/*    <span className="font-semibold">Logged in as:</span>*/}
-                    {/*    <div className="truncate">{user?.email}</div>*/}
-                    {/*</div>*/}
                     {navItems.map(({ name, path }) => (
                         <NavLink
                             key={path}
