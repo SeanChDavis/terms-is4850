@@ -1,8 +1,6 @@
 # TERMS
 **(T)eam 2 - (E)mployee (R)elationship (M)anagement (S)ystem**
 
-Update File
-
 A project by Sean Davis, Oladimeji Bada, Jaleah Carrawell, Joseph Huynh, and Jason Peters. Spring 2025 - Information Systems 4850 at University of Missouri - St. Louis.
 
 ## The Stack
