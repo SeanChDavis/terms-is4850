@@ -5,6 +5,7 @@ import MainLayout from '../components/layout/MainLayout';
 import EmployeeDashboard from '../pages/employee/Dashboard';
 import ManagerDashboard from '../pages/manager/Dashboard';
 import RoleProtectedRoute from '../components/auth/RoleProtectedRoute';
+import EmployeeSchedule from "../pages/employee/Schedule.jsx";
 
 const AppRoutes = () => {
     return (
@@ -26,7 +27,7 @@ const AppRoutes = () => {
                 <Route index element={<Navigate to="dashboard" replace />} />
                 <Route path="dashboard" element={<EmployeeDashboard />} />
                 <Route path="profile" element={<div>Employee Profile Page</div>} />
-                <Route path="schedule" element={<div>Employee Schedule Page</div>} />
+                <Route path="schedule" element={<EmployeeSchedule />} />
                 <Route path="messages" element={<div>Employee Messages Page</div>} />
             </Route>
 
