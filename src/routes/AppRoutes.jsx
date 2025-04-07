@@ -6,6 +6,7 @@ import EmployeeDashboard from '../pages/employee/Dashboard';
 import ManagerDashboard from '../pages/manager/Dashboard';
 import RoleProtectedRoute from '../components/auth/RoleProtectedRoute';
 import EmployeeSchedule from "../pages/employee/Schedule.jsx";
+import ManagerSchedule from "../pages/manager/Schedule.jsx";
 
 const AppRoutes = () => {
     return (
@@ -43,7 +44,7 @@ const AppRoutes = () => {
                 <Route index element={<Navigate to="dashboard" replace />} />
                 <Route path="dashboard" element={<ManagerDashboard />} />
                 <Route path="profile" element={<div>Manager Profile Page</div>} />
-                <Route path="schedule" element={<div>Manager Schedule Page</div>} />
+                <Route path="schedule" element={<ManagerSchedule />} />
                 <Route path="messages" element={<div>Manager Messages Page</div>} />
                 <Route path="announcements" element={<div>Manager Announcements Page</div>} />
                 <Route path="tools" element={<div>Manager System Tools Page</div>} />

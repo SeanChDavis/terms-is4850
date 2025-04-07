@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { db } from "../../firebase-config";
 import { useAuth } from "../../context/AuthContext";
 import { MdAccessTime, MdDone, MdOutlineDoNotDisturbAlt } from "react-icons/md";
+import { formatDate, formatTime, getRelativeDate } from "../../utils/formatters";
 
 const EmployeeSchedule = () => {
     const [requests, setRequests] = useState([]);
@@ -37,42 +38,6 @@ const EmployeeSchedule = () => {
 
         return () => unsubscribe();
     }, [user]);
-
-    // Format date for display
-    const formatDate = (dateString) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        return date.toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-        });
-    };
-
-    // Format time for display
-    const formatTime = (timeString) => {
-        if (!timeString) return '';
-        const [hours, minutes] = timeString.split(':');
-        const date = new Date();
-        date.setHours(+hours, +minutes);
-        return date.toLocaleTimeString(undefined, {
-            hour: 'numeric',
-            minute: '2-digit',
-        });
-    };
-
-    // Get relative date for display
-    function getRelativeDate(timestamp) {
-        if (!timestamp || !timestamp.toDate) return "—";
-        const now = new Date();
-        const submitted = timestamp.toDate();
-        const diffTime = now - submitted;
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 0) return "Today";
-        if (diffDays === 1) return "Yesterday";
-        return `${diffDays} days ago`;
-    }
 
     // Reset form fields when component mounts
     const resetForm = () => {
@@ -196,7 +161,7 @@ const EmployeeSchedule = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         >
                             {loading ? "Submitting..." : "Submit Request"}
                         </button>
