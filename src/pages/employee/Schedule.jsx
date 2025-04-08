@@ -123,7 +123,7 @@ const EmployeeSchedule = () => {
         <>
             <div className={"max-w-xl pb-4 mb-8"}>
                 <h2 className={`text-xl font-bold mb-2`}>Work Schedule Information</h2>
-                <p className={"text-subtle-text"}>View, manage, or submit requests to be excluded from the work schedule. This can include full days off, partial days, or specific time slots. All requests are subject to manager approval.</p>
+                <p className={"text-subtle-text"}>View, manage, or submit requests to be excluded from the work schedule.</p>
             </div>
 
             {/* New Time-Off Request Form */}
@@ -131,7 +131,7 @@ const EmployeeSchedule = () => {
                 <div className="px-4 py-5 sm:px-6">
                     <h2 className="text-base/7 font-semibold">New Time-Off Request</h2>
                     <p className="mt-1 text-sm/6 text-subtle-text">
-                        Request to be excluded from work schedule.
+                        Request full days off, partial days, or specific time slots. All requests are subject to management approval.
                     </p>
                 </div>
                 <div className="px-4 py-5 sm:p-6">
