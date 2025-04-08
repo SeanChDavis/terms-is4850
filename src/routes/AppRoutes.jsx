@@ -7,6 +7,7 @@ import ManagerDashboard from '../pages/manager/Dashboard';
 import RoleProtectedRoute from '../components/auth/RoleProtectedRoute';
 import EmployeeProfile from "../pages/employee/Profile.jsx";
 import ManagerProfile from "../pages/manager/Profile.jsx";
+import ManagerUserView from "../pages/manager/User.jsx";
 
 const AppRoutes = () => {
     return (
@@ -43,6 +44,7 @@ const AppRoutes = () => {
             >
                 <Route index element={<Navigate to="dashboard" replace />} />
                 <Route path="dashboard" element={<ManagerDashboard />} />
+                <Route path="/manager/users/:id" element={<ManagerUserView />} />
                 <Route path="profile" element={<ManagerProfile />} />
                 <Route path="schedule" element={<div>Manager Schedule Page</div>} />
                 <Route path="messages" element={<div>Manager Messages Page</div>} />
