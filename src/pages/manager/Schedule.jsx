@@ -6,12 +6,14 @@ import { MdAccessTime, MdDone, MdOutlineDoNotDisturbAlt } from "react-icons/md";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 
 const ManagerSchedule = () => {
+    const [userMap, setUserMap] = useState({});
     const [requests, setRequests] = useState([]);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [open, setOpen] = useState(true);
 
     const [loading, setLoading] = useState(true);
 
+    // Get all time-off requests
     const fetchRequests = async () => {
         try {
             const q = query(collection(db, "requests"), orderBy("submittedAt", "desc"));
@@ -25,7 +27,27 @@ const ManagerSchedule = () => {
         }
     };
 
+    // Get all users
+    const fetchUsers = async () => {
+        const usersSnap = await getDocs(collection(db, "users"));
+        const userMap = {};
+
+        usersSnap.forEach(doc => {
+            const data = doc.data();
+            userMap[doc.id] = {
+                display_name: data.display_name,
+                first_name: data.first_name,
+                last_name: data.last_name,
+                email: data.email,
+            };
+        });
+
+        setUserMap(userMap);
+    };
+
+    // Fetch users and requests on component mount
     useEffect(() => {
+        fetchUsers().catch(console.error);
         fetchRequests().catch(console.error);
     }, []);
 
@@ -109,7 +131,10 @@ const ManagerSchedule = () => {
                                         {getRelativeDate(r.submittedAt)}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        (coming soon)
+                                        {userMap[r.userId]?.display_name ||
+                                            `${userMap[r.userId]?.first_name || ''} ${userMap[r.userId]?.last_name || ''}`.trim() ||
+                                            userMap[r.userId]?.email ||
+                                            "—"}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {formatDate(r.startDate)}
