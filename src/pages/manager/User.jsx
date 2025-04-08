@@ -24,7 +24,7 @@ export default function ManagerUserView() {
     const toggleRole = async () => {
         if (!user) return;
         const newRole = user.role === "manager" ? "employee" : "manager";
-        await updateUserRole(user.uid, newRole);
+        await updateUserRole(user.uid, newRole, currentUser?.uid);
         setUser(prev => ({ ...prev, role: newRole }));
     };
 
