@@ -47,7 +47,7 @@ export default function ManagerUserView() {
                 </div>
                 <div className="p-6">
                     {user.uid === currentUser?.uid ? (
-                        <p className="flex items-center gap-1 text-md text-subtle-text italic">
+                        <p className="flex items-center gap-1 text-sm text-subtle-text">
                             <MdInfoOutline /> You are viewing your own user profile.{" "}
                             <Link to="/manager/profile" className="text-subtle-text cursor-pointer underline hover:no-underline">Edit your details.</Link>
                         </p>
@@ -63,13 +63,13 @@ export default function ManagerUserView() {
             </div>
 
             <div className="mt-8">
-                <h3 className="text-xl font-bold mb-2">Time-Off Requests</h3>
+                <h3 className="text-xl font-bold mb-2">User Time-Off Requests</h3>
                 <p className="text-gray-600">Coming soon!</p>
             </div>
 
             <div className="mt-6">
-                <h3 className="text-xl font-bold mb-2">User Records</h3>
-                <p className="text-gray-600">Be patient please.</p>
+                <h3 className="text-xl font-bold mb-2">Add User Note</h3>
+                <p className="text-gray-600">Coming soon! Be patient please.</p>
             </div>
 
             <button
