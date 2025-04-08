@@ -1,24 +1,17 @@
+import { format, parse } from 'date-fns';
+
 // Format date for display
 export const formatDate = (dateString) => {
     if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString(undefined, {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    });
+    const parsed = parse(dateString, 'yyyy-MM-dd', new Date());
+    return format(parsed, 'MMM d, yyyy');
 };
 
 // Format time for display
 export const formatTime = (timeString) => {
     if (!timeString) return '';
-    const [hours, minutes] = timeString.split(':');
-    const date = new Date();
-    date.setHours(+hours, +minutes);
-    return date.toLocaleTimeString(undefined, {
-        hour: 'numeric',
-        minute: '2-digit',
-    });
+    const parsed = parse(timeString, 'HH:mm', new Date());
+    return format(parsed, 'h:mm a');
 };
 
 // Get relative date for display

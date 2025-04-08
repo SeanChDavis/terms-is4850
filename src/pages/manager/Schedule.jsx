@@ -133,7 +133,9 @@ const ManagerSchedule = () => {
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {userMap[r.userId]?.display_name ||
                                             `${userMap[r.userId]?.first_name || ''} ${userMap[r.userId]?.last_name || ''}`.trim() ||
-                                            userMap[r.userId]?.email ||
+                                            (userMap[r.userId]?.email?.length > 20
+                                                ? `${userMap[r.userId]?.email.slice(0, 22)}...`
+                                                : userMap[r.userId]?.email) ||
                                             "—"}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
