@@ -116,8 +116,8 @@ const ManagerSchedule = () => {
                         <table className="min-w-full text-sm text-left text-gray-700">
                             <thead className="bg-gray-50 border-b border-border-gray">
                             <tr>
-                                <th className="px-4 py-3 font-semibold">Submitted</th>
-                                <th className="px-4 py-3 font-semibold">Name</th>
+                                <th className="px-4 py-3 font-semibold" style={{ width: "100px" }}>Posted</th>
+                                <th className="px-4 py-3 font-semibold">Submitted by</th>
                                 <th className="px-4 py-3 font-semibold">Start</th>
                                 <th className="px-4 py-3 font-semibold">End</th>
                                 <th className="px-4 py-3 font-semibold">Status</th>
@@ -156,7 +156,7 @@ const ManagerSchedule = () => {
                                         {r.status === "pending" ? (
                                             <button
                                                 onClick={() => setSelectedRequest(r)}
-                                                className="rounded-sm bg-primary px-3 py-1 text-xs font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                                                className="text-primary cursor-pointer underline hover:no-underline"
                                             >
                                                 Decide
                                             </button>
@@ -214,8 +214,8 @@ const ManagerSchedule = () => {
                                             Review Request
                                         </DialogTitle>
                                         <div className="space-y-2 mb-4">
-                                            <p className={"mb-0"}><strong>Name:</strong> {userMap[selectedRequest.userId]?.display_name || `${userMap[selectedRequest.userId]?.first_name || ''} ${userMap[selectedRequest.userId]?.last_name || ''}`.trim() || userMap[selectedRequest.userId]?.email || "—"}</p>
-                                            <p className={"mb-0"}><strong>Submitted:</strong> {getRelativeDate(selectedRequest.submittedAt)}</p>
+                                            <p className={"mb-0"}><strong>Submitted by:</strong> {userMap[selectedRequest.userId]?.display_name || `${userMap[selectedRequest.userId]?.first_name || ''} ${userMap[selectedRequest.userId]?.last_name || ''}`.trim() || userMap[selectedRequest.userId]?.email || "—"}</p>
+                                            <p className={"mb-0"}><strong>Posted:</strong> {getRelativeDate(selectedRequest.submittedAt)}</p>
                                             <p className={"mb-0"}><strong>Start:</strong> {formatDate(selectedRequest.startDate)} {selectedRequest.startTime && `at ${formatTime(selectedRequest.startTime)}`}</p>
                                             <p className={"mb-0"}><strong>End:</strong> {formatDate(selectedRequest.endDate)} {selectedRequest.endTime && `at ${formatTime(selectedRequest.endTime)}`}</p>
                                             <p className={"mt-4"}><strong className={"block"}>Details:</strong> {selectedRequest.details || "—"}</p>
