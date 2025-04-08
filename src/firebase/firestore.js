@@ -25,7 +25,11 @@ export async function getAllUsers() {
 }
 
 // Update a user's role (e.g., employee ↔ manager)
-export async function updateUserRole(uid, newRole) {
+export async function updateUserRole(uid, newRole, currentUid = null) {
+    if (uid === currentUid) {
+        console.warn("You cannot update your own role.");
+        return;
+    }
     const userRef = doc(db, "users", uid);
     await updateDoc(userRef, { role: newRole });
 }

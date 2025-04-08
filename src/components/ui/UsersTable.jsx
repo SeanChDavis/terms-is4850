@@ -19,7 +19,7 @@ export default function UsersTable() {
 
     const handleToggleRole = async (uid, currentRole) => {
         const newRole = currentRole === "manager" ? "employee" : "manager";
-        await updateUserRole(uid, newRole);
+        await updateUserRole(uid, newRole, currentUser?.uid);
         setUsers((prev) =>
             prev.map((u) => (u.uid === uid ? { ...u, role: newRole } : u))
         );
