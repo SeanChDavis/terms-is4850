@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAllUsers, updateUserRole } from "../../firebase/firestore";
+import useCurrentUser from "../../hooks/useCurrentUser";
 
 export default function UsersTable() {
+    const { userData: currentUser } = useCurrentUser();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -59,16 +61,20 @@ export default function UsersTable() {
                             <td className="px-4 py-3 whitespace-nowrap">{user.role}</td>
                             <td className="px-4 py-3">
                                 <div className="flex gap-1.5 items-center">
-                                    <Link to={`/manager/users/${user.uid}`} className="text-primary cursor-pointer underline hover:no-underline">
+                                    <Link to={`/manager/users/${user.uid}`} className="text-primary cursor-pointer no-underline hover:underline">
                                         View
                                     </Link>
-                                    <span className="text-gray-500"> | </span>
-                                    <button
-                                        onClick={() => handleToggleRole(user.uid, user.role)}
-                                        className="text-primary cursor-pointer underline hover:no-underline"
-                                    >
-                                        {user.role === "manager" ? "Demote" : "Promote"}
-                                    </button>
+                                    {user.uid !== currentUser?.uid && (
+                                        <>
+                                            <span className="text-gray-500"> | </span>
+                                            <button
+                                                onClick={() => handleToggleRole(user.uid, user.role)}
+                                                className="text-primary cursor-pointer no-underline hover:underline"
+                                            >
+                                                {user.role === "manager" ? "Demote" : "Promote"}
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </td>
                         </tr>

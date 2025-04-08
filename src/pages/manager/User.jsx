@@ -1,8 +1,11 @@
-import { useParams, useNavigate } from "react-router-dom";
+import {useParams, useNavigate, Link} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getUserDocument, updateUserRole } from "../../firebase/firestore";
+import useCurrentUser from "../../hooks/useCurrentUser";
+import { MdInfoOutline } from "react-icons/md";
 
 export default function ManagerUserView() {
+    const { userData: currentUser } = useCurrentUser();
     const { id } = useParams(); // user ID from route
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -43,12 +46,19 @@ export default function ManagerUserView() {
                     <p><span className="font-semibold">Current Role:</span> {user.role}</p>
                 </div>
                 <div className="p-6">
-                    <button
-                        onClick={toggleRole}
-                        className="px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark"
-                    >
-                        {user.role === "manager" ? "Demote to Employee" : "Promote to Manager"}
-                    </button>
+                    {user.uid === currentUser?.uid ? (
+                        <p className="flex items-center gap-1 text-md text-subtle-text italic">
+                            <MdInfoOutline /> You are viewing your own user profile.{" "}
+                            <Link to="/manager/profile" className="text-subtle-text cursor-pointer underline hover:no-underline">Edit your details.</Link>
+                        </p>
+                    ) : (
+                        <button
+                            onClick={toggleRole}
+                            className="px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark"
+                        >
+                            {user.role === "manager" ? "Demote to Employee" : "Promote to Manager"}
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -58,7 +68,7 @@ export default function ManagerUserView() {
             </div>
 
             <div className="mt-6">
-                <h3 className="text-xl font-bold mb-2">Employee Records</h3>
+                <h3 className="text-xl font-bold mb-2">User Records</h3>
                 <p className="text-gray-600">Be patient please.</p>
             </div>
 
