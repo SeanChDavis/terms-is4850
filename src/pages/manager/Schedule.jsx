@@ -173,9 +173,11 @@ const ManagerSchedule = () => {
 
                 {/* Pagination controls */}
                 {totalPages > 1 && (
-                    <div className="flex justify-between mt-4 gap-2 text-darker-gray">
+                    <div className="flex justify-between mt-4 px-4 pb-4 gap-2 text-darker-gray">
                         <div>
-                            <span className={"text-dark-gray text-sm font-semibold"}>Page {currentPage}</span>
+                            <span className="text-dark-gray text-sm font-semibold">
+                                Page {currentPage} of {totalPages}
+                            </span>
                         </div>
                         <div>
                             <button
