@@ -138,11 +138,11 @@ const ManagerSchedule = () => {
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {formatDate(r.startDate)}
-                                        {r.startTime && <span className="text-gray-500"> at {formatTime(r.startTime)}</span>}
+                                        {r.startTime && <span className="text-gray-500"> @ {formatTime(r.startTime)}</span>}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {formatDate(r.endDate)}
-                                        {r.endTime && <span className="text-gray-500"> at {formatTime(r.endTime)}</span>}
+                                        {r.endTime && <span className="text-gray-500"> @ {formatTime(r.endTime)}</span>}
                                     </td>
                                     <td className="px-4 py-3 flex items-center gap-1 capitalize">
                                         {r.status === "pending" && <MdAccessTime className="text-yellow-600" />}
@@ -212,6 +212,7 @@ const ManagerSchedule = () => {
                                             Review Request
                                         </DialogTitle>
                                         <div className="space-y-2 mb-4">
+                                            <p className={"mb-0"}><strong>Name:</strong> {userMap[selectedRequest.userId]?.display_name || `${userMap[selectedRequest.userId]?.first_name || ''} ${userMap[selectedRequest.userId]?.last_name || ''}`.trim() || userMap[selectedRequest.userId]?.email || "—"}</p>
                                             <p className={"mb-0"}><strong>Submitted:</strong> {getRelativeDate(selectedRequest.submittedAt)}</p>
                                             <p className={"mb-0"}><strong>Start:</strong> {formatDate(selectedRequest.startDate)} {selectedRequest.startTime && `at ${formatTime(selectedRequest.startTime)}`}</p>
                                             <p className={"mb-0"}><strong>End:</strong> {formatDate(selectedRequest.endDate)} {selectedRequest.endTime && `at ${formatTime(selectedRequest.endTime)}`}</p>
