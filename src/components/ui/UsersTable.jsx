@@ -43,10 +43,10 @@ export default function UsersTable() {
                 <table className="min-w-full text-sm text-left text-gray-700">
                     <thead className="bg-gray-50 border-b border-border-gray">
                     <tr>
-                        <th className="px-4 py-3 font-semibold">Name</th>
+                        <th className="px-4 py-3 font-semibold" style={{ width: "200px" }}>Name</th>
                         <th className="px-4 py-3 font-semibold">Email Address</th>
-                        <th className="px-4 py-3 font-semibold">Current Role</th>
-                        <th className="px-4 py-3 font-semibold">Actions</th>
+                        <th className="px-4 py-3 font-semibold" style={{ width: "170px" }}>Current Role</th>
+                        <th className="px-4 py-3 font-semibold" style={{ width: "170px" }}>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -58,18 +58,26 @@ export default function UsersTable() {
                                  "—"}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">{user.email}</td>
-                            <td className="px-4 py-3 whitespace-nowrap">{user.role}</td>
+                            <td className="px-4 py-3 whitespace-nowrap">
+                                <span className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset ${
+                                    user.role === "employee" 
+                                        ? "bg-green-50 text-gray-600 ring-blue-500/10" 
+                                        : "bg-gray-50 text-gray-600 ring-gray-500/10"
+                                }`}>
+                                    {user.role}
+                                </span>
+                            </td>
                             <td className="px-4 py-3">
-                                <div className="flex gap-1.5 items-center">
-                                    <Link to={`/manager/users/${user.uid}`} className="text-primary cursor-pointer no-underline hover:underline">
+                                <div className="flex gap-1 items-center">
+                                    <Link to={`/manager/users/${user.uid}`} className="text-primary cursor-pointer underline hover:no-underline">
                                         View
                                     </Link>
                                     {user.uid !== currentUser?.uid && (
                                         <>
-                                            <span className="text-gray-500"> | </span>
+                                            <span className="text-subtle-text"> | </span>
                                             <button
                                                 onClick={() => handleToggleRole(user.uid, user.role)}
-                                                className="text-primary cursor-pointer no-underline hover:underline"
+                                                className="text-primary cursor-pointer underline hover:no-underline"
                                             >
                                                 {user.role === "manager" ? "Demote" : "Promote"}
                                             </button>
