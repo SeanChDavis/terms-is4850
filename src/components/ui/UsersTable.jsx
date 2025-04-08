@@ -43,10 +43,10 @@ export default function UsersTable() {
                 <table className="min-w-full text-sm text-left text-gray-700">
                     <thead className="bg-gray-50 border-b border-border-gray">
                     <tr>
-                        <th className="px-4 py-3 font-semibold" style={{ width: "200px" }}>Name</th>
+                        <th className="px-4 py-3 font-semibold" style={{ width: "170px" }}>Name</th>
                         <th className="px-4 py-3 font-semibold">Email Address</th>
-                        <th className="px-4 py-3 font-semibold" style={{ width: "170px" }}>Current Role</th>
-                        <th className="px-4 py-3 font-semibold" style={{ width: "170px" }}>Actions</th>
+                        <th className="px-4 py-3 font-semibold" style={{ width: "150px" }}>Current Role</th>
+                        <th className="px-4 py-3 font-semibold text-right" style={{ width: "170px" }}>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -68,21 +68,21 @@ export default function UsersTable() {
                                 </span>
                             </td>
                             <td className="px-4 py-3">
-                                <div className="flex gap-1 items-center">
-                                    <Link to={`/manager/users/${user.uid}`} className="text-primary cursor-pointer underline hover:no-underline">
-                                        View
-                                    </Link>
+                                <div className="flex justify-end gap-1 items-center">
                                     {user.uid !== currentUser?.uid && (
                                         <>
-                                            <span className="text-subtle-text"> | </span>
                                             <button
                                                 onClick={() => handleToggleRole(user.uid, user.role)}
                                                 className="text-primary cursor-pointer underline hover:no-underline"
                                             >
                                                 {user.role === "manager" ? "Demote" : "Promote"}
                                             </button>
+                                            <span className="text-subtle-text"> | </span>
                                         </>
                                     )}
+                                    <Link to={`/manager/users/${user.uid}`} className="text-primary cursor-pointer underline hover:no-underline">
+                                        View
+                                    </Link>
                                 </div>
                             </td>
                         </tr>
