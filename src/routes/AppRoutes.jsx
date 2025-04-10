@@ -30,7 +30,7 @@ const AppRoutes = () => {
             >
                 <Route index element={<Navigate to="dashboard" replace />} />
                 <Route path="dashboard" element={<EmployeeDashboard />} />
-                <Route path="profile" element={<EmployeeProfile />} />>
+                <Route path="profile" element={<EmployeeProfile />} />
                 <Route path="schedule" element={<EmployeeSchedule />} />
                 <Route path="messages" element={<div>Employee Messages Page</div>} />
             </Route>
