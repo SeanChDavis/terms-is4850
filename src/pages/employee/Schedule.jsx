@@ -253,11 +253,11 @@ const EmployeeSchedule = () => {
                                             {r.endTime && <span className="text-gray-500"> @ {formatTime(r.endTime)}</span>}
                                         </td>
                                         <td className="px-4 py-3 max-w-xs truncate">{r.details || "—"}</td>
-                                        <td className="px-4 py-3 flex items-center gap-1">
+                                        <td className="px-4 py-3 flex items-center gap-1 capitalize">
                                             {r.status === "pending" && <MdAccessTime className="text-yellow-600" />}
                                             {r.status === "approved" && <MdDone className="text-green-600" />}
                                             {r.status === "denied" && <MdOutlineDoNotDisturbAlt className="text-red-600" />}
-                                            <span className="capitalize">{r.status}</span>
+                                            {r.status}
                                         </td>
                                         <td className="px-4 py-3 text-right" style={{ width: "120px" }}>
                                             <button
