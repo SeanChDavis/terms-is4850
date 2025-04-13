@@ -9,6 +9,8 @@ import {
 
 import { auth } from "../firebase-config";
 
+const googleProvider = new GoogleAuthProvider();
+
 // Create a new user
 export const signUp = (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password);
@@ -27,10 +29,6 @@ export const logout = () => {
 // Listen to auth state changes
 export const onAuthChange = (callback) => {
     return onAuthStateChanged(auth, callback);
-};
-// Sign up with Google
-export const signUpWithGoogle = () => {
-    return signInWithPopup(auth, googleProvider);
 };
 
 // Sign in with Google
