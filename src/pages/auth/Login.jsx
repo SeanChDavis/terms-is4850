@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { login } from "../../firebase/auth";
+import { login, signInWithGoogle } from "../../firebase/auth";
 import {createUserDocument, getUserDocument} from '../../firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import SiteLogo from "../../components/ui/SiteLogo.jsx";
+import {auth} from "../../firebase-config.js";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -40,7 +41,34 @@ const Login = () => {
         } catch (err) {
             setError(err.message);
         }
+    }
+
+    const handleGoogleLogin = async () => {
+        try {
+            const userCredential = await signInWithGoogle();
+            const uid = userCredential.user.uid;
+
+            const userDoc = await getUserDocument(uid);
+
+            if (!userDoc) {
+                // User doesn't exist in our system
+                await auth.signOut(); // Sign them out immediately
+                setError('Account not found. Please register first.');
+                return;
+            }
+
+            // Redirect based on role
+            navigate(userDoc.role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
+        } catch (err) {
+            // Handle specific Google auth errors
+            if (err.code === 'auth/account-exists-with-different-credential') {
+                setError('An account already exists with this email. Please log in with your email/password.');
+            } else {
+                setError(err.message);
+            }
+        }
     };
+
 
     return (
         <div className="min-h-screen bg-primary flex items-center justify-center p-4">
@@ -80,6 +108,7 @@ const Login = () => {
                 <p className="text-sm text-gray-600">
                     Don't have an account? <a href="/register" className="text-primary hover:underline">Register</a>
                 </p>
+                <button onClick={handleGoogleLogin}>Register with Google</button>
             </form>
         </div>
     );

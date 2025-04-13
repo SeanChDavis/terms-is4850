@@ -2,7 +2,9 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithPopup
 } from "firebase/auth";
 
 import { auth } from "../firebase-config";
@@ -25,4 +27,13 @@ export const logout = () => {
 // Listen to auth state changes
 export const onAuthChange = (callback) => {
     return onAuthStateChanged(auth, callback);
+};
+// Sign up with Google
+export const signUpWithGoogle = () => {
+    return signInWithPopup(auth, googleProvider);
+};
+
+// Sign in with Google
+export const signInWithGoogle = () => {
+    return signInWithPopup(auth, googleProvider);
 };

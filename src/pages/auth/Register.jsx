@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signUp } from '../../firebase/auth';
+import { signUp, signInWithGoogle } from '../../firebase/auth';
 import { createUserDocument } from '../../firebase/firestore';
 import SiteLogo from "../../components/ui/SiteLogo.jsx";
 
@@ -27,6 +27,23 @@ const Register = () => {
 
             // Redirect
             navigate(role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    const handleGoogleRegister = async () => {
+        try {
+            const userCredential = await signUpWithGoogle();
+            const uid = userCredential.user.uid;
+            const email = userCredential.user.email;
+
+            await createUserDocument(uid, {
+                email,
+                role: 'employee', // Default role for Google signups
+            });
+
+            navigate('/employee/dashboard');
         } catch (err) {
             setError(err.message);
         }
@@ -86,6 +103,9 @@ const Register = () => {
                         Log In
                     </a>
                 </p>
+
+                <button onClick={handleGoogleRegister}>Register with Google</button>
+
             </form>
         </div>
     );
