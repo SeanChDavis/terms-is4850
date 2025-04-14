@@ -74,7 +74,7 @@ const Login = () => {
         <div className="min-h-screen bg-primary flex items-center justify-center p-4">
             <form onSubmit={handleLogin} className="space-y-4 bg-white p-8 rounded shadow-md w-full max-w-md">
 
-                <SiteLogo variant="color" className={`mb-6`} />
+               0 <SiteLogo variant="color" className={`mb-6`} />
 
                 <h2 className="text-xl font-bold mb-4">Log Into Your Account</h2>
 
@@ -108,7 +108,7 @@ const Login = () => {
                 <p className="text-sm text-gray-600">
                     Don't have an account? <a href="/register" className="text-primary hover:underline">Register</a>
                 </p>
-                <button onClick={handleGoogleLogin}>Register with Google</button>
+                <button onClick={handleGoogleLogin}>Sign in with Google</button>
             </form>
         </div>
     );

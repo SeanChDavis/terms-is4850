@@ -36,7 +36,7 @@ const Register = () => {
     const handleGoogleRegister = async () => {
         try {
             const userCredential = await signInWithGoogle();
-            const uid = userCredential.user.uid;
+            const uid = userCredential.user.uid;z
             const email = userCredential.user.email;
 
             // Check if user already exists (prevent duplicate registration)
@@ -113,7 +113,7 @@ const Register = () => {
                     </a>
                 </p>
 
-                <button onClick={handleGoogleRegister}>Register with Google</button>
+                <button type="button" onClick={handleGoogleRegister}>Register with Google</button>
 
             </form>
         </div>
