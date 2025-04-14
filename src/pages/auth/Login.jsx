@@ -74,7 +74,7 @@ const Login = () => {
         <div className="min-h-screen bg-primary flex items-center justify-center p-4">
             <form onSubmit={handleLogin} className="space-y-4 bg-white p-8 rounded shadow-md w-full max-w-md">
 
-               0 <SiteLogo variant="color" className={`mb-6`} />
+               <SiteLogo variant="color" className={`mb-6`} />
 
                 <h2 className="text-xl font-bold mb-4">Log Into Your Account</h2>
 
