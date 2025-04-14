@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signUp } from '../../firebase/auth';
-import { createUserDocument } from '../../firebase/firestore';
+import { signUp, signInWithGoogle } from '../../firebase/auth';
+import {createUserDocument, getUserDocument} from '../../firebase/firestore';
 import SiteLogo from "../../components/ui/SiteLogo.jsx";
+import {auth} from "../../firebase-config.js";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -27,6 +28,31 @@ const Register = () => {
 
             // Redirect
             navigate(role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    const handleGoogleRegister = async () => {
+        try {
+            const userCredential = await signInWithGoogle();
+            const uid = userCredential.user.uid;
+            const email = userCredential.user.email;
+
+            // Check if user already exists (prevent duplicate registration)
+            const existingUser = await getUserDocument(uid);
+            if (existingUser) {
+                setError('This account is already registered. Please log in instead.');
+                await auth.signOut();
+                return;
+            }
+
+            await createUserDocument(uid, {
+                email,
+                role: 'employee', // Default role for Google signups
+            });
+
+            navigate('/employee/dashboard');
         } catch (err) {
             setError(err.message);
         }
@@ -86,6 +112,9 @@ const Register = () => {
                         Log In
                     </a>
                 </p>
+
+                <button type="button" onClick={handleGoogleRegister}>Register with Google</button>
+
             </form>
         </div>
     );
