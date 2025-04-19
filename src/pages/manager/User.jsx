@@ -8,7 +8,7 @@ import {
     onSnapshot
 } from "firebase/firestore";
 import {getUserDocument, updateUserRole} from "../../firebase/firestore";
-import {db} from "../../firebase-config";
+import {db} from "../../firebase/firebase-config.js";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import {MdAccessTime, MdDone, MdInfoOutline, MdOutlineDoNotDisturbAlt} from "react-icons/md";
 import {formatDate, formatTime, getRelativeDate} from "../../utils/formatters";

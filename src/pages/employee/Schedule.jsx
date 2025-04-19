@@ -10,7 +10,7 @@ import {
     doc
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { db } from "../../firebase-config";
+import { db } from "@/firebase/firebase-config.js";
 import { useAuth } from "../../context/AuthContext";
 import { MdAccessTime, MdDone, MdOutlineDoNotDisturbAlt } from "react-icons/md";
 import { formatDate, formatTime, getRelativeDate } from "../../utils/formatters";
@@ -196,17 +196,20 @@ const EmployeeSchedule = () => {
                                 id="details"
                                 rows={4}
                                 value={details}
+                                placeholder={"Provide additional context for your request..."}
                                 onChange={(e) => setDetails(e.target.value)}
                                 className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
                             />
                         </div>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                        >
-                            {loading ? "Submitting..." : "Submit Request"}
-                        </button>
+                        <div className="flex justify-end gap-4">
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            >
+                                {loading ? "Submitting..." : "Submit Request"}
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -310,7 +313,7 @@ const EmployeeSchedule = () => {
                                 <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
                                     <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                                         <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
-                                            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                            <div className="mt-3 text-center sm:mt-0 sm:text-left">
                                                 <DialogTitle as="h3" className="text-2xl mb-5 font-semibold text-gray-900">
                                                     Pending Request
                                                 </DialogTitle>

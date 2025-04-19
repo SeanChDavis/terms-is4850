@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, query, orderBy, doc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase-config";
+import { db } from "@/firebase/firebase-config.js";
 import { formatDate, formatTime, getRelativeDate } from "../../utils/formatters";
 import { MdAccessTime, MdDone, MdOutlineDoNotDisturbAlt } from "react-icons/md";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
@@ -211,7 +211,7 @@ const ManagerSchedule = () => {
                                     transition
                                     className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
                                 >
-                                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                    <div className="mt-3 text-center sm:mt-0 sm:text-left">
                                         <DialogTitle as="h3" className="text-2xl mb-5 font-semibold text-gray-900">
                                             Review Request
                                         </DialogTitle>

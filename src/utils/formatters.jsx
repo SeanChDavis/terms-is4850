@@ -1,11 +1,19 @@
 import { format, parse } from 'date-fns';
 
 // Format date for display
-export const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const parsed = parse(dateString, 'yyyy-MM-dd', new Date());
-    return format(parsed, 'MMM d, yyyy');
-};
+export function formatDate(value) {
+    const date = value instanceof Date
+        ? value
+        : value?.toDate
+            ? value.toDate()
+            : new Date(value);
+
+    return date.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    });
+}
 
 // Format time for display
 export const formatTime = (timeString) => {
