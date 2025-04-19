@@ -291,18 +291,50 @@ export default function ManagerAnnouncements() {
                                             className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
                                         >
                                             <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                                                <DialogTitle as="h3" className="text-2xl font-semibold text-gray-900">
+                                                <DialogTitle as="h3" className="text-2xl mb-2 font-semibold text-gray-900">
                                                     {selectedAnnouncement.title}
                                                 </DialogTitle>
                                                 <div className="space-y-2 mb-4">
-                                                    <p className="text-sm text-gray-600 mb-4">
-                                                        Posted: {formatDate(selectedAnnouncement.createdAt)}
+                                                    <p className="mb-0">
+                                                        <strong>Posted:</strong> {formatDate(selectedAnnouncement.createdAt)}
+                                                    </p>
+                                                    <p className="mb-0">
+                                                        <strong>Expires:</strong> {selectedAnnouncement.expiresAt ? formatDate(selectedAnnouncement.expiresAt instanceof Date ? selectedAnnouncement.expiresAt : selectedAnnouncement.expiresAt.toDate()) : "Never"}
+                                                    </p>
+                                                    {(() => {
+                                                        const expires = selectedAnnouncement.expiresAt
+                                                            ? (selectedAnnouncement.expiresAt instanceof Date
+                                                                ? selectedAnnouncement.expiresAt
+                                                                : selectedAnnouncement.expiresAt.toDate())
+                                                            : null;
+
+                                                        const expired = expires ? expires < new Date() : false;
+
+                                                        return (
+                                                            <p className="mb-0">
+                                                                <strong>Status:</strong>{" "}
+                                                                {expires ? (
+                                                                    expired ? (
+                                                                        <span className="text-red-600 font-semibold">Expired</span>
+                                                                    ) : (
+                                                                        <span className="text-green-600 font-semibold">Active</span>
+                                                                    )
+                                                                ) : (
+                                                                    <span className="font-semibold">Ongoing</span>
+                                                                )}
+                                                            </p>
+                                                        );
+                                                    })()}
+                                                    <p className="mb-4">
+                                                        <strong>Visible To:</strong> <span>
+                                                            {selectedAnnouncement.visibleTo === "employee" ? "Employees" : selectedAnnouncement.visibleTo === "manager" ? "Managers" : "Everyone"}
+                                                        </span>
                                                     </p>
                                                     <p className="text-gray-800 whitespace-pre-line mb-4">
-                                                        {selectedAnnouncement.body}
+                                                        <strong className={"block"}>Announcement Details:</strong> {selectedAnnouncement.body}
                                                     </p>
                                                 </div>
-                                                <div className="flex justify-end gap-3 mt-6">
+                                                <div className="flex justify-end gap-3 mt-12">
                                                     <button
                                                         onClick={() => setSelectedAnnouncement(null)}
                                                         className="rounded-md bg-gray-200 px-5 py-2.5 text-sm font-semibold cursor-pointer hover:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
