@@ -1,16 +1,28 @@
 import {useEffect, useState} from "react";
-import { db } from "@/firebase/firebase-config.js";
-import {collection, addDoc, deleteDoc, doc, serverTimestamp, query, orderBy, onSnapshot} from "firebase/firestore";
+import {db} from "@/firebase/firebase-config.js";
+import {
+    collection,
+    getDocs,
+    addDoc,
+    deleteDoc,
+    doc,
+    serverTimestamp,
+    query,
+    orderBy,
+    onSnapshot
+} from "firebase/firestore";
 import useCurrentUser from "@/hooks/useCurrentUser";
-import { formatDate, getRelativeDate } from "@/utils/formatters";
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import {formatDisplayDate} from "@/utils/formatters";
+import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/react';
 
 export default function ManagerAnnouncements() {
     const [announcements, setAnnouncements] = useState([]);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
     const [open, setOpen] = useState(true);
 
-    const { userData } = useCurrentUser();
+    const {userData} = useCurrentUser();
+    const [userMap, setUserMap] = useState({});
+
     const [title, setTitle] = useState("");
     const [visibleTo, setVisibleTo] = useState("all");
     const [body, setBody] = useState("");
@@ -35,6 +47,21 @@ export default function ManagerAnnouncements() {
 
         return () => unsubscribe();
     }, []);
+
+    const fetchUsers = async () => {
+        const snapshot = await getDocs(collection(db, "users"));
+        const result = {};
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            result[doc.id] = {
+                display_name: data.display_name,
+                first_name: data.first_name,
+                last_name: data.last_name,
+                email: data.email,
+            };
+        });
+        setUserMap(result);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -77,33 +104,47 @@ export default function ManagerAnnouncements() {
         await deleteDoc(docRef);
     };
 
-    // Pagination state
+    // Announcements & Pagination state
+    const [showMineOnly, setShowMineOnly] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
-    // Pagination math
-    const totalPages = Math.ceil(announcements.length / itemsPerPage);
+    // 1. Filter
+    const filteredAnnouncements = showMineOnly
+        ? announcements.filter(a => a.createdBy === userData?.uid)
+        : announcements;
+
+    // 2. Pagination math
+    const totalPages = Math.ceil(filteredAnnouncements.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentAnnouncements = announcements.slice(startIndex, startIndex + itemsPerPage);
+    const currentAnnouncements = filteredAnnouncements.slice(startIndex, startIndex + itemsPerPage);
 
     // Reset current page if announcements change
     useEffect(() => {
         if (currentPage > 1 && startIndex >= announcements.length) {
             setCurrentPage(currentPage - 1);
         }
+        fetchUsers().catch(console.error);
     }, [announcements, currentPage, startIndex]);
+
+    // Reset current page when announcements change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [showMineOnly]);
 
     return (
         <>
             <div className={"max-w-xl pb-4 mb-8"}>
                 <h2 className={`text-xl font-bold mb-2`}>System Announcements</h2>
                 <p className={"text-subtle-text"}>
-                    Use this page to create announcements that will be visible to all employees. You can post updates, important notices, or general information that needs to be communicated across the organization.
+                    Use this page to create announcements that will be visible to all employees. You can post updates,
+                    important notices, or general information that needs to be communicated across the organization.
                 </p>
             </div>
 
             {/* Announcement Form */}
-            <div className={"max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
+            <div
+                className={"max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
                 <div className="px-4 py-5 sm:px-6">
                     <h2 className="text-base/7 font-semibold">Create Announcement</h2>
                     <p className="mt-1 text-sm/6 text-subtle-text">
@@ -133,7 +174,7 @@ export default function ManagerAnnouncements() {
                                 type="text"
                                 id="title"
                                 value={title}
-                                placeholder={"Announcement Title"}
+                                placeholder={"E.g. Holiday Hours"}
                                 onChange={(e) => setTitle(e.target.value)}
                                 className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
                                 required
@@ -146,7 +187,7 @@ export default function ManagerAnnouncements() {
                             <textarea
                                 id="body"
                                 value={body}
-                                placeholder={"Type your announcement details here..."}
+                                placeholder={"E.g. We will be closed on December 25th for the holidays. Enjoy your time off!"}
                                 onChange={(e) => setBody(e.target.value)}
                                 rows={4}
                                 className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
@@ -154,7 +195,8 @@ export default function ManagerAnnouncements() {
                             />
                         </div>
                         <div>
-                            <label htmlFor="expiresAt" className="block text-sm/6 font-medium">Expiration Date (optional)</label>
+                            <label htmlFor="expiresAt" className="block text-sm/6 font-medium">Expiration Date
+                                (optional)</label>
                             <input
                                 type="date"
                                 id="expiresAt"
@@ -186,17 +228,30 @@ export default function ManagerAnnouncements() {
 
             {/* Announcement List */}
             <div className="mt-10">
-                <h2 className="text-xl font-bold mb-2">Past Announcements</h2>
-                {announcements.length === 0 ? (
-                    <p className="text-subtle-text text-sm">No announcements posted yet.</p>
+                <h2 className="text-xl font-semibold mb-0">Past Announcements</h2>
+                <div className="flex justify-between items-center mb-4">
+                    <button
+                        onClick={() => setShowMineOnly(prev => !prev)}
+                        className="text-sm text-gray-600 underline cursor-pointer hover:no-underline"
+                    >
+                        {showMineOnly ? "Show All Announcements" : "Show My Announcements Only"}
+                    </button>
+                </div>
+                {filteredAnnouncements.length === 0 ? (
+                    <p className="text-subtle-text text-sm">
+                        {showMineOnly
+                            ? "You have not posted any announcements yet."
+                            : "No announcements posted yet."}
+                    </p>
                 ) : (
                     <>
                         <div className="mt-4 overflow-auto rounded-md border border-border-gray bg-white">
                             <table className="min-w-full text-sm text-left text-gray-700">
                                 <thead className="bg-gray-50 border-b border-border-gray">
                                 <tr>
-                                    <th className="px-4 py-3 font-semibold" style={{ width: "120px" }}>Posted</th>
-                                    <th className="px-4 py-3 font-semibold" style={{ width: "120px" }}>Visible To</th>
+                                    <th className="px-4 py-3 font-semibold" style={{width: "120px"}}>Posted</th>
+                                    <th className="px-4 py-3 font-semibold" style={{width: "150px"}}>Created By</th>
+                                    <th className="px-4 py-3 font-semibold" style={{width: "120px"}}>Visible To</th>
                                     <th className="px-4 py-3 font-semibold">Title</th>
                                     <th className="px-4 py-3 font-semibold">Expires</th>
                                     <th className="px-4 py-3 font-semibold">Status</th>
@@ -204,48 +259,55 @@ export default function ManagerAnnouncements() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    {currentAnnouncements.map((a) => {
-                                        const expires = a.expiresAt
-                                            ? (a.expiresAt instanceof Date ? a.expiresAt : a.expiresAt.toDate())
-                                            : null;
+                                {currentAnnouncements.map((a) => {
+                                    const expires = a.expiresAt
+                                        ? (a.expiresAt instanceof Date ? a.expiresAt : a.expiresAt.toDate())
+                                        : null;
 
-                                        const expired = expires ? expires < new Date() : false;
+                                    const expired = expires ? expires < new Date() : false;
 
-                                        return (
-                                            <tr key={a.id} className="border-t border-border-gray">
-                                                <td className="px-4 py-3">{getRelativeDate(a.createdAt)}</td>
-                                                <td className="px-4 py-3">
-                                                    <span className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset ${
-                                                        a.visibleTo === "employee"
-                                                            ? "bg-green-50 text-gray-600 ring-blue-500/10"
-                                                            : a.visibleTo === "manager"
-                                                            ? "bg-blue-50 text-gray-600 ring-blue-500/10"
-                                                            : "bg-orange-50 text-gray-600 ring-blue-500/10"
-                                                    }`}>
+                                    return (
+                                        <tr key={a.id} className="border-t border-border-gray">
+                                            <td className="px-4 py-3">{formatDisplayDate(a.createdAt)}</td>
+                                            <td className="px-4 py-3 whitespace-nowrap">
+                                                {userMap[a.createdBy]?.display_name ||
+                                                    `${userMap[a.createdBy]?.first_name || ''} ${userMap[a.createdBy]?.last_name || ''}`.trim() ||
+                                                    `${userMap[a.createdBy]?.email.slice(0, 17)}...` ||
+                                                    "—"}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                    <span
+                                                        className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium ${
+                                                            a.visibleTo === "employee"
+                                                                ? "bg-green-50 text-gray-600"
+                                                                : a.visibleTo === "manager"
+                                                                    ? "bg-blue-50 text-gray-600"
+                                                                    : "bg-orange-50 text-gray-600"
+                                                        }`}>
                                                         {a.visibleTo === "employee" ? "Employees" : a.visibleTo === "manager" ? "Managers" : "Everyone"}
                                                     </span>
-                                                </td>
-                                                <td className="px-4 py-3 truncate">{a.title}</td>
-                                                <td className="px-4 py-3">{a.expiresAt ? formatDate(a.expiresAt instanceof Date ? a.expiresAt : a.expiresAt.toDate())
-                                                    : "—"}</td>
-                                                <td className="px-4 py-3">
-                                                    {a.expiresAt ? (
-                                                        expired
-                                                            ? <span className="text-red-600 font-medium">Expired</span>
-                                                            : <span className="text-green-600 font-medium">Active</span>
-                                                    ) : "—"}
-                                                </td>
-                                                <td className="px-4 py-3 text-right">
-                                                    <button
-                                                        onClick={() => setSelectedAnnouncement(a)}
-                                                        className="text-primary cursor-pointer underline hover:no-underline"
-                                                    >
-                                                        View
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
+                                            </td>
+                                            <td className="px-4 py-3 truncate">{a.title}</td>
+                                            <td className="px-4 py-3">{a.expiresAt ? formatDisplayDate(a.expiresAt instanceof Date ? a.expiresAt : a.expiresAt.toDate())
+                                                : "—"}</td>
+                                            <td className="px-4 py-3">
+                                                {a.expiresAt ? (
+                                                    expired
+                                                        ? <span className="text-red-600 font-bold">Expired</span>
+                                                        : <span className="text-green-600 font-bold">Active</span>
+                                                ) : "—"}
+                                            </td>
+                                            <td className="px-4 py-3 text-right">
+                                                <button
+                                                    onClick={() => setSelectedAnnouncement(a)}
+                                                    className="text-primary cursor-pointer underline hover:no-underline"
+                                                >
+                                                    View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                                 </tbody>
                             </table>
                         </div>
@@ -285,21 +347,32 @@ export default function ManagerAnnouncements() {
                                     className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
                                 />
                                 <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
-                                    <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                                    <div
+                                        className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                                         <DialogPanel
                                             transition
                                             className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
                                         >
                                             <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                                                <DialogTitle as="h3" className="text-2xl mb-2 font-semibold text-gray-900">
+                                                <DialogTitle
+                                                    as="h3"
+                                                    className="text-2xl mb-5 font-semibold text-gray-900"
+                                                >
                                                     {selectedAnnouncement.title}
                                                 </DialogTitle>
                                                 <div className="space-y-2 mb-4">
                                                     <p className="mb-0">
-                                                        <strong>Posted:</strong> {formatDate(selectedAnnouncement.createdAt)}
+                                                        <strong>Posted:</strong> {formatDisplayDate(selectedAnnouncement.createdAt)}
                                                     </p>
                                                     <p className="mb-0">
-                                                        <strong>Expires:</strong> {selectedAnnouncement.expiresAt ? formatDate(selectedAnnouncement.expiresAt instanceof Date ? selectedAnnouncement.expiresAt : selectedAnnouncement.expiresAt.toDate()) : "Never"}
+                                                        <strong>Created By:</strong>{" "}
+                                                        {userMap[selectedAnnouncement.createdBy]?.display_name ||
+                                                            `${userMap[selectedAnnouncement.createdBy]?.first_name || ''} ${userMap[selectedAnnouncement.createdBy]?.last_name || ''}`.trim() ||
+                                                            userMap[selectedAnnouncement.createdBy]?.email ||
+                                                            "—"}
+                                                    </p>
+                                                    <p className="mb-0">
+                                                        <strong>Expires:</strong> {selectedAnnouncement.expiresAt ? formatDisplayDate(selectedAnnouncement.expiresAt instanceof Date ? selectedAnnouncement.expiresAt : selectedAnnouncement.expiresAt.toDate()) : "Never"}
                                                     </p>
                                                     {(() => {
                                                         const expires = selectedAnnouncement.expiresAt
@@ -315,9 +388,11 @@ export default function ManagerAnnouncements() {
                                                                 <strong>Status:</strong>{" "}
                                                                 {expires ? (
                                                                     expired ? (
-                                                                        <span className="text-red-600 font-semibold">Expired</span>
+                                                                        <span
+                                                                            className="text-red-600 font-semibold">Expired</span>
                                                                     ) : (
-                                                                        <span className="text-green-600 font-semibold">Active</span>
+                                                                        <span
+                                                                            className="text-green-600 font-semibold">Active</span>
                                                                     )
                                                                 ) : (
                                                                     <span className="font-semibold">Ongoing</span>
@@ -331,7 +406,8 @@ export default function ManagerAnnouncements() {
                                                         </span>
                                                     </p>
                                                     <p className="text-gray-800 whitespace-pre-line mb-4">
-                                                        <strong className={"block"}>Announcement Details:</strong> {selectedAnnouncement.body}
+                                                        <strong className={"block"}>Announcement
+                                                            Details:</strong> {selectedAnnouncement.body}
                                                     </p>
                                                 </div>
                                                 <div className="flex justify-end gap-3 mt-12">
@@ -341,19 +417,17 @@ export default function ManagerAnnouncements() {
                                                     >
                                                         Close
                                                     </button>
-                                                    <button
-                                                        onClick={async () => {
-                                                            try {
+                                                    {selectedAnnouncement.createdBy === userData?.uid && (
+                                                        <button
+                                                            onClick={async () => {
                                                                 await deleteAnnouncement(selectedAnnouncement.id);
                                                                 setSelectedAnnouncement(null);
-                                                            } catch (error) {
-                                                                console.error("Failed to delete announcement:", error);
-                                                            }
-                                                        }}
-                                                        className="rounded-md bg-red-800 px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-red-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-900"
-                                                    >
-                                                        Delete
-                                                    </button>
+                                                            }}
+                                                            className="rounded-md bg-red-800 px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-red-900"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         </DialogPanel>

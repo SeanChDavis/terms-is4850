@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { collection, getDocs, query, orderBy, doc, updateDoc } from "firebase/firestore";
-import { db } from "@/firebase/firebase-config.js";
-import { formatDate, formatTime, getRelativeDate } from "../../utils/formatters";
-import { MdAccessTime, MdDone, MdOutlineDoNotDisturbAlt } from "react-icons/md";
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import {useEffect, useState} from "react";
+import {collection, getDocs, query, orderBy, doc, updateDoc} from "firebase/firestore";
+import {db} from "@/firebase/firebase-config.js";
+import {formatDisplayDate, formatTime} from "../../utils/formatters";
+import {MdAccessTime, MdDone, MdOutlineDoNotDisturbAlt} from "react-icons/md";
+import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/react';
 
 const ManagerSchedule = () => {
     const [userMap, setUserMap] = useState({});
@@ -18,7 +18,7 @@ const ManagerSchedule = () => {
         try {
             const q = query(collection(db, "requests"), orderBy("submittedAt", "desc"));
             const snapshot = await getDocs(q);
-            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const data = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
             setRequests(data);
         } catch (err) {
             console.error("Error fetching requests:", err);
@@ -90,7 +90,8 @@ const ManagerSchedule = () => {
             <div className={"max-w-xl pb-4 mb-8"}>
                 <h2 className={`text-xl font-bold mb-2`}>Work Schedule Information</h2>
                 <p className={"text-subtle-text"}>
-                    As a manager, you can view all time-off requests submitted by employees. You can approve or deny requests based on your discretion.
+                    As a manager, you can view all time-off requests submitted by employees. You can approve or deny
+                    requests based on your discretion.
                 </p>
             </div>
 
@@ -116,19 +117,19 @@ const ManagerSchedule = () => {
                         <table className="min-w-full text-sm text-left text-gray-700">
                             <thead className="bg-gray-50 border-b border-border-gray">
                             <tr>
-                                <th className="px-4 py-3 font-semibold" style={{ width: "100px" }}>Posted</th>
+                                <th className="px-4 py-3 font-semibold" style={{width: "100px"}}>Posted</th>
                                 <th className="px-4 py-3 font-semibold">Submitted by</th>
                                 <th className="px-4 py-3 font-semibold">Start</th>
                                 <th className="px-4 py-3 font-semibold">End</th>
                                 <th className="px-4 py-3 font-semibold">Status</th>
-                                <th className="px-4 py-3 font-semibold">Action</th>
+                                <th className="px-4 py-3 font-semibold text-right">Action</th>
                             </tr>
                             </thead>
                             <tbody>
                             {currentRequests.map(r => (
                                 <tr key={r.id} className="border-t border-border-gray">
                                     <td className="px-4 py-3 whitespace-nowrap  text-sm text-gray-600">
-                                        {getRelativeDate(r.submittedAt)}
+                                        {formatDisplayDate(r.submittedAt)}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {userMap[r.userId]?.display_name ||
@@ -139,20 +140,25 @@ const ManagerSchedule = () => {
                                             "—"}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {formatDate(r.startDate)}
-                                        {r.startTime && <span className="text-gray-500"> @ {formatTime(r.startTime)}</span>}
+                                        {formatDisplayDate(r.startDate)}
+                                        {r.startTime &&
+                                            <span className="text-gray-500"> @ {formatTime(r.startTime)}</span>}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {formatDate(r.endDate)}
+                                        {formatDisplayDate(r.endDate)}
                                         {r.endTime && <span className="text-gray-500"> @ {formatTime(r.endTime)}</span>}
                                     </td>
-                                    <td className="px-4 py-3 flex items-center gap-1 capitalize">
-                                        {r.status === "pending" && <MdAccessTime className="text-yellow-600" />}
-                                        {r.status === "approved" && <MdDone className="text-green-600" />}
-                                        {r.status === "denied" && <MdOutlineDoNotDisturbAlt className="text-red-600" />}
-                                        {r.status}
+                                    <td className="px-4 py-3 capitalize">
+                                        <span className={`font-bold
+                                            ${r.status === "pending" ? "text-yellow-600" :
+                                                r.status === "approved" ? "text-green-600" :
+                                                r.status === "denied" ? "text-red-600" : ""
+                                            }`}
+                                        >
+                                            {r.status}
+                                        </span>
                                     </td>
-                                    <td className="px-4 py-3">
+                                    <td className="px-4 py-3 text-right">
                                         {r.status === "pending" ? (
                                             <button
                                                 onClick={() => setSelectedRequest(r)}
@@ -206,21 +212,35 @@ const ManagerSchedule = () => {
                             className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
                         />
                         <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
-                            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                            <div
+                                className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                                 <DialogPanel
                                     transition
                                     className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
                                 >
                                     <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                                        <DialogTitle as="h3" className="text-2xl mb-5 font-semibold text-gray-900">
+                                        <DialogTitle
+                                            as="h3"
+                                            className="text-2xl mb-5 font-semibold text-gray-900"
+                                        >
                                             Review Request
                                         </DialogTitle>
                                         <div className="space-y-2 mb-4">
-                                            <p className={"mb-0"}><strong>Submitted by:</strong> {userMap[selectedRequest.userId]?.display_name || `${userMap[selectedRequest.userId]?.first_name || ''} ${userMap[selectedRequest.userId]?.last_name || ''}`.trim() || userMap[selectedRequest.userId]?.email || "—"}</p>
-                                            <p className={"mb-0"}><strong>Posted:</strong> {getRelativeDate(selectedRequest.submittedAt)}</p>
-                                            <p className={"mb-0"}><strong>Start:</strong> {formatDate(selectedRequest.startDate)} {selectedRequest.startTime && `at ${formatTime(selectedRequest.startTime)}`}</p>
-                                            <p className={"mb-0"}><strong>End:</strong> {formatDate(selectedRequest.endDate)} {selectedRequest.endTime && `at ${formatTime(selectedRequest.endTime)}`}</p>
-                                            <p className={"mt-4"}><strong className={"block"}>Details:</strong> {selectedRequest.details || "—"}</p>
+                                            <p className={"mb-0"}><strong>Submitted
+                                                by:</strong> {userMap[selectedRequest.userId]?.display_name || `${userMap[selectedRequest.userId]?.first_name || ''} ${userMap[selectedRequest.userId]?.last_name || ''}`.trim() || userMap[selectedRequest.userId]?.email || "—"}
+                                            </p>
+                                            <p className={"mb-0"}>
+                                                <strong>Posted:</strong> {formatDisplayDate(selectedRequest.submittedAt, {relative: true})}
+                                            </p>
+                                            <p className={"mb-0"}>
+                                                <strong>Start:</strong> {formatDisplayDate(selectedRequest.startDate)} {selectedRequest.startTime && `at ${formatTime(selectedRequest.startTime)}`}
+                                            </p>
+                                            <p className={"mb-0"}>
+                                                <strong>End:</strong> {formatDisplayDate(selectedRequest.endDate)} {selectedRequest.endTime && `at ${formatTime(selectedRequest.endTime)}`}
+                                            </p>
+                                            <p className={"mt-4"}><strong
+                                                className={"block"}>Details:</strong> {selectedRequest.details || "—"}
+                                            </p>
                                         </div>
                                     </div>
                                     <div className="mt-5 sm:mt-8 sm:flex sm:flex-row-reverse gap-2">

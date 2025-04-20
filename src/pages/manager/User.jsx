@@ -7,11 +7,11 @@ import {
     orderBy,
     onSnapshot
 } from "firebase/firestore";
-import {getUserDocument, updateUserRole} from "../../firebase/firestore";
-import {db} from "../../firebase/firebase-config.js";
+import {getUserDocument, updateUserRole} from "@/firebase/firestore.js";
+import {db} from "@/firebase/firebase-config.js";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import {MdAccessTime, MdDone, MdInfoOutline, MdOutlineDoNotDisturbAlt} from "react-icons/md";
-import {formatDate, formatTime, getRelativeDate} from "../../utils/formatters";
+import {formatDisplayDate, formatTime} from "../../utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 
 export default function ManagerUserView() {
@@ -77,7 +77,8 @@ export default function ManagerUserView() {
                 View information about the user and manage their role.
             </p>
 
-            <div className="mt-6 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x">
+            <div
+                className="mt-6 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x">
                 <div className="p-6 flex-1">
                     <p><span
                         className="font-semibold">Preferred Name:</span> {user.display_name || `${user.first_name || ""} ${user.last_name || "—"}` || "—"}
@@ -115,16 +116,19 @@ export default function ManagerUserView() {
                     <p className="text-sm text-subtle-text">No requests submitted by this user.</p>
                 ) : (
                     <>
-                        <p className="text-subtle-text">View time-off requests submitted by this user. To manage pending requests, visit the <Link to="/manager/schedule" className="text-subtle-text cursor-pointer underline hover:no-underline">Schedule</Link> page.</p>
+                        <p className="text-subtle-text">View time-off requests submitted by this user. To manage pending
+                            requests, visit the <Link to="/manager/schedule"
+                                                      className="text-subtle-text cursor-pointer underline hover:no-underline">Schedule</Link> page.
+                        </p>
                         <div className="mt-4 overflow-auto rounded-md border border-border-gray bg-white">
                             <table className="min-w-full text-sm text-left text-gray-700">
                                 <thead className="bg-gray-50 border-b border-border-gray">
                                 <tr>
                                     <th className="px-4 py-3 font-semibold" style={{width: "120px"}}>Posted</th>
+                                    <th className="px-4 py-3 font-semibold" style={{width: "150px"}}>Status</th>
                                     <th className="px-4 py-3 font-semibold">Start</th>
                                     <th className="px-4 py-3 font-semibold">End</th>
                                     <th className="px-4 py-3 font-semibold" style={{width: "340px"}}>Details</th>
-                                    <th className="px-4 py-3 font-semibold" style={{width: "150px"}}>Status</th>
                                     <th className="px-4 py-3 font-semibold text-right">Action</th>
                                 </tr>
                                 </thead>
@@ -132,26 +136,29 @@ export default function ManagerUserView() {
                                 {currentRequests.map((r) => (
                                     <tr key={r.id} className="border-t border-border-gray">
                                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
-                                            {getRelativeDate(r.submittedAt)}
+                                            {formatDisplayDate(r.submittedAt)}
+                                        </td>
+                                        <td className="px-4 py-3 capitalize">
+                                            <span className={`font-bold
+                                                ${r.status === "pending" ? "text-yellow-600" :
+                                                    r.status === "approved" ? "text-green-600" :
+                                                    r.status === "denied" ? "text-red-600" : ""
+                                                }`}
+                                            >
+                                                {r.status}
+                                            </span>
                                         </td>
                                         <td className="px-4 py-3 whitespace-nowrap">
-                                            <span className="font-medium">{formatDate(r.startDate)}</span>
+                                            <span className="font-medium">{formatDisplayDate(r.startDate)}</span>
                                             {r.startTime &&
                                                 <span className="text-gray-500"> @ {formatTime(r.startTime)}</span>}
                                         </td>
                                         <td className="px-4 py-3 whitespace-nowrap">
-                                            <span className="font-medium">{formatDate(r.endDate)}</span>
+                                            <span className="font-medium">{formatDisplayDate(r.endDate)}</span>
                                             {r.endTime &&
                                                 <span className="text-gray-500"> @ {formatTime(r.endTime)}</span>}
                                         </td>
                                         <td className="px-4 py-3 max-w-xs truncate">{r.details || "—"}</td>
-                                        <td className="px-4 py-3 flex items-center gap-1 capitalize">
-                                            {r.status === "pending" && <MdAccessTime className="text-yellow-600"/>}
-                                            {r.status === "approved" && <MdDone className="text-green-600"/>}
-                                            {r.status === "denied" &&
-                                                <MdOutlineDoNotDisturbAlt className="text-red-600"/>}
-                                            {r.status}
-                                        </td>
                                         <td className="px-4 py-3 text-right">
                                             <button
                                                 onClick={() => {
@@ -205,20 +212,22 @@ export default function ManagerUserView() {
                                         className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                                         <DialogPanel
                                             className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
-                                            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                                <DialogTitle as="h3"
-                                                             className="text-2xl mb-5 font-semibold text-gray-900">
+                                            <div className="mt-3 text-center sm:mt-0 sm:text-left">
+                                                <DialogTitle
+                                                    as="h3"
+                                                    className="text-2xl mb-5 font-semibold text-gray-900"
+                                                >
                                                     Request Details
                                                 </DialogTitle>
                                                 <div className="space-y-2 mb-4">
-                                                    <p>
-                                                        <strong>Posted:</strong> {getRelativeDate(selectedRequest.submittedAt)}
+                                                    <p className={"mb-0"}>
+                                                        <strong>Posted:</strong> {formatDisplayDate(selectedRequest.submittedAt, {relative: true})}
                                                     </p>
-                                                    <p>
-                                                        <strong>Start:</strong> {formatDate(selectedRequest.startDate)} {selectedRequest.startTime && `@ ${formatTime(selectedRequest.startTime)}`}
+                                                    <p className={"mb-0"}>
+                                                        <strong>Start:</strong> {formatDisplayDate(selectedRequest.startDate)} {selectedRequest.startTime && `@ ${formatTime(selectedRequest.startTime)}`}
                                                     </p>
-                                                    <p>
-                                                        <strong>End:</strong> {formatDate(selectedRequest.endDate)} {selectedRequest.endTime && `@ ${formatTime(selectedRequest.endTime)}`}
+                                                    <p className={"mb-0"}>
+                                                        <strong>End:</strong> {formatDisplayDate(selectedRequest.endDate)} {selectedRequest.endTime && `@ ${formatTime(selectedRequest.endTime)}`}
                                                     </p>
                                                     <p className="mt-4"><strong
                                                         className="block">Details:</strong> {selectedRequest.details || "—"}

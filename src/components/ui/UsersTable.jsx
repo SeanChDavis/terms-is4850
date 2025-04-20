@@ -59,11 +59,12 @@ export default function UsersTable() {
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">{user.email}</td>
                             <td className="px-4 py-3 capitalize whitespace-nowrap">
-                                <span className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset ${
+                                <span className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium ${
                                     user.role === "employee" 
-                                        ? "bg-green-50 text-gray-600 ring-blue-500/10"
-                                        : "bg-blue-50 text-gray-600 ring-blue-500/10"
-                                }`}>
+                                        ? "bg-green-50 text-gray-600"
+                                        : "bg-blue-50 text-gray-600"
+                                    }`}
+                                >
                                     {user.role}
                                 </span>
                             </td>
