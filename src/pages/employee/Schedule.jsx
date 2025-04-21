@@ -131,7 +131,7 @@ const EmployeeSchedule = () => {
             <div
                 className={"max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
                 <div className="px-4 py-5 sm:px-6">
-                    <h2 className="text-base/7 font-semibold">New Time-Off Request</h2>
+                    <h2 className="text-base/7 font-semibold">Create New Time-Off Request</h2>
                     <p className="mt-1 text-sm/6 text-subtle-text">
                         Request full days off, partial days, or specific time slots. All requests are subject to
                         management approval.

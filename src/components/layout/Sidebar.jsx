@@ -11,9 +11,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         { name: 'Profile', path: 'profile' },
         { name: 'Schedule', path: 'schedule' },
         { name: 'Messages', path: 'messages' },
+        { name: 'Announcements', path: 'announcements' },
         ...(basePath === '/manager'
             ? [
-                { name: 'Announcements', path: 'announcements' },
                 { name: 'System Tools', path: 'tools' },
             ]
             : []),
