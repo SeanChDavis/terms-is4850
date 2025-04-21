@@ -1,15 +1,23 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import MainLayout from '../components/layout/MainLayout';
+import RoleProtectedRoute from '../components/auth/RoleProtectedRoute';
+
+{/* Auth Pages */}
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
-import MainLayout from '../components/layout/MainLayout';
+
+{/* Employee Pages */}
 import EmployeeDashboard from '../pages/employee/Dashboard';
-import ManagerDashboard from '../pages/manager/Dashboard';
-import RoleProtectedRoute from '../components/auth/RoleProtectedRoute';
 import EmployeeSchedule from "../pages/employee/Schedule.jsx";
-import ManagerSchedule from "../pages/manager/Schedule.jsx";
 import EmployeeProfile from "../pages/employee/Profile.jsx";
+
+{/* Manager Pages */}
+import ManagerDashboard from '../pages/manager/Dashboard';
+import ManagerAnnouncements from "../pages/manager/Announcements.jsx";
+import ManagerSchedule from "../pages/manager/Schedule.jsx";
 import ManagerProfile from "../pages/manager/Profile.jsx";
 import ManagerUserView from "../pages/manager/User.jsx";
+import EmployeeAnnouncements from "@/pages/employee/Announcements.jsx";
 
 const AppRoutes = () => {
     return (
@@ -32,6 +40,7 @@ const AppRoutes = () => {
                 <Route path="dashboard" element={<EmployeeDashboard />} />
                 <Route path="profile" element={<EmployeeProfile />} />
                 <Route path="schedule" element={<EmployeeSchedule />} />
+                <Route path="announcements" element={<EmployeeAnnouncements />} />
                 <Route path="messages" element={<div>Employee Messages Page</div>} />
             </Route>
 
@@ -50,7 +59,7 @@ const AppRoutes = () => {
                 <Route path="profile" element={<ManagerProfile />} />
                 <Route path="schedule" element={<ManagerSchedule />} />
                 <Route path="messages" element={<div>Manager Messages Page</div>} />
-                <Route path="announcements" element={<div>Manager Announcements Page</div>} />
+                <Route path="announcements" element={<ManagerAnnouncements />} />
                 <Route path="tools" element={<div>Manager System Tools Page</div>} />
             </Route>
 
