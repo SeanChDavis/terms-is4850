@@ -4,6 +4,8 @@ import { db } from "../../firebase-config";
 import { formatDate, formatTime, getRelativeDate } from "../../utils/formatters";
 import { MdAccessTime, MdDone, MdOutlineDoNotDisturbAlt } from "react-icons/md";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import ManagerUploadSchedule from "../../components/manager/UploadSchedule.jsx";
+import ViewSchedule from "../../components/ui/ViewSchedule.jsx";
 
 const ManagerSchedule = () => {
     const [userMap, setUserMap] = useState({});
@@ -249,6 +251,10 @@ const ManagerSchedule = () => {
                     </Dialog>
                 )}
             </div>
+
+            <ManagerUploadSchedule />
+
+            <ViewSchedule />
         </>
     );
 };

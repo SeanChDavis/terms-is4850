@@ -15,6 +15,7 @@ import { useAuth } from "../../context/AuthContext";
 import { MdAccessTime, MdDone, MdOutlineDoNotDisturbAlt } from "react-icons/md";
 import { formatDate, formatTime, getRelativeDate } from "../../utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
+import ViewSchedule from "../../components/ui/ViewSchedule.jsx";
 
 const EmployeeSchedule = () => {
     const [requests, setRequests] = useState([]);
@@ -214,6 +215,8 @@ const EmployeeSchedule = () => {
                 {success && <p className="text-sm text-green-600">Request submitted successfully!</p>}
                 {error && <p className="text-sm text-red-600">{error}</p>}
             </div>
+
+            <ViewSchedule />
 
             {/* Existing Requests table */}
             <div className="mt-10">

@@ -74,40 +74,46 @@ const Profile = () => {
                     </p>
                 </div>
                 <div className="px-4 py-5 sm:p-6">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <label htmlFor="first_name" className="block mb-1 text-sm/6 font-medium">
-                            First Name
-                        </label>
-                        <input
-                            type="first_name"
-                            id="first_name"
-                            name="first_name"
-                            value={form.first_name}
-                            onChange={handleChange}
-                            className="block mb-4 w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                        />
-                        <label htmlFor="last_name" className="block mb-1 text-sm/6 font-medium">
-                            Last Name
-                        </label>
-                        <input
-                            type="last_name"
-                            id="last_name"
-                            name="last_name"
-                            value={form.last_name}
-                            onChange={handleChange}
-                            className="block mb-4 w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                        />
-                        <label htmlFor="display_name" className="block mb-1 text-sm/6 font-medium">
-                            Display Name
-                        </label>
-                        <input
-                            type="display_name"
-                            id="display_name"
-                            name="display_name"
-                            value={form.display_name}
-                            onChange={handleChange}
-                            className="block mb-4 w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                        />
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <label htmlFor="first_name" className="block mb-1 text-sm/6 font-medium">
+                                First Name
+                            </label>
+                            <input
+                                type="first_name"
+                                id="first_name"
+                                name="first_name"
+                                value={form.first_name}
+                                onChange={handleChange}
+                                className="block mb-4 w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="last_name" className="block mb-1 text-sm/6 font-medium">
+                                Last Name
+                            </label>
+                            <input
+                                type="last_name"
+                                id="last_name"
+                                name="last_name"
+                                value={form.last_name}
+                                onChange={handleChange}
+                                className="block mb-4 w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="display_name" className="block mb-1 text-sm/6 font-medium">
+                                Display Name
+                            </label>
+                            <input
+                                type="display_name"
+                                id="display_name"
+                                name="display_name"
+                                value={form.display_name}
+                                onChange={handleChange}
+                                className="block mb-4 w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                            />
+                        </div>
                         <button
                             type="submit"
                             disabled={loading}
