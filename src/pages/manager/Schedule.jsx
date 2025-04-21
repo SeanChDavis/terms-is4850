@@ -271,9 +271,20 @@ const ManagerSchedule = () => {
                 )}
             </div>
 
-            <ManagerUploadSchedule />
-
-            <ViewSchedule />
+            <h2 className="text-xl font-semibold mt-10 mb-2">Manage Schedule Visibility</h2>
+            <p className="max-w-2xl text-subtle-text mb-2">
+                The latest uploaded schedule is visible to all employees. You can upload a new schedule or view the current one.
+            </p>
+            <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
+                <div>
+                    <ManagerUploadSchedule />
+                </div>
+                <div>
+                    <div id="view-schedule-box">
+                        <ViewSchedule canDelete={true} />
+                    </div>
+                </div>
+            </div>
         </>
     );
 };

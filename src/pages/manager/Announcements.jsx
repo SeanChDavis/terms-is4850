@@ -205,15 +205,13 @@ export default function ManagerAnnouncements() {
                                 className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
                             />
                         </div>
-                        <div className="flex justify-end gap-4">
-                            <button
-                                type="submit"
-                                disabled={submitting}
-                                className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                            >
-                                {submitting ? "Posting..." : "Post Announcement"}
-                            </button>
-                        </div>
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                        >
+                            {submitting ? "Posting..." : "Post Announcement"}
+                        </button>
                     </form>
                 </div>
             </div>

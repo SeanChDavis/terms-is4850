@@ -16,6 +16,7 @@ import {MdAccessTime, MdDone, MdOutlineDoNotDisturbAlt} from "react-icons/md";
 import {formatDisplayDate, formatTime} from "../../utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 import ViewSchedule from "../../components/ui/ViewSchedule.jsx";
+import ManagerUploadSchedule from "@/components/manager/UploadSchedule.jsx";
 
 const EmployeeSchedule = () => {
     const [requests, setRequests] = useState([]);
@@ -128,101 +129,107 @@ const EmployeeSchedule = () => {
                     schedule.</p>
             </div>
 
-            {/* New Time-Off Request Form */}
-            <div
-                className={"max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
-                <div className="px-4 py-5 sm:px-6">
-                    <h2 className="text-base/7 font-semibold">Create New Time-Off Request</h2>
-                    <p className="mt-1 text-sm/6 text-subtle-text">
-                        Request full days off, partial days, or specific time slots. All requests are subject to
-                        management approval.
-                    </p>
-                </div>
-                <div className="px-4 py-5 sm:p-6">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-                            <div className="sm:col-span-3">
-                                <label htmlFor="date" className="block text-sm/6 font-medium">
-                                    Start Date <span className={"text-red-600"}>*</span>
-                                </label>
-                                <input
-                                    required
-                                    type="date"
-                                    id="startDate"
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                    className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                />
-                            </div>
-                            <div className="sm:col-span-3">
-                                <label htmlFor="startTime" className="block text-sm/6 font-medium">
-                                    Start Time (optional)
-                                </label>
-                                <input
-                                    type="time"
-                                    id="startTime"
-                                    value={startTime}
-                                    onChange={(e) => setStartTime(e.target.value)}
-                                    className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                />
-                            </div>
-                            <div className="sm:col-span-3">
-                                <label htmlFor="date" className="block text-sm/6 font-medium">
-                                    End Date <span className={"text-red-600"}>*</span>
-                                </label>
-                                <input
-                                    required
-                                    type="date"
-                                    id="endDate"
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                    className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                />
-                            </div>
-                            <div className="sm:col-span-3">
-                                <label htmlFor="endTime" className="block text-sm/6 font-medium">
-                                    End Time (optional)
-                                </label>
-                                <input
-                                    type="time"
-                                    id="endTime"
-                                    value={endTime}
-                                    onChange={(e) => setEndTime(e.target.value)}
-                                    className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label htmlFor="details" className="block text-sm/6 font-medium">
-                                Additional Details (optional)
-                            </label>
-                            <textarea
-                                id="details"
-                                rows={4}
-                                value={details}
-                                placeholder={"Provide additional context for your request..."}
-                                onChange={(e) => setDetails(e.target.value)}
-                                className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                            />
-                        </div>
-                        <div className="flex justify-end gap-4">
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                            >
-                                {loading ? "Submitting..." : "Submit Request"}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div className="h-5 mt-2">
-                {success && <p className="text-sm text-green-600">Request submitted successfully!</p>}
-                {error && <p className="text-sm text-red-600">{error}</p>}
-            </div>
+            <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
+                <div>
 
-            <ViewSchedule />
+                    {/* New Time-Off Request Form */}
+                    <div
+                        className={"divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
+                        <div className="px-4 py-5 sm:px-6">
+                            <h2 className="text-base/7 font-semibold">Create New Time-Off Request</h2>
+                            <p className="mt-1 text-sm/6 text-subtle-text">
+                                Request full days off, partial days, or specific time slots. All requests are subject to
+                                management approval.
+                            </p>
+                        </div>
+                        <div className="px-4 py-5 sm:p-6">
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+                                    <div className="sm:col-span-3">
+                                        <label htmlFor="date" className="block text-sm/6 font-medium">
+                                            Start Date <span className={"text-red-600"}>*</span>
+                                        </label>
+                                        <input
+                                            required
+                                            type="date"
+                                            id="startDate"
+                                            value={startDate}
+                                            onChange={(e) => setStartDate(e.target.value)}
+                                            className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                        />
+                                    </div>
+                                    <div className="sm:col-span-3">
+                                        <label htmlFor="startTime" className="block text-sm/6 font-medium">
+                                            Start Time (optional)
+                                        </label>
+                                        <input
+                                            type="time"
+                                            id="startTime"
+                                            value={startTime}
+                                            onChange={(e) => setStartTime(e.target.value)}
+                                            className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                        />
+                                    </div>
+                                    <div className="sm:col-span-3">
+                                        <label htmlFor="date" className="block text-sm/6 font-medium">
+                                            End Date <span className={"text-red-600"}>*</span>
+                                        </label>
+                                        <input
+                                            required
+                                            type="date"
+                                            id="endDate"
+                                            value={endDate}
+                                            onChange={(e) => setEndDate(e.target.value)}
+                                            className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                        />
+                                    </div>
+                                    <div className="sm:col-span-3">
+                                        <label htmlFor="endTime" className="block text-sm/6 font-medium">
+                                            End Time (optional)
+                                        </label>
+                                        <input
+                                            type="time"
+                                            id="endTime"
+                                            value={endTime}
+                                            onChange={(e) => setEndTime(e.target.value)}
+                                            className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label htmlFor="details" className="block text-sm/6 font-medium">
+                                        Additional Details (optional)
+                                    </label>
+                                    <textarea
+                                        id="details"
+                                        rows={4}
+                                        value={details}
+                                        placeholder={"Provide additional context for your request..."}
+                                        onChange={(e) => setDetails(e.target.value)}
+                                        className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                    />
+                                </div>
+                                <div className="">
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                                    >
+                                        {loading ? "Submitting..." : "Submit Request"}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div className="h-5 mt-2">
+                        {success && <p className="text-sm text-green-600">Request submitted successfully!</p>}
+                        {error && <p className="text-sm text-red-600">{error}</p>}
+                    </div>
+                </div>
+                <div>
+                    <ViewSchedule />
+                </div>
+            </div>
 
             {/* Existing Requests table */}
             <div className="mt-10">
