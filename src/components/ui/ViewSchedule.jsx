@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
-import { db } from "../../firebase-config";
+import { db } from "@/firebase/firebase-config";
 
 const ViewSchedule = () => {
     const [latestSchedule, setLatestSchedule] = useState(null);

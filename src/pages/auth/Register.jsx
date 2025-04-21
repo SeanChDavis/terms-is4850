@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { signUp, signInWithGoogle } from '../../firebase/auth';
 import {createUserDocument, getUserDocument} from '../../firebase/firestore';
 import SiteLogo from "../../components/ui/SiteLogo.jsx";
-import {auth} from "../../firebase-config.js";
+import {auth} from "../../firebase/firebase-config.js";
 
 const Register = () => {
     const navigate = useNavigate();

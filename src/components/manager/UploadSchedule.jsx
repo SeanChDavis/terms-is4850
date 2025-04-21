@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { storage, db } from "../../firebase-config";
+import { storage, db } from "@/firebase/firebase-config";
 import { useAuth } from "../../context/AuthContext";
 
 const ManagerUploadSchedule = () => {

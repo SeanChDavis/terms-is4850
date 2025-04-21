@@ -1,5 +1,5 @@
 import { collection, getDocs, doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase-config';
+import { db } from './firebase-config.js';
 
 // Create or overwrite a user document
 export const createUserDocument = async (uid, data) => {

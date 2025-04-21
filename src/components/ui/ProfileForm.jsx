@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
-import { db } from "../../firebase-config";
+import { db } from "../../firebase/firebase-config.js";
 
 const Profile = () => {
     const { user } = useAuth();
