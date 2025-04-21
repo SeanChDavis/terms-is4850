@@ -90,12 +90,14 @@ const ManagerUploadSchedule = () => {
                                 type="text"
                                 value={label}
                                 onChange={(e) => setLabel(e.target.value)}
-                                className="block mb-4 w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900"
-                                placeholder="e.g. April 22–28 Schedule"
+                                className="block mb-4 w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                placeholder="E.g. April 22–28 Schedule"
                             />
                         </div>
                         <div>
-                            <label className="block mb-1 text-sm/6 font-medium">File</label>
+                            <label className="block mb-1 text-sm/6 font-medium">
+                                File <span className={"text-red-600"}>*</span>
+                            </label>
                             <input
                                 ref={fileInputRef}
                                 type="file"
