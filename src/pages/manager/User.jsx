@@ -10,13 +10,13 @@ import {
 import {getUserDocument, updateUserRole} from "@/firebase/firestore.js";
 import {db} from "@/firebase/firebase-config.js";
 import useCurrentUser from "../../hooks/useCurrentUser";
-import {MdAccessTime, MdDone, MdInfoOutline, MdOutlineDoNotDisturbAlt} from "react-icons/md";
+import {MdInfoOutline} from "react-icons/md";
 import {formatDisplayDate, formatTime} from "../../utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 
 export default function ManagerUserView() {
     const {userData: currentUser} = useCurrentUser();
-    const {id} = useParams(); // user ID from route
+    const {id} = useParams();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -253,17 +253,17 @@ export default function ManagerUserView() {
                 )}
             </div>
 
-            <div className="mt-10">
+            <div className="mt-10 mb-12">
                 <h3 className="text-xl font-bold mb-2">Add User Note</h3>
                 <p className="text-gray-600">Coming soon! Be patient please.</p>
             </div>
 
-            <button
-                onClick={() => navigate("/manager/dashboard")}
+            <Link
+                to="/manager/dashboard"
                 className="mt-8 text-sm rounded-md bg-gray-200 px-4 py-2 font-semibold cursor-pointer hover:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
             >
                 Return to Dashboard
-            </button>
+            </Link>
         </>
     );
 }

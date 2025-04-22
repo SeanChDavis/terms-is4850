@@ -5,6 +5,7 @@ import {formatDisplayDate, formatTime} from "../../utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/react';
 import ManagerUploadSchedule from "../../components/manager/UploadSchedule.jsx";
 import ViewSchedule from "../../components/ui/ViewSchedule.jsx";
+import {Link} from "react-router-dom";
 
 const ManagerSchedule = () => {
     const [userMap, setUserMap] = useState({});
@@ -98,22 +99,24 @@ const ManagerSchedule = () => {
 
             <div className="mt-6">
                 <h1 className="text-xl font-semibold mb-0">Manage Time-Off Requests</h1>
-                <div className="flex justify-between items-center mb-4">
-                    <button
-                        onClick={() => {
-                            setShowAll(prev => !prev);
-                            setCurrentPage(1);
-                        }}
-                        className="text-sm text-gray-600 underline cursor-pointer hover:no-underline"
-                    >
-                        {showAll ? "Show Pending Only" : "Show Non-Pending Requests"}
-                    </button>
-                </div>
+                {requests.length > 0 && (
+                    <div className="flex justify-between items-center mb-4">
+                        <button
+                            onClick={() => {
+                                setShowAll(prev => !prev);
+                                setCurrentPage(1);
+                            }}
+                            className="text-sm text-gray-600 underline cursor-pointer hover:no-underline"
+                        >
+                            {showAll ? "Show Pending Only" : "Show Non-Pending Requests"}
+                        </button>
+                    </div>
+                )}
 
                 {/* Table for displaying requests */}
                 {loading ? (
                     <p>Loading...</p>
-                ) : (
+                ) : currentRequests.length > 0 ? (
                     <div className="overflow-auto rounded-md border border-border-gray bg-white">
                         <table className="min-w-full text-sm text-left text-gray-700">
                             <thead className="bg-gray-50 border-b border-border-gray">
@@ -185,6 +188,8 @@ const ManagerSchedule = () => {
                             </tbody>
                         </table>
                     </div>
+                ) : (
+                    <p className={"mt-2 text-sm italic text-subtle-text"}>No time-off requests have been submitted. Check back soon.</p>
                 )}
 
                 {/* Pagination controls */}
@@ -295,17 +300,34 @@ const ManagerSchedule = () => {
                 )}
             </div>
 
-            <h2 className="text-xl font-semibold mt-10 mb-2">Manage Schedule Visibility</h2>
-            <p className="max-w-2xl text-subtle-text mb-2">
-                The latest uploaded schedule is visible to all employees. You can upload a new schedule or view the current one.
-            </p>
-            <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
-                <div>
-                    <ManagerUploadSchedule />
+            {requests.length > 0 && (
+                <div className={"space-y-2 mb-12 lg:mb-20"}>
+                    <h2 className="text-xl font-semibold mt-10">Time Off Summary</h2>
+                    <p className="max-w-2xl text-subtle-text mb-6">
+                        The Time Off Summary provides a breakdown of all time-off requests by date, helping you build the schedule effectively.
+                    </p>
+                    <Link
+                        to="/manager/time-off-summary"
+                        className="mt-8 text-sm rounded-md bg-gray-200 px-4 py-2 font-semibold cursor-pointer hover:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
+                    >
+                        View Time Off Summary
+                    </Link>
                 </div>
-                <div>
-                    <div id="view-schedule-box">
-                        <ViewSchedule canDelete={true} />
+            )}
+
+            <div className="my-8">
+                <h2 className="text-xl font-semibold mt-10 mb-2">Manage Schedule Visibility</h2>
+                <p className="max-w-2xl text-subtle-text mb-2">
+                    The latest uploaded schedule is visible to all employees. You can upload a new schedule or view the current one.
+                </p>
+                <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
+                    <div>
+                        <ManagerUploadSchedule />
+                    </div>
+                    <div>
+                        <div id="view-schedule-box">
+                            <ViewSchedule canDelete={true} />
+                        </div>
                     </div>
                 </div>
             </div>
