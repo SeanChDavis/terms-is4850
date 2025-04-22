@@ -154,9 +154,14 @@ export default function ManagerUserView() {
                                                 <span className="text-gray-500"> @ {formatTime(r.startTime)}</span>}
                                         </td>
                                         <td className="px-4 py-3 whitespace-nowrap">
-                                            <span className="font-medium">{formatDisplayDate(r.endDate)}</span>
-                                            {r.endTime &&
-                                                <span className="text-gray-500"> @ {formatTime(r.endTime)}</span>}
+                                            {r.endDate ? (
+                                                <>
+                                                    <span className="font-medium">{formatDisplayDate(r.endDate)}</span>
+                                                    {r.endTime ? <span className="text-gray-500"> @ {formatTime(r.endTime)}</span> : null}
+                                                </>
+                                            ) : (
+                                                "—"
+                                            )}
                                         </td>
                                         <td className="px-4 py-3 max-w-xs truncate">{r.details || "—"}</td>
                                         <td className="px-4 py-3 text-right">
@@ -230,7 +235,7 @@ export default function ManagerUserView() {
                                                         <strong>Start:</strong> {formatDisplayDate(selectedRequest.startDate)} {selectedRequest.startTime && `@ ${formatTime(selectedRequest.startTime)}`}
                                                     </p>
                                                     <p className={"mb-0"}>
-                                                        <strong>End:</strong> {formatDisplayDate(selectedRequest.endDate)} {selectedRequest.endTime && `@ ${formatTime(selectedRequest.endTime)}`}
+                                                        <strong>End:</strong> {selectedRequest.endDate ? formatDisplayDate(selectedRequest.endDate) : "—"} {selectedRequest.endTime ? `@ ${formatTime(selectedRequest.endTime)}` : ""}
                                                     </p>
                                                     <p className="mt-4"><strong className="block">Details:</strong> {selectedRequest.details || "—"}
                                                     </p>

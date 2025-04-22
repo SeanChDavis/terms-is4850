@@ -144,14 +144,14 @@ const ManagerSchedule = () => {
                                             "—"}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {formatDisplayDate(r.startDate)}
+                                        <span className="font-medium">{formatDisplayDate(r.startDate)}</span>
                                         {r.startTime &&
                                             <span className="text-gray-500"> @ {formatTime(r.startTime)}</span>}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {r.endDate ? (
                                             <>
-                                                {formatDisplayDate(r.endDate)}
+                                                <span className="font-medium">{formatDisplayDate(r.endDate)}</span>
                                                 {r.endTime ? <span className="text-gray-500"> @ {formatTime(r.endTime)}</span> : null}
                                             </>
                                         ) : (
