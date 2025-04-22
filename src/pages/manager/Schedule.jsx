@@ -146,8 +146,14 @@ const ManagerSchedule = () => {
                                             <span className="text-gray-500"> @ {formatTime(r.startTime)}</span>}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {formatDisplayDate(r.endDate)}
-                                        {r.endTime && <span className="text-gray-500"> @ {formatTime(r.endTime)}</span>}
+                                        {r.endDate ? (
+                                            <>
+                                                {formatDisplayDate(r.endDate)}
+                                                {r.endTime ? <span className="text-gray-500"> @ {formatTime(r.endTime)}</span> : null}
+                                            </>
+                                        ) : (
+                                            "—"
+                                        )}
                                     </td>
                                     <td className="px-4 py-3 capitalize">
                                         <span className={`font-bold
@@ -230,14 +236,19 @@ const ManagerSchedule = () => {
                                             <p className={"mb-0"}><strong>Submitted
                                                 by:</strong> {userMap[selectedRequest.userId]?.display_name || `${userMap[selectedRequest.userId]?.first_name || ''} ${userMap[selectedRequest.userId]?.last_name || ''}`.trim() || userMap[selectedRequest.userId]?.email || "—"}
                                             </p>
-                                            <p className={"mb-0"}>
+                                            <p className={"mb-0 capitalize"}>
                                                 <strong>Posted:</strong> {formatDisplayDate(selectedRequest.submittedAt, {relative: true})}
                                             </p>
+                                            {selectedRequest.requestType && (
+                                                <p className={"mb-0"}>
+                                                    <strong>Type:</strong> {selectedRequest.requestType === "full" ? "Full Day" : selectedRequest.requestType === "multi" ? "Multi-Day" : "Custom Date & Time Range"}
+                                                </p>
+                                            )}
                                             <p className={"mb-0"}>
                                                 <strong>Start:</strong> {formatDisplayDate(selectedRequest.startDate)} {selectedRequest.startTime && `at ${formatTime(selectedRequest.startTime)}`}
                                             </p>
                                             <p className={"mb-0"}>
-                                                <strong>End:</strong> {formatDisplayDate(selectedRequest.endDate)} {selectedRequest.endTime && `at ${formatTime(selectedRequest.endTime)}`}
+                                                <strong>End:</strong> {selectedRequest.endDate ? formatDisplayDate(selectedRequest.endDate) : "—"} {selectedRequest.endTime ? `at ${formatTime(selectedRequest.endTime)}` : ""}
                                             </p>
                                             <p className={"mt-4"}><strong
                                                 className={"block"}>Details:</strong> {selectedRequest.details || "—"}

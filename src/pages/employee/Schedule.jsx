@@ -12,11 +12,9 @@ import {
 import {useEffect, useState} from "react";
 import {db} from "@/firebase/firebase-config.js";
 import {useAuth} from "../../context/AuthContext";
-import {MdAccessTime, MdDone, MdOutlineDoNotDisturbAlt} from "react-icons/md";
 import {formatDisplayDate, formatTime} from "../../utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 import ViewSchedule from "../../components/ui/ViewSchedule.jsx";
-import ManagerUploadSchedule from "@/components/manager/UploadSchedule.jsx";
 
 const EmployeeSchedule = () => {
     const [requests, setRequests] = useState([]);
@@ -24,6 +22,7 @@ const EmployeeSchedule = () => {
     const [open, setOpen] = useState(false);
     const {user} = useAuth();
 
+    const [requestType, setRequestType] = useState("");
     const [startDate, setStartDate] = useState("");
     const [startTime, setStartTime] = useState("");
     const [endDate, setEndDate] = useState("");
@@ -65,6 +64,7 @@ const EmployeeSchedule = () => {
 
     // Reset form fields when component mounts
     const resetForm = () => {
+        setRequestType("");
         setStartDate("");
         setStartTime("");
         setEndDate("");
@@ -80,17 +80,70 @@ const EmployeeSchedule = () => {
         setSuccess(false);
 
         try {
-            await addDoc(collection(db, "requests"), {
+
+            // ======= Start validation
+            // ========================
+            const now = new Date();
+            const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+
+            const [year, month, day] = startDate.split("-").map(Number);
+            const selectedDay = new Date(year, month - 1, day);
+
+            if (selectedDay < tomorrow) {
+                setError("Requests must begin on a future date.");
+                setLoading(false);
+                return;
+            }
+
+            if (requestType === "multi" && new Date(endDate) < new Date(startDate)) {
+                setError("End date must be after start date.");
+                setLoading(false);
+                return;
+            }
+
+            if (requestType === "custom") {
+
+                if (!startDate || !endDate || !startTime || !endTime) {
+                    setError("All date and time fields are required for custom requests.");
+                    setLoading(false);
+                    return;
+                }
+
+                const start = new Date(`${startDate}T${startTime}`);
+                const end = new Date(`${endDate}T${endTime}`);
+
+                if (end <= start) {
+                    setError("End time must be after start time.");
+                    setLoading(false);
+                    return;
+                }
+            }
+            // ======= End validation
+            // ======================
+
+            // Basic payload without potentially undefined fields
+            const payload = {
                 userId: user.uid,
                 email: user.email,
+                requestType,
                 startDate,
-                endDate,
-                startTime,
-                endTime,
                 details,
-                status: 'pending',
                 submittedAt: serverTimestamp(),
-            });
+                status: 'pending'
+            };
+
+            // Add start and end times only if they are provided
+            if (requestType === "custom") {
+                payload.startTime = startTime;
+                payload.endDate = endDate;
+                payload.endTime = endTime;
+            } else if (requestType === "multi") {
+                payload.endDate = endDate;
+            }
+
+            // Now add the request to Firestore
+            await addDoc(collection(db, "requests"), payload);
+
             setSuccess(true);
             resetForm();
             setCurrentPage(1);
@@ -138,63 +191,95 @@ const EmployeeSchedule = () => {
                         <div className="px-4 py-5 sm:px-6">
                             <h2 className="text-base/7 font-semibold">Create New Time-Off Request</h2>
                             <p className="mt-1 text-sm/6 text-subtle-text">
-                                Request full days off, partial days, or specific time slots. All requests are subject to
+                                Request off a full day, multiple days, or specific time range. All requests are subject to
                                 management approval.
                             </p>
                         </div>
                         <div className="px-4 py-5 sm:p-6">
-                            <form onSubmit={handleSubmit} className="space-y-6">
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div className="sm:col-span-6">
+                                    <label className="block text-sm/6 font-medium">
+                                        Request Type <span className="text-red-600">*</span>
+                                    </label>
+                                    <select
+                                        value={requestType}
+                                        onChange={(e) => setRequestType(e.target.value)}
+                                        required
+                                        className="block w-full rounded-md bg-light-gray px-2 py-2 text-base cursor-pointer text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                    >
+                                        <option value="">Select type...</option>
+                                        <option value="full">Full Day</option>
+                                        <option value="multi">Multi-Day</option>
+                                        <option value="custom">Custom Date & Time Range</option>
+                                    </select>
+                                </div>
                                 <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-                                    <div className="sm:col-span-3">
-                                        <label htmlFor="date" className="block text-sm/6 font-medium">
-                                            Start Date <span className={"text-red-600"}>*</span>
-                                        </label>
-                                        <input
-                                            required
-                                            type="date"
-                                            id="startDate"
-                                            value={startDate}
-                                            onChange={(e) => setStartDate(e.target.value)}
-                                            className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                        />
-                                    </div>
-                                    <div className="sm:col-span-3">
-                                        <label htmlFor="startTime" className="block text-sm/6 font-medium">
-                                            Start Time (optional)
-                                        </label>
-                                        <input
-                                            type="time"
-                                            id="startTime"
-                                            value={startTime}
-                                            onChange={(e) => setStartTime(e.target.value)}
-                                            className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                        />
-                                    </div>
-                                    <div className="sm:col-span-3">
-                                        <label htmlFor="date" className="block text-sm/6 font-medium">
-                                            End Date <span className={"text-red-600"}>*</span>
-                                        </label>
-                                        <input
-                                            required
-                                            type="date"
-                                            id="endDate"
-                                            value={endDate}
-                                            onChange={(e) => setEndDate(e.target.value)}
-                                            className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                        />
-                                    </div>
-                                    <div className="sm:col-span-3">
-                                        <label htmlFor="endTime" className="block text-sm/6 font-medium">
-                                            End Time (optional)
-                                        </label>
-                                        <input
-                                            type="time"
-                                            id="endTime"
-                                            value={endTime}
-                                            onChange={(e) => setEndTime(e.target.value)}
-                                            className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                        />
-                                    </div>
+
+                                    {requestType && (
+                                        <div className="sm:col-span-3">
+                                            <label htmlFor="date" className="block text-sm/6 font-medium">
+                                                Start Date <span className={"text-red-600"}>*</span>
+                                            </label>
+                                            <input
+                                                required
+                                                type="date"
+                                                id="startDate"
+                                                value={startDate}
+                                                onChange={(e) => setStartDate(e.target.value)}
+                                                className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {requestType === "custom" && (
+                                        <div className="sm:col-span-3">
+                                            <label htmlFor="startTime" className="block text-sm/6 font-medium">
+                                                Start Time <span className={"text-red-600"}>*</span>
+                                            </label>
+                                            <input
+                                                required
+                                                type="time"
+                                                id="startTime"
+                                                value={startTime}
+                                                onChange={(e) => setStartTime(e.target.value)}
+                                                className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {(requestType === "multi" || requestType === "custom") && (
+                                        <>
+                                            <div className="sm:col-span-3">
+                                                <label htmlFor="date" className="block text-sm/6 font-medium">
+                                                    End Date <span className={"text-red-600"}>*</span>
+                                                </label>
+                                                <input
+                                                    required
+                                                    type="date"
+                                                    id="endDate"
+                                                    value={endDate}
+                                                    onChange={(e) => setEndDate(e.target.value)}
+                                                    className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                                />
+                                            </div>
+
+                                            {requestType === "custom" && (
+                                                <div className="sm:col-span-3">
+                                                    <label htmlFor="endTime" className="block text-sm/6 font-medium">
+                                                        End Time  <span className={"text-red-600"}>*</span>
+                                                    </label>
+                                                    <input
+                                                        required
+                                                        type="time"
+                                                        id="endTime"
+                                                        value={endTime}
+                                                        onChange={(e) => setEndTime(e.target.value)}
+                                                        className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                                    />
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
                                 </div>
                                 <div>
                                     <label htmlFor="details" className="block text-sm/6 font-medium">
@@ -266,9 +351,14 @@ const EmployeeSchedule = () => {
                                                 <span className="text-gray-500"> @ {formatTime(r.startTime)}</span>}
                                         </td>
                                         <td className="px-4 py-3 whitespace-nowrap">
-                                            <span className="font-medium">{formatDisplayDate(r.endDate)}</span>
-                                            {r.endTime &&
-                                                <span className="text-gray-500"> @ {formatTime(r.endTime)}</span>}
+                                            {r.endDate ? (
+                                                <>
+                                                    <span className="font-medium">{formatDisplayDate(r.endDate)}</span>
+                                                    {r.endTime && <span className="text-gray-500"> @ {formatTime(r.endTime)}</span>}
+                                                </>
+                                            ) : (
+                                                "—"
+                                            )}
                                         </td>
                                         <td className="px-4 py-3 max-w-xs truncate">{r.details || "—"}</td>
                                         <td className="px-4 py-3 capitalize">
@@ -345,11 +435,16 @@ const EmployeeSchedule = () => {
                                                     <p className={"mb-0"}>
                                                         <strong>Posted:</strong> {formatDisplayDate(selectedRequest.submittedAt, {relative: true})}
                                                     </p>
+                                                    {selectedRequest.requestType && (
+                                                        <p className={"mb-0"}>
+                                                            <strong>Type:</strong> {selectedRequest.requestType === "full" ? "Full Day" : selectedRequest.requestType === "multi" ? "Multi-Day" : "Custom Date & Time Range"}
+                                                        </p>
+                                                    )}
                                                     <p className={"mb-0"}>
                                                         <strong>Start:</strong> {formatDisplayDate(selectedRequest.startDate)} {selectedRequest.startTime && `@ ${formatTime(selectedRequest.startTime)}`}
                                                     </p>
                                                     <p className={"mb-0"}>
-                                                        <strong>End:</strong> {formatDisplayDate(selectedRequest.endDate)} {selectedRequest.endTime && `@ ${formatTime(selectedRequest.endTime)}`}
+                                                        <strong>End:</strong> {selectedRequest.endDate ? formatDisplayDate(selectedRequest.endDate) : "—"} {selectedRequest.endTime && `@ ${formatTime(selectedRequest.endTime)}`}
                                                     </p>
                                                     <p className={"mt-4"}>
                                                         <strong
