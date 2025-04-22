@@ -18,13 +18,26 @@ export const formatTime = (timeString) => {
 export function formatDisplayDate(date, { relative = false } = {}) {
     if (!date) return "";
 
-    const jsDate = date instanceof Date ? date : date?.toDate?.() || new Date(date);
+    let jsDate;
 
-    if (!jsDate || isNaN(jsDate.getTime())) return "";
+    if (date instanceof Date) {
+        jsDate = date;
+    } else if (typeof date?.toDate === "function") {
+        jsDate = date.toDate();
+    } else if (typeof date === "string") {
+        // Must be ISO 8601
+        jsDate = parseISO(date);
+    } else if (typeof date === "object" && date.seconds) {
+        jsDate = new Date(date.seconds * 1000);
+    } else {
+        return "";
+    }
 
-    if (relative) return getRelativeDate(jsDate);
-    return formatDate(jsDate);
+    if (!isValid(jsDate)) return "";
+
+    return relative ? getRelativeDate(jsDate) : formatDate(jsDate);
 }
+
 
 // Format date for display
 export function formatDate(value) {
