@@ -39,7 +39,7 @@ const expandRequestToDates = (request, displayName) => {
             type: requestType,
             startTime: dayStartTime,
             endTime: dayEndTime,
-            status, // 👈 include status so we can flag pending
+            status,
         });
     }
 
