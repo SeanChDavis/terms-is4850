@@ -5,7 +5,9 @@ import {
     query,
     where,
     orderBy,
-    onSnapshot
+    onSnapshot,
+    updateDoc,
+    doc
 } from "firebase/firestore";
 import {getUserDocument, updateUserRole} from "@/firebase/firestore.js";
 import {db} from "@/firebase/firebase-config.js";
@@ -66,6 +68,18 @@ export default function ManagerUserView() {
         const newRole = user.role === "manager" ? "employee" : "manager";
         await updateUserRole(user.uid, newRole, currentUser?.uid);
         setUser(prev => ({...prev, role: newRole}));
+    };
+
+    const handleStatusUpdate = async (id, newStatus) => {
+        try {
+            await updateDoc(doc(db, "requests", id), {
+                status: newStatus,
+            });
+            setSelectedRequest(null);
+        } catch (err) {
+            console.error("Error updating status:", err);
+            alert("Could not update request. Please try again.");
+        }
     };
 
     if (loading) return <div className="p-4">Loading user...</div>;
@@ -165,15 +179,19 @@ export default function ManagerUserView() {
                                         </td>
                                         <td className="px-4 py-3 max-w-xs truncate">{r.details || "—"}</td>
                                         <td className="px-4 py-3 text-right">
-                                            <button
-                                                onClick={() => {
-                                                    setSelectedRequest(r);
-                                                    setOpen(true);
-                                                }}
-                                                className="text-primary cursor-pointer underline hover:no-underline"
-                                            >
-                                                View
-                                            </button>
+                                            {r.status === "pending" ? (
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedRequest(r);
+                                                        setOpen(true);
+                                                    }}
+                                                    className="text-primary cursor-pointer underline hover:no-underline"
+                                                >
+                                                    Decide
+                                                </button>
+                                            ) : (
+                                                <span className="text-gray-400">—</span>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}
@@ -210,7 +228,14 @@ export default function ManagerUserView() {
 
                         {/* Modal for viewing request details */}
                         {selectedRequest && (
-                            <Dialog open={open} onClose={() => setOpen(false)} className="relative z-50">
+                            <Dialog
+                                open={open}
+                                onClose={() => {
+                                    setOpen(false);
+                                    setSelectedRequest(null);
+                                }}
+                                className="relative z-50"
+                            >
                                 <DialogBackdrop
                                     transition
                                     className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
@@ -243,10 +268,25 @@ export default function ManagerUserView() {
                                             </div>
                                             <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row-reverse gap-2">
                                                 <button
-                                                    onClick={() => setOpen(false)}
+                                                    onClick={() => handleStatusUpdate(selectedRequest.id, "approved")}
+                                                    className="w-full sm:w-auto rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+                                                >
+                                                    Approve
+                                                </button>
+                                                <button
+                                                    onClick={() => handleStatusUpdate(selectedRequest.id, "denied")}
+                                                    className="w-full sm:w-auto rounded-md bg-red-800 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-red-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-900"
+                                                >
+                                                    Deny
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        setOpen(false);
+                                                        setSelectedRequest(null);
+                                                    }}
                                                     className="w-full sm:w-auto rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold cursor-pointer hover:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
                                                 >
-                                                    Close
+                                                    Cancel
                                                 </button>
                                             </div>
                                         </DialogPanel>

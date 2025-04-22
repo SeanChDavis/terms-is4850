@@ -180,7 +180,7 @@ const ManagerSchedule = () => {
                                                 Decide
                                             </button>
                                         ) : (
-                                            <span className="text-gray-300">—</span>
+                                            <span>—</span>
                                         )}
                                     </td>
                                 </tr>
