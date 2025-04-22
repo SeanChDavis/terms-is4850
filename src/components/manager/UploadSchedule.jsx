@@ -110,7 +110,7 @@ const ManagerUploadSchedule = () => {
                         <button
                             type="submit"
                             disabled={uploading || !file}
-                            className="mt-3 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark"
+                            className="mt-3 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark"
                         >
                             {uploading ? "Uploading..." : "Upload Schedule"}
                         </button>

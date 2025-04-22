@@ -18,7 +18,7 @@ import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/reac
 export default function ManagerAnnouncements() {
     const [announcements, setAnnouncements] = useState([]);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     const {userData} = useCurrentUser();
     const [userMap, setUserMap] = useState({});
@@ -221,7 +221,7 @@ export default function ManagerAnnouncements() {
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="mt-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            className="mt-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         >
                             {submitting ? "Posting..." : "Post Announcement"}
                         </button>
@@ -310,7 +310,10 @@ export default function ManagerAnnouncements() {
                                             </td>
                                             <td className="px-4 py-3 text-right">
                                                 <button
-                                                    onClick={() => setSelectedAnnouncement(a)}
+                                                    onClick={() => {
+                                                        setSelectedAnnouncement(a);
+                                                        setOpen(true);
+                                                    }}
                                                     className="text-primary cursor-pointer underline hover:no-underline"
                                                 >
                                                     View
@@ -352,19 +355,26 @@ export default function ManagerAnnouncements() {
 
                         {/* Modal for viewing announcement details */}
                         {selectedAnnouncement && (
-                            <Dialog open={open} onClose={setOpen} className="relative z-50">
+                            <Dialog
+                                open={open}
+                                onClose={() => {
+                                    setOpen(false);
+                                    setSelectedAnnouncement(null);
+                                }}
+                                className="relative z-50"
+                            >
                                 <DialogBackdrop
                                     transition
                                     className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
                                 />
                                 <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
                                     <div
-                                        className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                                        className="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0">
                                         <DialogPanel
                                             transition
                                             className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
                                         >
-                                            <div className="mt-3 text-center sm:mt-0 sm:text-left">
+                                            <div>
                                                 <DialogTitle
                                                     as="h3"
                                                     className="text-2xl mb-5 font-semibold text-gray-900"
@@ -372,7 +382,7 @@ export default function ManagerAnnouncements() {
                                                     {selectedAnnouncement.title}
                                                 </DialogTitle>
                                                 <div className="space-y-2 mb-4">
-                                                    <p className="mb-0">
+                                                    <p className="mb-0 capitalize">
                                                         <strong>Posted:</strong> {formatDisplayDate(selectedAnnouncement.createdAt)}
                                                     </p>
                                                     <p className="mb-0">
@@ -417,28 +427,30 @@ export default function ManagerAnnouncements() {
                                                         </span>
                                                     </p>
                                                     <p className="text-gray-800 whitespace-pre-line mb-4">
-                                                        <strong className={"block"}>Announcement
-                                                            Details:</strong> {selectedAnnouncement.body}
+                                                        <strong className={"block"}>Details:</strong> {selectedAnnouncement.body}
                                                     </p>
                                                 </div>
-                                                <div className="flex justify-end gap-3 mt-12">
-                                                    <button
-                                                        onClick={() => setSelectedAnnouncement(null)}
-                                                        className="rounded-md bg-gray-200 px-5 py-2.5 text-sm font-semibold cursor-pointer hover:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
-                                                    >
-                                                        Close
-                                                    </button>
+                                                <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row-reverse gap-2">
                                                     {selectedAnnouncement.createdBy === userData?.uid && (
                                                         <button
                                                             onClick={async () => {
                                                                 await deleteAnnouncement(selectedAnnouncement.id);
                                                                 setSelectedAnnouncement(null);
                                                             }}
-                                                            className="rounded-md bg-red-800 px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-red-900"
+                                                            className="w-full sm:w-auto rounded-md bg-red-800 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-red-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-900"
                                                         >
                                                             Delete
                                                         </button>
                                                     )}
+                                                    <button
+                                                        onClick={() => {
+                                                            setOpen(false);
+                                                            setSelectedAnnouncement(null);
+                                                        }}
+                                                        className="w-full sm:w-auto rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold cursor-pointer hover:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
+                                                    >
+                                                        Close
+                                                    </button>
                                                 </div>
                                             </div>
                                         </DialogPanel>

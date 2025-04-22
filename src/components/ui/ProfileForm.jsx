@@ -117,7 +117,7 @@ const Profile = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="mt-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            className="mt-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         >
                             {loading ? "Updating..." : "Update Profile"}
                         </button>

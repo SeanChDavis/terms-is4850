@@ -101,7 +101,7 @@ export default function ManagerUserView() {
                             <p className="font-semibold mb-2">Actions:</p>
                             <button
                                 onClick={toggleRole}
-                                className="px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark"
+                                className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark"
                             >
                                 {user.role === "manager" ? "Demote to Employee" : "Promote to Manager"}
                             </button>
@@ -206,13 +206,16 @@ export default function ManagerUserView() {
                         {/* Modal for viewing request details */}
                         {selectedRequest && (
                             <Dialog open={open} onClose={() => setOpen(false)} className="relative z-50">
-                                <DialogBackdrop className="fixed inset-0 bg-gray-500/75"/>
+                                <DialogBackdrop
+                                    transition
+                                    className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+                                />
                                 <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
                                     <div
-                                        className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                                        className="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0">
                                         <DialogPanel
-                                            className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
-                                            <div className="mt-3 text-center sm:mt-0 sm:text-left">
+                                            className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+                                            <div>
                                                 <DialogTitle
                                                     as="h3"
                                                     className="text-2xl mb-5 font-semibold text-gray-900"
@@ -220,7 +223,7 @@ export default function ManagerUserView() {
                                                     Request Details
                                                 </DialogTitle>
                                                 <div className="space-y-2 mb-4">
-                                                    <p className={"mb-0"}>
+                                                    <p className={"mb-0 capitalize"}>
                                                         <strong>Posted:</strong> {formatDisplayDate(selectedRequest.submittedAt, {relative: true})}
                                                     </p>
                                                     <p className={"mb-0"}>
@@ -229,15 +232,14 @@ export default function ManagerUserView() {
                                                     <p className={"mb-0"}>
                                                         <strong>End:</strong> {formatDisplayDate(selectedRequest.endDate)} {selectedRequest.endTime && `@ ${formatTime(selectedRequest.endTime)}`}
                                                     </p>
-                                                    <p className="mt-4"><strong
-                                                        className="block">Details:</strong> {selectedRequest.details || "—"}
+                                                    <p className="mt-4"><strong className="block">Details:</strong> {selectedRequest.details || "—"}
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="mt-5 sm:mt-8 sm:flex sm:flex-row-reverse gap-2">
+                                            <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row-reverse gap-2">
                                                 <button
                                                     onClick={() => setOpen(false)}
-                                                    className="rounded-md bg-gray-200 px-5 py-2.5 text-sm font-semibold cursor-pointer hover:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
+                                                    className="w-full sm:w-auto rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold cursor-pointer hover:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
                                                 >
                                                     Close
                                                 </button>
@@ -258,7 +260,7 @@ export default function ManagerUserView() {
 
             <button
                 onClick={() => navigate("/manager/dashboard")}
-                className="mt-8 rounded-md bg-gray-200 px-5 py-2.5 font-semibold cursor-pointer hover:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
+                className="mt-8 text-sm rounded-md bg-gray-200 px-4 py-2 font-semibold cursor-pointer hover:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
             >
                 Return to Dashboard
             </button>
