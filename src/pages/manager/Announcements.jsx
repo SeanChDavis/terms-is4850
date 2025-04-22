@@ -68,6 +68,20 @@ export default function ManagerAnnouncements() {
         setSubmitting(true);
 
         try {
+
+            if (expiresAt) {
+                const [year, month, day] = expiresAt.split("-").map(Number);
+                const expDate = new Date(year, month - 1, day);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (expDate <= today) {
+                    setError("Expiration must be at least one full day in the future.");
+                    setSubmitting(false);
+                    return;
+                }
+            }
+
             await addDoc(collection(db, "announcements"), {
                 title,
                 body,
@@ -77,9 +91,8 @@ export default function ManagerAnnouncements() {
                 emailSent: false, // Placeholder for future email support
                 ...(expiresAt && {
                     expiresAt: (() => {
-                        const date = new Date(expiresAt);
-                        date.setHours(23, 59, 59, 999);
-                        return date;
+                        const [year, month, day] = expiresAt.split("-").map(Number);
+                        return new Date(year, month - 1, day);
                     })()
                 })
             });
@@ -152,7 +165,7 @@ export default function ManagerAnnouncements() {
                     </p>
                 </div>
                 <div className="px-4 py-5 sm:p-6">
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label htmlFor="visibleTo" className="block text-sm/6 font-medium">Visible To</label>
                             <select
@@ -208,7 +221,7 @@ export default function ManagerAnnouncements() {
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            className="mt-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         >
                             {submitting ? "Posting..." : "Post Announcement"}
                         </button>
