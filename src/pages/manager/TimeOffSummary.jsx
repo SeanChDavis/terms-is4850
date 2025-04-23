@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {collection, getDocs, query, orderBy, updateDoc, doc} from "firebase/firestore";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/firebase/firebase-config";
 import { formatDisplayDate, formatTime } from "../../utils/formatters";
 import { Link } from "react-router-dom";
@@ -45,8 +45,6 @@ const expandRequestToDates = (request, user = {}) => {
             startTime: dayStartTime,
             endTime: dayEndTime,
             status,
-            requestId: request.id,
-            showControls: iso === startDate,
         });
     }
 
@@ -59,20 +57,6 @@ const TimeOffSummary = () => {
     const [expandedByDate, setExpandedByDate] = useState({});
     const [loading, setLoading] = useState(true);
     const [showPending, setShowPending] = useState(false);
-
-    const handleStatusUpdate = async (id, newStatus) => {
-        try {
-            await updateDoc(doc(db, "requests", id), {
-                status: newStatus,
-            });
-            const updated = await getDocs(query(collection(db, "requests"), orderBy("submittedAt", "desc")));
-            const data = updated.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setRequests(data);
-        } catch (err) {
-            console.error("Error updating status:", err);
-            alert("Could not update request. Please try again.");
-        }
-    };
 
     useEffect(() => {
         const fetchUsersAndRequests = async () => {
@@ -121,7 +105,7 @@ const TimeOffSummary = () => {
             <div className="max-w-xl mb-6">
                 <h2 className="text-xl font-bold mb-2">Time-Off Summary</h2>
                 <p className="text-subtle-text mb-4">
-                    View a breakdown of time-off requests by date to assist with scheduling. You can approve or deny pending requests directly from this page.
+                    View a breakdown of time-off requests by date to assist with scheduling.
                 </p>
                 <div className="mb-10">
                     <Link
@@ -147,7 +131,7 @@ const TimeOffSummary = () => {
             ) : sortedDates.length === 0 ? (
                 <p>No requests found for the current filter.</p>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {sortedDates.map(date => (
                         <div
                             key={date}
@@ -171,22 +155,8 @@ const TimeOffSummary = () => {
                                                 </>
                                             )}
                                         </p>
-                                        {entry.status === "pending" && entry.showControls && (
-                                            <div className="mt-0 space-x-2">
-                                                <p className="inline text-yellow-600 font-medium mr-1">Pending:</p>
-                                                <button
-                                                    onClick={() => handleStatusUpdate(entry.requestId, "approved")}
-                                                    className="text-green-700 font-medium underline hover:no-underline cursor-pointer"
-                                                >
-                                                    Approve
-                                                </button>
-                                                <button
-                                                    onClick={() => handleStatusUpdate(entry.requestId, "denied")}
-                                                    className="text-red-700 font-medium underline hover:no-underline cursor-pointer"
-                                                >
-                                                    Deny
-                                                </button>
-                                            </div>
+                                        {entry.status === "pending" && (
+                                            <p className="text-yellow-600 font-medium">Pending</p>
                                         )}
                                     </div>
                                 ))}
