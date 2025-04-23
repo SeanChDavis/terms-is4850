@@ -15,8 +15,6 @@ const expandRequestToDates = (request, user = {}) => {
         ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
         : user.display_name) || user.email || "Unknown";
 
-    console.log(name);
-
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
         const clone = new Date(d);
         const iso = clone.toISOString().split("T")[0];
@@ -58,6 +56,17 @@ const TimeOffSummary = () => {
     const [loading, setLoading] = useState(true);
     const [showPending, setShowPending] = useState(false);
 
+    const getStartOfWeek = () => {
+        const now = new Date();
+        const day = now.getDay();
+        const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+        const monday = new Date(now.setDate(diff));
+        return monday.toISOString().split("T")[0];
+    };
+
+    const [startDateFilter, setStartDateFilter] = useState(getStartOfWeek());
+    const [endDateFilter, setEndDateFilter] = useState("");
+
     useEffect(() => {
         const fetchUsersAndRequests = async () => {
             try {
@@ -98,7 +107,12 @@ const TimeOffSummary = () => {
         setExpandedByDate(grouped);
     }, [requests, userMap, showPending]);
 
-    const sortedDates = Object.keys(expandedByDate).sort();
+    const filteredDates = Object.keys(expandedByDate).filter(date => {
+        const d = new Date(date);
+        const start = new Date(startDateFilter);
+        const end = endDateFilter ? new Date(endDateFilter) : null;
+        return d >= start && (!end || d <= end);
+    }).sort();
 
     return (
         <div>
@@ -115,24 +129,54 @@ const TimeOffSummary = () => {
                         Return to Schedule Page
                     </Link>
                 </div>
-                <label className="flex items-center gap-2 mt-4 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={showPending}
-                        onChange={() => setShowPending(prev => !prev)}
-                        className="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0 focus:ring-2 focus:ring-offset-white"
-                    />
-                    Show pending requests
-                </label>
+                <div>
+                    <h2 className={"text-lg font-semibold mb-2"}>
+                        Filter Requests
+                    </h2>
+                    <p className="text-subtle-text mb-4">
+                        Use the filters below to narrow down the time-off requests by date range and status. By default, the summary shows all approved requests starting from the beginning of the current week.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium mb-1 text-gray-700">Start Date</label>
+                                    <input
+                                        type="date"
+                                        value={startDateFilter}
+                                        onChange={e => setStartDateFilter(e.target.value)}
+                                        className="text-sm border rounded px-2 py-1"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-1 text-gray-700">End Date</label>
+                                    <input
+                                        type="date"
+                                        value={endDateFilter}
+                                        onChange={e => setEndDateFilter(e.target.value)}
+                                        className="text-sm border rounded px-2 py-1"
+                                    />
+                                </div>
+                            </div>
+                </div>
+                <div className="flex flex-wrap gap-6 items-end mt-5">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={showPending}
+                            onChange={() => setShowPending(prev => !prev)}
+                            className="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0 focus:ring-2 focus:ring-offset-white"
+                        />
+                        Show pending requests
+                    </label>
+                </div>
             </div>
 
             {loading ? (
                 <p>Loading...</p>
-            ) : sortedDates.length === 0 ? (
+            ) : filteredDates.length === 0 ? (
                 <p>No requests found for the current filter.</p>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {sortedDates.map(date => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredDates.map(date => (
                         <div
                             key={date}
                             className="rounded-lg border border-border-gray bg-white p-4 shadow-md shadow-gray-200"
