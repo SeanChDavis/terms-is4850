@@ -5,11 +5,17 @@ import { formatDisplayDate, formatTime } from "../../utils/formatters";
 import { Link } from "react-router-dom";
 
 // Expand multi-day or custom requests into individual days
-const expandRequestToDates = (request, displayName) => {
+const expandRequestToDates = (request, user = {}) => {
     const { startDate, endDate, startTime, endTime, requestType, status } = request;
     const start = new Date(startDate);
     const end = endDate ? new Date(endDate) : new Date(startDate);
     const entries = [];
+
+    const name = (user.first_name || user.last_name
+        ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
+        : user.display_name) || user.email || "Unknown";
+
+    console.log(name);
 
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
         const clone = new Date(d);
@@ -30,12 +36,11 @@ const expandRequestToDates = (request, displayName) => {
                 dayStartTime = startTime;
                 dayEndTime = endTime;
             }
-            // else: middle day, all day off (leave startTime and endTime null)
         }
 
         entries.push({
             date: iso,
-            displayName,
+            name,
             type: requestType,
             startTime: dayStartTime,
             endTime: dayEndTime,
@@ -59,10 +64,7 @@ const TimeOffSummary = () => {
                 const userSnap = await getDocs(collection(db, "users"));
                 const userData = {};
                 userSnap.forEach(doc => {
-                    const d = doc.data();
-                    userData[doc.id] = d.display_name ||
-                        `${d.first_name || ""} ${d.last_name || ""}`.trim() ||
-                        d.email;
+                    userData[doc.id] = doc.data();
                 });
                 setUserMap(userData);
 
@@ -77,7 +79,7 @@ const TimeOffSummary = () => {
             }
         };
 
-        fetchUsersAndRequests();
+        fetchUsersAndRequests().catch(console.error);
     }, []);
 
     useEffect(() => {
@@ -86,7 +88,7 @@ const TimeOffSummary = () => {
         requests
             .filter(r => r.status === "approved" || (showPending && r.status === "pending"))
             .forEach(r => {
-                const entries = expandRequestToDates(r, userMap[r.userId] || "Unknown");
+                const entries = expandRequestToDates(r, userMap[r.userId] || {});
                 entries.forEach(entry => {
                     if (!grouped[entry.date]) grouped[entry.date] = [];
                     grouped[entry.date].push(entry);
@@ -103,7 +105,7 @@ const TimeOffSummary = () => {
             <div className="max-w-xl mb-6">
                 <h2 className="text-xl font-bold mb-2">Time-Off Summary</h2>
                 <p className="text-subtle-text mb-4">
-                    View a breakdown of time-off requests by date to assist with legacy system scheduling.
+                    View a breakdown of time-off requests by date to assist with scheduling.
                 </p>
                 <div className="mb-10">
                     <Link
@@ -118,9 +120,9 @@ const TimeOffSummary = () => {
                         type="checkbox"
                         checked={showPending}
                         onChange={() => setShowPending(prev => !prev)}
-                        className={"form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0 focus:ring-2 focus:ring-offset-white"}
+                        className="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0 focus:ring-2 focus:ring-offset-white"
                     />
-                    Show pending requests too
+                    Show pending requests
                 </label>
             </div>
 
@@ -129,31 +131,36 @@ const TimeOffSummary = () => {
             ) : sortedDates.length === 0 ? (
                 <p>No requests found for the current filter.</p>
             ) : (
-                <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {sortedDates.map(date => (
-                        <div key={date}>
-                            <h3 className="text-lg font-semibold mb-2">{formatDisplayDate(date)}</h3>
-                            <ul className="ml-4 list-disc text-sm">
+                        <div
+                            key={date}
+                            className="rounded-lg border border-border-gray bg-white p-4 shadow-md shadow-gray-200"
+                        >
+                            <h3 className="text-md font-semibold mb-2 text-primary">{formatDisplayDate(date)}</h3>
+                            <div className="space-y-4 text-sm text-gray-800">
                                 {expandedByDate[date].map((entry, idx) => (
-                                    <li className={"mb-2"} key={idx}>
-                                        <strong className={"block"}>{entry.displayName}</strong>
-                                        {entry.type === "full" && "Off (Full Day)"}
-                                        {entry.type === "multi" && "Off (Multi-Day)"}
-                                        {entry.type === "custom" && (
-                                            <>
-                                                {entry.startTime && !entry.endTime && `Off after ${formatTime(entry.startTime)}`}
-                                                {!entry.startTime && entry.endTime && `Off before ${formatTime(entry.endTime)}`}
-                                                {entry.startTime && entry.endTime && `${formatTime(entry.startTime)} – ${formatTime(entry.endTime)}`}
-                                                {!entry.startTime && !entry.endTime && "Off"}
-                                                {" (Custom)"}
-                                            </>
-                                        )}
+                                    <div key={idx} className="border-l-4 pl-3 border-gray-200">
+                                        <p className="font-semibold">{entry.name}</p>
+                                        <p className="text-subtle-text">
+                                            {entry.type === "full" && "Full Day Off"}
+                                            {entry.type === "multi" && "Full Day Off (via Multi-Day)"}
+                                            {entry.type === "custom" && (
+                                                <>
+                                                    {entry.startTime && !entry.endTime && `Off After ${formatTime(entry.startTime)}`}
+                                                    {!entry.startTime && entry.endTime && `Off Until ${formatTime(entry.endTime)}`}
+                                                    {entry.startTime && entry.endTime && `${formatTime(entry.startTime)} – ${formatTime(entry.endTime)}`}
+                                                    {!entry.startTime && !entry.endTime && "Full Day Off"}
+                                                    {" (via Custom Range)"}
+                                                </>
+                                            )}
+                                        </p>
                                         {entry.status === "pending" && (
-                                            <span className="text-yellow-600 font-medium ml-1">(Pending)</span>
+                                            <p className="text-yellow-600 font-medium">Pending</p>
                                         )}
-                                    </li>
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     ))}
                 </div>
