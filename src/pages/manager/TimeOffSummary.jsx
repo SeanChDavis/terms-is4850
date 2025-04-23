@@ -137,25 +137,25 @@ const TimeOffSummary = () => {
                         Use the filters below to narrow down the time-off requests by date range and status. By default, the summary shows all approved requests starting from the beginning of the current week.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1 text-gray-700">Start Date</label>
-                                    <input
-                                        type="date"
-                                        value={startDateFilter}
-                                        onChange={e => setStartDateFilter(e.target.value)}
-                                        className="text-sm border rounded px-2 py-1"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1 text-gray-700">End Date</label>
-                                    <input
-                                        type="date"
-                                        value={endDateFilter}
-                                        onChange={e => setEndDateFilter(e.target.value)}
-                                        className="text-sm border rounded px-2 py-1"
-                                    />
-                                </div>
-                            </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1 text-gray-700">Start Date</label>
+                            <input
+                                type="date"
+                                value={startDateFilter}
+                                onChange={e => setStartDateFilter(e.target.value)}
+                                className="text-sm border rounded px-2 py-1"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1 text-gray-700">End Date</label>
+                            <input
+                                type="date"
+                                value={endDateFilter}
+                                onChange={e => setEndDateFilter(e.target.value)}
+                                className="text-sm border rounded px-2 py-1"
+                            />
+                        </div>
+                    </div>
                 </div>
                 <div className="flex flex-wrap gap-6 items-end mt-5">
                     <label className="flex items-center gap-2 cursor-pointer">
@@ -187,7 +187,7 @@ const TimeOffSummary = () => {
                                     <div key={idx} className="border-l-4 pl-3 border-gray-200">
                                         <p className="font-semibold">{entry.name}</p>
                                         <p className="text-subtle-text">
-                                            {entry.type === "full" && "Full Day Off"}
+                                            {entry.type === "single" && "Full Day Off (via Single Day)"}
                                             {entry.type === "multi" && "Full Day Off (via Multi-Day)"}
                                             {entry.type === "custom" && (
                                                 <>

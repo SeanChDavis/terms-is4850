@@ -191,7 +191,7 @@ const EmployeeSchedule = () => {
                         <div className="px-4 py-5 sm:px-6">
                             <h2 className="text-base/7 font-semibold">Create New Time-Off Request</h2>
                             <p className="mt-1 text-sm/6 text-subtle-text">
-                                Request off a full day, multiple days, or specific time range. All requests are subject to
+                                Request off a single day, multiple days, or specific date/time range. All requests are subject to
                                 management approval.
                             </p>
                         </div>
@@ -208,7 +208,7 @@ const EmployeeSchedule = () => {
                                         className="block w-full rounded-md bg-light-gray px-2 py-2 text-base cursor-pointer text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
                                     >
                                         <option value="">Select type...</option>
-                                        <option value="full">Full Day</option>
+                                        <option value="single">Single Day</option>
                                         <option value="multi">Multi-Day</option>
                                         <option value="custom">Custom Date & Time Range</option>
                                     </select>
@@ -447,7 +447,7 @@ const EmployeeSchedule = () => {
                                                     </p>
                                                     {selectedRequest.requestType && (
                                                         <p className={"mb-0"}>
-                                                            <strong>Type:</strong> {selectedRequest.requestType === "full" ? "Full Day" : selectedRequest.requestType === "multi" ? "Multi-Day" : "Custom Date & Time Range"}
+                                                            <strong>Type:</strong> {selectedRequest.requestType === "single" ? "Single Day" : selectedRequest.requestType === "multi" ? "Multi-Day" : "Custom Date & Time Range"}
                                                         </p>
                                                     )}
                                                     <p className={"mb-0"}>

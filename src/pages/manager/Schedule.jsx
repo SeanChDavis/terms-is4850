@@ -256,7 +256,7 @@ const ManagerSchedule = () => {
                                             </p>
                                             {selectedRequest.requestType && (
                                                 <p className={"mb-0"}>
-                                                    <strong>Type:</strong> {selectedRequest.requestType === "full" ? "Full Day" : selectedRequest.requestType === "multi" ? "Multi-Day" : "Custom Date & Time Range"}
+                                                    <strong>Type:</strong> {selectedRequest.requestType === "single" ? "Single Day" : selectedRequest.requestType === "multi" ? "Multi-Day" : "Custom Date & Time Range"}
                                                 </p>
                                             )}
                                             <p className={"mb-0"}>
