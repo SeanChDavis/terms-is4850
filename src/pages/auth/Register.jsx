@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signUp, signInWithGoogle } from '../../firebase/auth';
+import { useToast } from '../../context/ToastContext.jsx';
 import {createUserDocument, getUserDocument} from '../../firebase/firestore';
 import SiteLogo from "../../components/ui/SiteLogo.jsx";
 import {auth} from "../../firebase-config.js";
 
 const Register = () => {
+    const { addToast } = useToast();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -29,6 +31,11 @@ const Register = () => {
             // Redirect
             navigate(role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
         } catch (err) {
+            addToast({  // Add this toast
+                type: 'error',
+                message: err.message,
+                duration: 5000
+            });
             setError(err.message);
         }
     };
@@ -42,7 +49,12 @@ const Register = () => {
             // Check if user already exists (prevent duplicate registration)
             const existingUser = await getUserDocument(uid);
             if (existingUser) {
-                setError('This account is already registered. Please log in instead.');
+                const errorMsg = 'This account is already registered. Please log in instead.';
+                addToast({  // Add this toast
+                    type: 'error',
+                    message:  errorMsg,
+                    duration: 5000
+                });
                 await auth.signOut();
                 return;
             }
@@ -50,6 +62,12 @@ const Register = () => {
             await createUserDocument(uid, {
                 email,
                 role: 'employee', // Default role for Google signups
+            });
+
+            addToast({  // Add this toast
+                type: 'success',
+                message: 'Registered with Google successfully!',
+                duration: 3000
             });
 
             navigate('/employee/dashboard');
