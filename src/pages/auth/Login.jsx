@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { login, signInWithGoogle } from "../../firebase/auth";
+import { useToast } from '../../context/ToastContext.jsx';
 import {createUserDocument, getUserDocument} from '../../firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import SiteLogo from "../../components/ui/SiteLogo.jsx";
 import {auth} from "../../firebase-config.js";
 
 const Login = () => {
+    const { addToast } = useToast();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -23,13 +25,18 @@ const Login = () => {
 
             if (!userDoc) {
                 // No document at all — fallback (edge case)
-                userDoc = { email, role: 'employee' };
+                userDoc = {email, role: 'employee'};
                 await createUserDocument(uid, userDoc);
             } else if (!userDoc.role) {
                 // Has a user doc but no role field
                 userDoc.role = 'employee';
                 await createUserDocument(uid, userDoc); // Overwrites safely
             }
+            addToast({  // Add this toast
+                type: 'success',
+                message: 'Logged in successfully!',
+                duration: 3000
+            });
 
             // Redirect based on role
             if (userDoc.role === 'manager') {
@@ -39,6 +46,11 @@ const Login = () => {
             }
 
         } catch (err) {
+            addToast({  // Add this toast
+                type: 'error',
+                message: err.message,
+                duration: 5000
+            });
             setError(err.message);
         }
     }
@@ -56,6 +68,11 @@ const Login = () => {
                 setError('Account not found. Please register first.');
                 return;
             }
+            addToast({  // Add this toast
+                type: 'success',
+                message: 'Logged in with Google successfully!',
+                duration: 3000
+            });
 
             // Redirect based on role
             navigate(userDoc.role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
