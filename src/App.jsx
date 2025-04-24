@@ -7,7 +7,6 @@ function App() {
     return (
         <ToastProvider>
         <Router>
-
             <AppRoutes />
         </Router>
         </ToastProvider>
