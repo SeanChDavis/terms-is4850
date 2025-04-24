@@ -19,6 +19,8 @@ import ManagerProfile from "../pages/manager/Profile.jsx";
 import ManagerUserView from "../pages/manager/User.jsx";
 import EmployeeAnnouncements from "@/pages/employee/Announcements.jsx";
 import TimeOffSummary from "@/pages/manager/TimeOffSummary.jsx";
+import EmployeeMessages from "@/pages/employee/Messages.jsx";
+import ManagerMessages from "@/pages/manager/Messages.jsx";
 
 const AppRoutes = () => {
     return (
@@ -42,7 +44,7 @@ const AppRoutes = () => {
                 <Route path="profile" element={<EmployeeProfile />} />
                 <Route path="schedule" element={<EmployeeSchedule />} />
                 <Route path="announcements" element={<EmployeeAnnouncements />} />
-                <Route path="messages" element={<div>Employee Messages Page</div>} />
+                <Route path="messages" element={<EmployeeMessages />} />
             </Route>
 
             {/* Protected Manager Routes */}
@@ -60,7 +62,7 @@ const AppRoutes = () => {
                 <Route path="profile" element={<ManagerProfile />} />
                 <Route path="schedule" element={<ManagerSchedule />} />
                 <Route path="time-off-summary" element={<TimeOffSummary />} />
-                <Route path="messages" element={<div>Manager Messages Page</div>} />
+                <Route path="messages" element={<ManagerMessages />} />
                 <Route path="announcements" element={<ManagerAnnouncements />} />
                 <Route path="tools" element={<div>Manager System Tools Page</div>} />
             </Route>
