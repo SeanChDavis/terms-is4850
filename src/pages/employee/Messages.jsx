@@ -6,18 +6,36 @@ export default function EmployeeMessages() {
     const [selectedThread, setSelectedThread] = useState(null);
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 h-[80vh]">
-            <div className="col-span-1">
-                <h1 className="text-xl font-semibold mb-2">Messages</h1>
-                <Inbox onSelect={setSelectedThread} />
+        <>
+            <div className={"pb-4"}>
+
+                <div className="max-w-xl pb-4 mb-8">
+                    <h2 className="text-xl font-bold mb-2">
+                        Messages
+                    </h2>
+                    <p className={"text-subtle-text mb-4"}>
+                        View and respond to messages from management.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-y-6 lg:gap-x-6 lg:h-[70vh]">
+                    <div className="col-span-1">
+                        <Inbox
+                            onSelect={setSelectedThread}
+                            selectedThreadId={selectedThread}
+                        />
+                    </div>
+                    <div className="col-span-2 h-full">
+                        {selectedThread ? (
+                            <ThreadView threadId={selectedThread} />
+                        ) : (
+                            <div className={"bg-white rounded-lg border border-border-gray shadow-md shadow-gray-200 p-4 lg:p-6 h-full"}>
+                                <p className="text-gray-500 text-center my-6">Select a conversation to begin.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
-            <div className="col-span-2">
-                {selectedThread ? (
-                    <ThreadView threadId={selectedThread} />
-                ) : (
-                    <p className="text-gray-500 mt-8 text-center">Select a conversation to begin</p>
-                )}
-            </div>
-        </div>
+        </>
     );
 }

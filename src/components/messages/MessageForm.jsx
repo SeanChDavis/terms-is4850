@@ -30,17 +30,23 @@ export default function MessageForm({ threadId, recipientId }) {
     };
 
     return (
-        <form onSubmit={handleSend} className="flex gap-2 mt-2">
-            <input
-                type="text"
+        <form onSubmit={handleSend} className="flex flex-col gap-3 mt-2 pt-4">
+            <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Type your message…"
-                className="flex-1 px-4 py-2 border rounded"
+                rows={3}
+                className="w-full px-4 py-2 text-sm border border-border-gray rounded-md focus:outline-none focus:ring-1 focus:ring-slate-600 resize-none"
             />
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-                Send
-            </button>
+            <div className="flex justify-end">
+                <button
+                    type="submit"
+                    className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark"
+                >
+                    Send Message
+                </button>
+            </div>
         </form>
     );
 }
+

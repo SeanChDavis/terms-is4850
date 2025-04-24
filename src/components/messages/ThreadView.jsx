@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { db } from "@/firebase/firebase-config";
 import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
@@ -9,6 +9,8 @@ export default function ThreadView({ threadId }) {
     const { user } = useAuth();
     const [messages, setMessages] = useState([]);
     const [recipientId, setRecipientId] = useState(null);
+    const scrollRef = useRef(null);
+    const scrollAnchorRef = useRef(null);
 
     useEffect(() => {
         const q = query(
@@ -20,6 +22,7 @@ export default function ThreadView({ threadId }) {
         const unsub = onSnapshot(q, (snapshot) => {
             const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setMessages(results);
+
             if (results.length > 0 && user) {
                 const other = results[0].senderId === user.uid
                     ? results[0].recipientId
@@ -31,12 +34,26 @@ export default function ThreadView({ threadId }) {
         return () => unsub();
     }, [threadId, user]);
 
+    useEffect(() => {
+        if (scrollAnchorRef.current) {
+            scrollAnchorRef.current.scrollIntoView({ behavior: "smooth" }); // or "smooth"
+        }
+    }, [messages]);
+
     return (
-        <div className="bg-white rounded-lg shadow p-4 h-full flex flex-col justify-between">
-            <div className="overflow-y-auto mb-4">
+        <div className="h-full flex flex-col bg-white rounded-lg border border-border-gray p-4">
+            <div
+                ref={scrollRef}
+                className="overflow-y-auto mb-4 pr-1"
+                style={{ maxHeight: "calc(70vh - 100px)" }}
+            >
+                <p className="text-subtle-text text-sm font-semibold text-right mb-2">
+                    Your Messages: ↓
+                </p>
                 {messages.map((msg) => (
                     <MessageBubble key={msg.id} message={msg} isSender={msg.senderId === user.uid} />
                 ))}
+                <div ref={scrollAnchorRef} />
             </div>
             {recipientId && <MessageForm threadId={threadId} recipientId={recipientId} />}
         </div>

@@ -11,6 +11,7 @@ import {
     setDoc,
 } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 
 export default function NewMessageModal({ isOpen, onClose, onSelect }) {
     const { user } = useAuth();
@@ -58,35 +59,64 @@ export default function NewMessageModal({ isOpen, onClose, onSelect }) {
         onSelect(threadId);
     };
 
-    return isOpen ? (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded shadow w-[90%] max-w-md">
-                <h2 className="text-lg font-semibold mb-4">Start New Message</h2>
-                <select
-                    className="w-full mb-4 border px-4 py-2 rounded"
-                    value={selected}
-                    onChange={(e) => setSelected(e.target.value)}
-                >
-                    <option value="">Select employee</option>
-                    {employees.map((emp) => (
-                        <option key={emp.id} value={emp.id}>
-                            {emp.name || emp.email}
-                        </option>
-                    ))}
-                </select>
-                <textarea
-                    className="w-full border rounded px-4 py-2 mb-4"
-                    placeholder="Type your first message…"
-                    value={initialMessage}
-                    onChange={(e) => setInitialMessage(e.target.value)}
-                />
-                <div className="flex justify-end gap-2">
-                    <button className="text-gray-600" onClick={onClose}>Cancel</button>
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={startConversation}>
-                        Start
-                    </button>
+    return (
+        <Dialog open={isOpen} onClose={onClose} className="relative z-50">
+            <DialogBackdrop
+                className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+            />
+            <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
+                <div className="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0">
+                    <DialogPanel
+                        className="w-full relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+                    >
+                        <DialogTitle
+                            as="h3"
+                            className="text-xl mb-5 font-semibold text-gray-900"
+                        >
+                            New Message
+                        </DialogTitle>
+                        <select
+                            className="w-full mb-4 bg-light-gray border border-border-gray p-2 rounded-md text-sm"
+                            value={selected}
+                            onChange={(e) => setSelected(e.target.value)}
+                        >
+                            <option value="">Select Recipient</option>
+                            {employees.map((emp) => {
+                                const name =
+                                    emp.first_name && emp.last_name
+                                        ? `${emp.first_name} ${emp.last_name}`
+                                        : emp.display_name || emp.email;
+                                return (
+                                    <option key={emp.id} value={emp.id}>
+                                        {name}
+                                    </option>
+                                );
+                            })}
+                        </select>
+                        <textarea
+                            className="w-full bg-light-gray border border-border-gray rounded-md p-2 mb-4 text-sm resize-none"
+                            placeholder="Type your first message…"
+                            rows={3}
+                            value={initialMessage}
+                            onChange={(e) => setInitialMessage(e.target.value)}
+                        />
+                        <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row-reverse gap-2">
+                            <button
+                                onClick={startConversation}
+                                className="w-full sm:w-auto rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+                            >
+                                Start
+                            </button>
+                            <button
+                                onClick={onClose}
+                                className="w-full sm:w-auto rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold cursor-pointer hover:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </DialogPanel>
                 </div>
             </div>
-        </div>
-    ) : null;
+        </Dialog>
+    );
 }

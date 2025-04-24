@@ -1,13 +1,13 @@
 export default function MessageBubble({ message, isSender }) {
     return (
-        <div className={`flex ${isSender ? "justify-end" : "justify-start"} mb-2`}>
+        <div className={`flex ${isSender ? "justify-end" : "justify-start"} mb-5 lg:mb-4`}>
             <div
-                className={`max-w-[70%] px-4 py-2 rounded-xl text-sm ${
-                    isSender ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"
+                className={`max-w-[85%] lg:max-w-[70%] px-4 py-2 rounded-lg text-md font-medium ${
+                    isSender ? "bg-slate-700 text-white" : "bg-light-gray"
                 }`}
             >
                 {message.message}
-                <div className="text-[10px] opacity-70 mt-1 text-right">
+                <div className="text-[10px] opacity-70 mt-3 text-right">
                     {new Date(message.timestamp?.toDate?.()).toLocaleString()}
                 </div>
             </div>
