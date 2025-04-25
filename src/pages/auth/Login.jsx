@@ -5,6 +5,8 @@ import {createUserDocument, getUserDocument} from '../../firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import SiteLogo from "../../components/ui/SiteLogo.jsx";
 import {auth} from "../../firebase/firebase-config.js";
+import { sendPasswordResetEmail } from "../../firebase/auth";
+
 
 const Login = () => {
     const { addToast } = useToast();
@@ -12,6 +14,28 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [showForgotPassword, setShowForgotPassword] = useState(false);
+    const [resetEmail, setResetEmail] = useState('');
+
+    const handleForgotPassword = async () => {
+        try {
+            await sendPasswordResetEmail(resetEmail);
+            addToast({
+                type: 'success',
+                message: 'Password reset email sent! Check your inbox.',
+                duration: 5000
+            });
+            setShowForgotPassword(false);
+        } catch (err) {
+            addToast({
+                type: 'error',
+                message: err.message,
+                duration: 5000
+            });
+        }
+    };
+
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -121,6 +145,42 @@ const Login = () => {
                 >
                     Log In
                 </button>
+                {!showForgotPassword ? (
+                    <button
+                        type="button"
+                        onClick={() => setShowForgotPassword(true)}
+                        className="text-sm text-primary hover:underline"
+                    >
+                        Forgot password?
+                    </button>
+                ) : (
+                    <div className="mt-2">
+                        <label className="block mb-1 font-medium">Enter your email</label>
+                        <input
+                            type="email"
+                            value={resetEmail}
+                            onChange={(e) => setResetEmail(e.target.value)}
+                            className="w-full mb-2 p-2 border-2 border-border-gray rounded"
+                            required
+                        />
+                        <div className="flex gap-2">
+                            <button
+                                type="button"
+                                onClick={handleForgotPassword}
+                                className="px-4 py-2 bg-primary text-white rounded"
+                            >
+                                Send Reset Link
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setShowForgotPassword(false)}
+                                className="px-4 py-2 bg-gray-200 rounded"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                )}
 
                 <p className="text-sm text-gray-600">
                     Don't have an account? <a href="/register" className="text-primary hover:underline">Register</a>

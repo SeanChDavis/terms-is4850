@@ -35,3 +35,7 @@ export const onAuthChange = (callback) => {
 export const signInWithGoogle = () => {
     return signInWithPopup(auth, googleProvider);
 };
+// Password reset email
+export const sendPasswordResetEmail = (email) => {
+    return sendPasswordResetEmail(auth, email);
+};
