@@ -5,6 +5,7 @@ import { useToast } from '../../context/ToastContext.jsx';
 import {createUserDocument, getUserDocument} from '../../firebase/firestore';
 import SiteLogo from "../../components/ui/SiteLogo.jsx";
 import {auth} from "../../firebase/firebase-config.js";
+import GoogleAuthButton from "../../components/ui/GoogleAuthButton Style.jsx";
 
 const Register = () => {
     const { addToast } = useToast();
@@ -131,7 +132,12 @@ const Register = () => {
                     </a>
                 </p>
 
-                <button type="button" onClick={handleGoogleRegister}>Register with Google</button>
+                <div className="mt-4">
+                    <GoogleAuthButton
+                        onClick={handleGoogleRegister()}
+                        label={ "Sign up with Google"}
+                    />
+                </div>
 
             </form>
         </div>
