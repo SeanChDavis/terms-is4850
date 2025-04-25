@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { login, signInWithGoogle } from "../../firebase/auth";
 import { useToast } from '../../context/ToastContext.jsx';
 import {createUserDocument, getUserDocument} from '../../firebase/firestore';
@@ -16,6 +16,16 @@ const Login = () => {
     const [error, setError] = useState('');
     const [showForgotPassword, setShowForgotPassword] = useState(false);
     const [resetEmail, setResetEmail] = useState('');
+    const { user, role } = useAuth();
+
+
+    // redirect from auth pages When logged in
+    useEffect(() => {
+        if (user) {
+            navigate(role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
+        }
+    }, [user, role, navigate]);
+
 
     const handleForgotPassword = async () => {
         try {
