@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signUp, signInWithGoogle } from '../../firebase/auth';
 import { useToast } from '../../context/ToastContext.jsx';
@@ -12,8 +12,14 @@ const Register = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('employee'); // Hardcoded toggle for now
     const [error, setError] = useState('');
+    const { user, role } = useAuth();
+
+    useEffect(() => {
+        if (user) {
+            navigate(role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
+        }
+    }, [user, role, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -62,7 +68,7 @@ const Register = () => {
 
             await createUserDocument(uid, {
                 email,
-                role: 'employee', // Default role for Google signups
+                role: 'employee', // Default all new users to employee
             });
 
             addToast({  // Add this toast
