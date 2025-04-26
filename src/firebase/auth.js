@@ -39,3 +39,8 @@ export const signInWithGoogle = () => {
 export const sendPasswordResetEmail = (email) => {
     return sendPasswordResetEmail(auth, email);
 };
+
+// Password reset email
+export const resetPassword = (email) => {
+    return sendPasswordResetEmail(auth, email);
+};

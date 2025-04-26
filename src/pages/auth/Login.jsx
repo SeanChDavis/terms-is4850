@@ -183,13 +183,12 @@ const Login = () => {
                             >
                                 Send Reset Link
                             </button>
-                            <button
-                                type="button"
-                                onClick={() => setShowForgotPassword(false)}
-                                className="px-4 py-2 bg-gray-200 rounded"
+                            <a
+                                href="/reset-password"
+                                className="text-sm text-primary hover:underline cursor-pointer"
                             >
-                                Cancel
-                            </button>
+                                Forgot password?
+                            </a>
                         </div>
                     </div>
                 )}
