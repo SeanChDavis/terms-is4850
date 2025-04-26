@@ -140,7 +140,7 @@ const Register = () => {
 
                 <div className="mt-4">
                     <GoogleAuthButton
-                        onClick={handleGoogleRegister()}
+                        onClick={handleGoogleRegister}
                         label={ "Sign up with Google"}
                     />
                 </div>
