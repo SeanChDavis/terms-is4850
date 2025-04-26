@@ -4,7 +4,8 @@ import {
     signOut,
     onAuthStateChanged,
     GoogleAuthProvider,
-    signInWithPopup
+    signInWithPopup,
+    sendPasswordResetEmail as firebaseSendPasswordResetEmail
 } from "firebase/auth";
 
 import { auth } from "./firebase-config.js";
@@ -35,12 +36,6 @@ export const onAuthChange = (callback) => {
 export const signInWithGoogle = () => {
     return signInWithPopup(auth, googleProvider);
 };
-// Password reset email
 export const sendPasswordResetEmail = (email) => {
-    return sendPasswordResetEmail(auth, email);
-};
-
-// Password reset email
-export const resetPassword = (email) => {
-    return sendPasswordResetEmail(auth, email);
+    return firebaseSendPasswordResetEmail(auth, email);
 };

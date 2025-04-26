@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { resetPassword } from "../../firebase/auth";
+import { sendPasswordResetEmail } from "../../firebase/auth";
 import { useToast } from "../../context/ToastContext";
 import SiteLogo from "../../components/ui/SiteLogo.jsx";
 
@@ -15,7 +15,7 @@ const ResetPassword = () => {
         setError('');
 
         try {
-            await resetPassword(email);
+            await sendPasswordResetEmail(email);
             addToast({
                 type: 'success',
                 message: 'Password reset email sent! Check your inbox.',
