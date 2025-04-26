@@ -29,25 +29,6 @@ const Login = () => {
     }, [user, role, navigate]);
 
 
-    const handleForgotPassword = async () => {
-        try {
-            await sendPasswordResetEmail(resetEmail);
-            addToast({
-                type: 'success',
-                message: 'Password reset email sent! Check your inbox.',
-                duration: 5000
-            });
-            setShowForgotPassword(false);
-        } catch (err) {
-            addToast({
-                type: 'error',
-                message: err.message,
-                duration: 5000
-            });
-        }
-    };
-
-
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -157,46 +138,13 @@ const Login = () => {
                 >
                     Log In
                 </button>
-                {!showForgotPassword ? (
-                    <button
-                        type="button"
-                        onClick={() => setShowForgotPassword(true)}
-                        className="text-sm text-primary hover:underline"
-                    >
-                        Forgot password?
-                    </button>
-                ) : (
-                    <div className="mt-2">
-                        <label className="block mb-1 font-medium">Enter your email</label>
-                        <input
-                            type="email"
-                            value={resetEmail}
-                            onChange={(e) => setResetEmail(e.target.value)}
-                            className="w-full mb-2 p-2 border-2 border-border-gray rounded"
-                            required
-                        />
-                        <div className="flex gap-2">
-                            <button
-                                type="button"
-                                onClick={handleForgotPassword}
-                                className="px-4 py-2 bg-primary text-white rounded"
-                            >
-                                Send Reset Link
-                            </button>
-                            <a
-                                href="/reset-password"
-                                className="text-sm text-primary hover:underline cursor-pointer"
-                            >
-                                Forgot password?
-                            </a>
-                        </div>
-                    </div>
-                )}
 
-                <p className="text-sm text-gray-600">
-                    Don't have an account? <a href="/register" className="text-primary hover:underline">Register</a>
-                </p>
-
+                <a
+                    href="/reset-password"
+                    className="text-sm text-primary hover:underline cursor-pointer"
+                >
+                    Forgot password?
+                </a>
 
                 <div className="mt-4">
                     <GoogleAuthButton
@@ -204,7 +152,6 @@ const Login = () => {
                         label={"Sign in with Google" }
                     />
                 </div>
-
             </form>
         </div>
     );

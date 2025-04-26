@@ -49,12 +49,21 @@ const ResetPassword = () => {
 
                 {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
 
-                <button
-                    type="submit"
-                    className="w-full bg-primary text-white py-2 rounded hover:bg-primary-dark transition cursor-pointer"
-                >
-                    Send Reset Link
-                </button>
+                <div className="flex flex-col sm:flex-row gap-2">
+                    <button
+                        type="submit"
+                        className="px-4 py-2 bg-primary text-white rounded cursor-pointer"
+                    >
+                        Send Reset Link
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => navigate('/login')}
+                        className="px-4 py-2 bg-gray-200 rounded cursor-pointer"
+                    >
+                        Cancel
+                    </button>
+                </div>
 
                 <p className="mt-4 text-sm text-gray-600">
                     Remember your password?{' '}

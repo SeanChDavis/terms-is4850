@@ -19,6 +19,7 @@ import ManagerProfile from "../pages/manager/Profile.jsx";
 import ManagerUserView from "../pages/manager/User.jsx";
 import EmployeeAnnouncements from "@/pages/employee/Announcements.jsx";
 import TimeOffSummary from "@/pages/manager/TimeOffSummary.jsx";
+import ResetPassword from "../pages/auth/ResetPassword.jsx";
 
 const AppRoutes = () => {
     return (
@@ -27,6 +28,7 @@ const AppRoutes = () => {
             {/* Public Auth Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Protected Employee Routes */}
             <Route
