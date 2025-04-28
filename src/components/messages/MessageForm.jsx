@@ -30,7 +30,7 @@ export default function MessageForm({ threadId, recipientId }) {
     };
 
     return (
-        <form onSubmit={handleSend} className="flex flex-col gap-3 mt-2 pt-4">
+        <form onSubmit={handleSend} className="flex flex-col gap-3 pt-4">
             <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}

@@ -36,7 +36,7 @@ export default function ThreadView({ threadId }) {
 
     useEffect(() => {
         if (scrollAnchorRef.current) {
-            scrollAnchorRef.current.scrollIntoView({ behavior: "smooth" }); // or "smooth"
+            scrollAnchorRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages]);
 
@@ -45,7 +45,7 @@ export default function ThreadView({ threadId }) {
             <div
                 ref={scrollRef}
                 className="overflow-y-auto mb-4 pr-1"
-                style={{ maxHeight: "calc(70vh - 100px)" }}
+                style={{ maxHeight: "calc(63vh - 150px)" }}
             >
                 <p className="text-subtle-text text-sm font-semibold text-right mb-2">
                     Your Messages: ↓

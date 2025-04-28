@@ -62,7 +62,7 @@ export default function Inbox({ onSelect, selectedThreadId }) {
                         <div className="font-bold text-sm">
                             <span className={""}>{recipientName}</span>
                         </div>
-                        <div className="text-sm italic text-subtle-text truncate">{thread.lastMessage}</div>
+                        {/*<div className="text-sm italic text-subtle-text truncate">{thread.lastMessage}</div>*/}
                     </div>
                 );
             })}
