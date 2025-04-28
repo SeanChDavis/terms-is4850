@@ -129,6 +129,34 @@ const TimeOffSummary = () => {
                         Return to Schedule Page
                     </Link>
                 </div>
+                <div className="mb-4">
+                    <h2 className={"text-lg font-semibold mb-2"}>
+                        Filter Requests
+                    </h2>
+                    <p className="max-w-3xl text-subtle-text mb-4">
+                        Use the filters below to narrow down the time-off requests by date range and status. By default, the summary shows all approved requests starting from the beginning of the current week.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                            <input
+                                type="date"
+                                value={startDateFilter}
+                                onChange={e => setStartDateFilter(e.target.value)}
+                                className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">End Date</label>
+                            <input
+                                type="date"
+                                value={endDateFilter}
+                                onChange={e => setEndDateFilter(e.target.value)}
+                                className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {loading ? (
@@ -137,34 +165,6 @@ const TimeOffSummary = () => {
                 <p>No requests found for the current filter.</p>
             ) : (
                 <>
-                    <div className="mb-4">
-                        <h2 className={"text-lg font-semibold mb-2"}>
-                            Filter Requests
-                        </h2>
-                        <p className="max-w-3xl text-subtle-text mb-4">
-                            Use the filters below to narrow down the time-off requests by date range and status. By default, the summary shows all approved requests starting from the beginning of the current week.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Start Date</label>
-                                <input
-                                    type="date"
-                                    value={startDateFilter}
-                                    onChange={e => setStartDateFilter(e.target.value)}
-                                    className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">End Date</label>
-                                <input
-                                    type="date"
-                                    value={endDateFilter}
-                                    onChange={e => setEndDateFilter(e.target.value)}
-                                    className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                />
-                            </div>
-                        </div>
-                    </div>
                     <div className="flex flex-wrap gap-6 items-end mb-8">
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input
