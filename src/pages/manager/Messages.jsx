@@ -1,11 +1,27 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import Inbox from "@/components/messages/Inbox";
 import ThreadView from "@/components/messages/ThreadView";
 import NewMessageModal from "@/components/messages/NewMessageModal";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function ManagerMessages() {
-    const [selectedThread, setSelectedThread] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const { threadId } = useParams();
+    const navigate = useNavigate();
+    const [selectedThread, setSelectedThread] = useState(threadId || null);
+
+    // Keep selectedThread in sync with URL
+    useEffect(() => {
+        if (threadId && threadId !== selectedThread) {
+            setSelectedThread(threadId);
+        }
+    }, [threadId]);
+
+    // When a new thread is clicked
+    const handleSelectThread = (id) => {
+        setSelectedThread(id);
+        navigate(`/manager/messages/${id}`);
+    };
 
     return (
         <>
@@ -26,7 +42,7 @@ export default function ManagerMessages() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-y-6 lg:gap-x-6 lg:h-[70vh]">
                 <div className="col-span-1">
                     <Inbox
-                        onSelect={setSelectedThread}
+                        onSelect={handleSelectThread}
                         selectedThreadId={selectedThread}
                     />
                 </div>

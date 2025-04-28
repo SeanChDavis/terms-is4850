@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { db } from "@/firebase/firebase-config";
-import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
+import { getDoc, doc, collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
 import MessageBubble from "./MessageBubble";
 import MessageForm from "./MessageForm";
@@ -13,26 +13,33 @@ export default function ThreadView({ threadId }) {
     const scrollAnchorRef = useRef(null);
 
     useEffect(() => {
-        const q = query(
-            collection(db, "messages"),
-            where("threadId", "==", threadId),
-            orderBy("timestamp", "asc")
-        );
+        async function fetchThreadData() {
+            if (!threadId || !user) return;
 
-        const unsub = onSnapshot(q, (snapshot) => {
-            const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setMessages(results);
-
-            if (results.length > 0 && user) {
-                const other = results[0].senderId === user.uid
-                    ? results[0].recipientId
-                    : results[0].senderId;
-                setRecipientId(other);
+            const threadDoc = await getDoc(doc(db, "threads", threadId));
+            if (threadDoc.exists()) {
+                const participants = threadDoc.data().participants || [];
+                const otherUserId = participants.find((id) => id !== user.uid);
+                setRecipientId(otherUserId);
             }
-        });
 
-        return () => unsub();
+            const q = query(
+                collection(db, "messages"),
+                where("threadId", "==", threadId),
+                orderBy("timestamp", "asc")
+            );
+
+            const unsub = onSnapshot(q, (snapshot) => {
+                const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setMessages(results);
+            });
+
+            return () => unsub();
+        }
+
+        fetchThreadData().catch(console.error);
     }, [threadId, user]);
+
 
     useEffect(() => {
         if (scrollAnchorRef.current) {

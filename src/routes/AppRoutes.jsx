@@ -62,7 +62,7 @@ const AppRoutes = () => {
                 <Route path="profile" element={<ManagerProfile />} />
                 <Route path="schedule" element={<ManagerSchedule />} />
                 <Route path="time-off-summary" element={<TimeOffSummary />} />
-                <Route path="messages" element={<ManagerMessages />} />
+                <Route path="messages/:threadId?" element={<ManagerMessages />} />
                 <Route path="announcements" element={<ManagerAnnouncements />} />
                 <Route path="tools" element={<div>Manager System Tools Page</div>} />
             </Route>

@@ -1,12 +1,41 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllUsers, updateUserRole } from "../../firebase/firestore";
+import { getAllUsers } from "@/firebase/firestore.js";
 import useCurrentUser from "../../hooks/useCurrentUser";
+import { useNavigate } from "react-router-dom";
+import { db } from "@/firebase/firebase-config.js";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export default function UsersTable() {
     const { userData: currentUser } = useCurrentUser();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
+
+    const handleMessageUser = async (targetUserId) => {
+        if (!currentUser) return;
+
+        const ids = [currentUser.uid, targetUserId].sort();
+        const threadId = ids.join("_");
+
+        const threadRef = doc(db, "threads", threadId);
+        const threadSnap = await getDoc(threadRef);
+
+        if (!threadSnap.exists()) {
+            await setDoc(threadRef, {
+                participants: ids,
+                managerId: currentUser.uid,
+                employeeId: targetUserId,
+                createdBy: currentUser.uid,
+                createdAt: serverTimestamp(),
+                lastMessage: "",
+                lastUpdated: serverTimestamp(),
+            });
+        }
+
+        navigate(`/manager/messages/${threadId}`);
+    };
 
     useEffect(() => {
         async function fetchUsers() {
@@ -16,14 +45,6 @@ export default function UsersTable() {
         }
         fetchUsers().catch(console.error);
     }, []);
-
-    const handleToggleRole = async (uid, currentRole) => {
-        const newRole = currentRole === "manager" ? "employee" : "manager";
-        await updateUserRole(uid, newRole, currentUser?.uid);
-        setUsers((prev) =>
-            prev.map((u) => (u.uid === uid ? { ...u, role: newRole } : u))
-        );
-    };
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -73,10 +94,10 @@ export default function UsersTable() {
                                     {user.uid !== currentUser?.uid && (
                                         <>
                                             <button
-                                                onClick={() => handleToggleRole(user.uid, user.role)}
+                                                onClick={() => handleMessageUser(user.uid)}
                                                 className="text-primary cursor-pointer underline hover:no-underline"
                                             >
-                                                {user.role === "manager" ? "Demote" : "Promote"}
+                                                Message
                                             </button>
                                             <span className="text-subtle-text"> | </span>
                                         </>
