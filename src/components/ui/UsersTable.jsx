@@ -59,10 +59,6 @@ export default function UsersTable() {
 
     return (
         <>
-            <h1 className="text-xl font-semibold mb-2">Manage Personnel</h1>
-            <p className="max-w-xl text-subtle-text mb-6">
-                Here you can view and manage all users in the system. Click "View" to see more details about a user, or "Message" to start a conversation.
-            </p>
             <div className="overflow-auto rounded-md border border-border-gray bg-white">
                 <table className="min-w-full text-sm text-left text-gray-700">
                     <thead className="bg-gray-50 border-b border-border-gray">
@@ -94,7 +90,7 @@ export default function UsersTable() {
                             </td>
                             <td className="px-4 py-3">
                                 <div className="flex justify-end gap-1 items-center">
-                                    {user.uid !== currentUser?.uid && (
+                                    {user.uid !== currentUser?.uid ? (
                                         <>
                                             <button
                                                 onClick={() => handleMessageUser(user.uid)}
@@ -103,11 +99,16 @@ export default function UsersTable() {
                                                 Message
                                             </button>
                                             <span className="text-subtle-text"> | </span>
+                                            <Link
+                                                to={`/manager/users/${user.uid}`}
+                                                className="text-primary cursor-pointer underline hover:no-underline"
+                                            >
+                                                View
+                                            </Link>
                                         </>
+                                    ) : (
+                                        <span className="text-subtle-text italic text-sm">—</span>
                                     )}
-                                    <Link to={`/manager/users/${user.uid}`} className="text-primary cursor-pointer underline hover:no-underline">
-                                        View
-                                    </Link>
                                 </div>
                             </td>
                         </tr>

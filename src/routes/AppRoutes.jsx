@@ -22,6 +22,7 @@ import TimeOffSummary from "@/pages/manager/TimeOffSummary.jsx";
 import EmployeeMessages from "@/pages/employee/Messages.jsx";
 import ManagerMessages from "@/pages/manager/Messages.jsx";
 import UsersTable from "@/components/ui/UsersTable.jsx";
+import Users from "@/pages/manager/Users.jsx";
 
 const AppRoutes = () => {
     return (
@@ -59,7 +60,7 @@ const AppRoutes = () => {
             >
                 <Route index element={<Navigate to="dashboard" replace />} />
                 <Route path="dashboard" element={<ManagerDashboard />} />
-                <Route path="users" element={<UsersTable />} />
+                <Route path="users" element={<Users />} />
                 <Route path="users/:id" element={<ManagerUserView />} />
                 <Route path="profile" element={<ManagerProfile />} />
                 <Route path="schedule" element={<ManagerSchedule />} />

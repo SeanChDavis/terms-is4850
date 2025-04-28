@@ -147,7 +147,7 @@ export default function ManagerAnnouncements() {
 
     return (
         <>
-            <div className={"max-w-xl pb-4 mb-8"}>
+            <div className={"max-w-xl mb-8"}>
                 <h2 className={`text-xl font-bold mb-2`}>System Announcements</h2>
                 <p className={"text-subtle-text"}>
                     Use this page to create announcements that will be visible to all employees. You can post updates,
