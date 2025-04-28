@@ -20,43 +20,50 @@ export default function NewMessageModal({ isOpen, onClose, onSelect }) {
     const [initialMessage, setInitialMessage] = useState("");
 
     useEffect(() => {
-        const fetchEmployees = async () => {
-            const q = query(collection(db, "users"), where("role", "==", "employee"));
+        const fetchRecipients = async () => {
+            const q = query(collection(db, "users")); // no role filter
             const snapshot = await getDocs(q);
             const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setEmployees(users);
+
+            const filtered = users.filter((u) => u.id !== user.uid); // don't list yourself
+            setEmployees(filtered);
         };
 
-        if (isOpen) fetchEmployees().catch(console.error);
+        if (isOpen) fetchRecipients().catch(console.error);
     }, [isOpen]);
 
     const startConversation = async () => {
         if (!selected || !user) return;
-        const threadId = [user.uid, selected].sort().join("_");
 
-        await setDoc(doc(db, "threads", threadId), {
-            participants: [user.uid, selected],
-            managerId: user.uid,
-            employeeId: selected,
-            createdBy: user.uid,
-            createdAt: serverTimestamp(),
-            lastMessage: "",
-            lastUpdated: serverTimestamp(),
-        });
+        try {
+            const threadId = [user.uid, selected].sort().join("_");
 
-        if (initialMessage.trim()) {
-            await addDoc(collection(db, "messages"), {
-                threadId,
-                senderId: user.uid,
-                recipientId: selected,
-                message: initialMessage.trim(),
-                timestamp: serverTimestamp(),
-                read: false,
+            await setDoc(doc(db, "threads", threadId), {
+                participants: [user.uid, selected],
+                managerId: user.uid,
+                employeeId: selected,
+                createdBy: user.uid,
+                createdAt: serverTimestamp(),
+                lastMessage: "",
+                lastUpdated: serverTimestamp(),
             });
-        }
 
-        onClose();
-        onSelect(threadId);
+            if (initialMessage.trim()) {
+                await addDoc(collection(db, "messages"), {
+                    threadId,
+                    senderId: user.uid,
+                    recipientId: selected,
+                    message: initialMessage.trim(),
+                    timestamp: serverTimestamp(),
+                    read: false,
+                });
+            }
+
+            onClose();
+            onSelect(threadId);
+        } catch (error) {
+            console.error("Failed to start conversation:", error);
+        }
     };
 
     return (

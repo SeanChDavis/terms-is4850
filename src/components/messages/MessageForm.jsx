@@ -20,13 +20,16 @@ export default function MessageForm({ threadId, recipientId }) {
             read: false,
         };
 
-        await addDoc(collection(db, "messages"), newMessage);
-        await updateDoc(doc(db, "threads", threadId), {
-            lastMessage: text.trim(),
-            lastUpdated: serverTimestamp(),
-        });
-
-        setText("");
+        try {
+            await addDoc(collection(db, "messages"), newMessage);
+            await updateDoc(doc(db, "threads", threadId), {
+                lastMessage: text.trim(),
+                lastUpdated: serverTimestamp(),
+            });
+            setText("");
+        } catch (error) {
+            console.error("Error sending message:", error);
+        }
     };
 
     return (
