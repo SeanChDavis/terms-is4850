@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import {db} from "@/firebase/firebase-config";
-import {getDoc, doc, collection, query, where, orderBy, onSnapshot} from "firebase/firestore";
+import {getDoc, doc, collection, query, where, orderBy, onSnapshot, writeBatch} from "firebase/firestore";
 import {useAuth} from "@/context/AuthContext";
 import MessageBubble from "./MessageBubble";
 import MessageForm from "./MessageForm";
@@ -33,10 +33,39 @@ export default function ThreadView({threadId}) {
             const unsub = onSnapshot(q, (snapshot) => {
                 const results = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
                 setMessages(results);
+
+                if (snapshot?.docs?.length > 0) {
+                    const batch = writeBatch(db);
+                    snapshot.docs.forEach((docSnap) => {
+                        const data = docSnap.data();
+                        const messageId = docSnap.id;
+
+                        // Only mark messages that:
+                        // 1. Current user is the recipient
+                        // 2. Current user is NOT in readBy yet
+                        if (
+                            data.recipientId === user.uid &&
+                            (!data.readBy || !data.readBy.includes(user.uid))
+                        ) {
+                            const messageRef = doc(db, "messages", messageId);
+                            batch.update(messageRef, {
+                                readBy: [...(data.readBy || []), user.uid],
+                            });
+                        }
+                    });
+
+                    // Commit all updates
+                    batch.commit().catch(console.error);
+                }
+
                 setLoading(false);
             });
 
-            return () => unsub();
+            return () => {
+                unsub();
+                setMessages([]);
+                setLoading(true);
+            };
         }
 
         fetchThreadData().catch(console.error);

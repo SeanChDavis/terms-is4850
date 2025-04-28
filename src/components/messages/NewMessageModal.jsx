@@ -55,7 +55,7 @@ export default function NewMessageModal({ isOpen, onClose, onSelect }) {
                     recipientId: selected,
                     message: initialMessage.trim(),
                     timestamp: serverTimestamp(),
-                    read: false,
+                    readBy: [user.uid],
                 });
             }
 
