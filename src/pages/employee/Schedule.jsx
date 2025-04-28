@@ -29,7 +29,9 @@ const EmployeeSchedule = () => {
     const [endTime, setEndTime] = useState("");
     const [details, setDetails] = useState("");
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
+
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState("");
 
@@ -50,6 +52,8 @@ const EmployeeSchedule = () => {
             }));
             setRequests(results);
         });
+
+        setLoading(false);
 
         return () => unsubscribe();
     }, [user]);
@@ -75,7 +79,7 @@ const EmployeeSchedule = () => {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        setLoadingSubmit(true);
         setError("");
         setSuccess(false);
 
@@ -91,13 +95,13 @@ const EmployeeSchedule = () => {
 
             if (selectedDay < tomorrow) {
                 setError("Requests must begin on a future date.");
-                setLoading(false);
+                setLoadingSubmit(false);
                 return;
             }
 
             if (requestType === "multi" && new Date(endDate) < new Date(startDate)) {
                 setError("End date must be after start date.");
-                setLoading(false);
+                setLoadingSubmit(false);
                 return;
             }
 
@@ -105,7 +109,7 @@ const EmployeeSchedule = () => {
 
                 if (!startDate || !endDate || !startTime || !endTime) {
                     setError("All date and time fields are required for custom requests.");
-                    setLoading(false);
+                    setLoadingSubmit(false);
                     return;
                 }
 
@@ -114,7 +118,7 @@ const EmployeeSchedule = () => {
 
                 if (end <= start) {
                     setError("End time must be after start time.");
-                    setLoading(false);
+                    setLoadingSubmit(false);
                     return;
                 }
             }
@@ -151,7 +155,7 @@ const EmployeeSchedule = () => {
             console.error("Error submitting request:", err);
             setError("Something went wrong. Please try again.");
         } finally {
-            setLoading(false);
+            setLoadingSubmit(false);
         }
     };
 
