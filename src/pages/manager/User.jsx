@@ -18,6 +18,7 @@ import useCurrentUser from "../../hooks/useCurrentUser";
 import {MdInfoOutline} from "react-icons/md";
 import {formatDisplayDate, formatTime} from "../../utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
+import UserNotes from "@/components/manager/UserNotes";
 
 export default function ManagerUserView() {
     const {userData: currentUser} = useCurrentUser();
@@ -118,7 +119,6 @@ export default function ManagerUserView() {
             <p className={"text-subtle-text"}>
                 View information about the user and manage their role.
             </p>
-
             <div
                 className="mt-6 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x">
                 <div className="p-6 flex-1">
@@ -163,10 +163,10 @@ export default function ManagerUserView() {
             <div className="mt-10">
                 <h3 className="text-xl font-bold mb-2">User Time-Off Requests History</h3>
                 {requests.length === 0 ? (
-                    <p className="text-sm text-subtle-text">No requests submitted by this user.</p>
+                    <p className="mt-3 text-sm italic text-subtle-text">No requests submitted by this user.</p>
                 ) : (
                     <>
-                        <p className="text-subtle-text">View time-off requests submitted by this user. To manage pending
+                        <p className="max-w-lg text-subtle-text">View time-off requests submitted by this user. To manage pending
                             requests, visit the <Link to="/manager/schedule"
                                                       className="text-subtle-text cursor-pointer underline hover:no-underline">Schedule</Link> page.
                         </p>
@@ -335,17 +335,7 @@ export default function ManagerUserView() {
                 )}
             </div>
 
-            <div className="mt-10 mb-12">
-                <h3 className="text-xl font-bold mb-2">Add User Note</h3>
-                <p className="text-gray-600">Coming soon! Be patient please.</p>
-            </div>
-
-            <Link
-                to="/manager/dashboard"
-                className="mt-8 text-sm rounded-md bg-gray-200 px-4 py-2 font-semibold cursor-pointer hover:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
-            >
-                Return to Dashboard
-            </Link>
+            {user.uid !== currentUser?.uid && <UserNotes userId={user.uid} />}
         </>
     );
 }

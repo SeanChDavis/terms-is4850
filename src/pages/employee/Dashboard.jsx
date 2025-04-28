@@ -11,7 +11,7 @@ export default function EmployeeDashboard() {
 
     return (
         <>
-            <div className="mb-12">
+            <div className="mb-8">
                 <h2 className="text-xl font-bold mb-2">
                     Welcome, {userData?.display_name || userData?.first_name || "Welcome!"}!
                 </h2>
