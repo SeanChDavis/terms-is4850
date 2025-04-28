@@ -34,7 +34,7 @@ export default function ManagerMessages() {
                 </p>
                 <button
                     onClick={() => setShowModal(true)}
-                    className="mt-3 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-emerald-900"
+                    className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-emerald-900"
                 >
                     Create New Message
                 </button>

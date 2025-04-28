@@ -64,6 +64,8 @@ const Profile = () => {
 
     };
 
+    if (loading) return <div className="text-sm text-subtle-text">Loading...</div>;
+
     return (
         <>
             <div className={"max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>

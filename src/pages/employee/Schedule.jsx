@@ -174,6 +174,8 @@ const EmployeeSchedule = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentRequests = requests.slice(startIndex, startIndex + itemsPerPage);
 
+    if (loading) return <div className="text-sm text-subtle-text">Loading...</div>;
+
     return (
         <>
             <div className={"max-w-xl pb-4 mb-8"}>
@@ -182,7 +184,7 @@ const EmployeeSchedule = () => {
                     schedule.</p>
             </div>
 
-            <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
                 <div>
 
                     {/* New Time-Off Request Form */}
