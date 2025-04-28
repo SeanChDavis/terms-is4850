@@ -14,7 +14,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         { name: 'Announcements', path: 'announcements' },
         ...(basePath === '/manager'
             ? [
-                { name: 'System Tools', path: 'tools' },
+                { name: 'Users', path: 'users' },
+                { name: 'Tools', path: 'tools' },
             ]
             : []),
     ];

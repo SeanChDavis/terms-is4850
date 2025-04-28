@@ -48,7 +48,7 @@ export default function UsersTable() {
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
 
     // Pagination math
     const totalPages = Math.ceil(users.length / itemsPerPage);
@@ -59,7 +59,10 @@ export default function UsersTable() {
 
     return (
         <>
-            <h1 className="text-xl font-semibold mb-4">Manage Personnel</h1>
+            <h1 className="text-xl font-semibold mb-2">Manage Personnel</h1>
+            <p className="max-w-xl text-subtle-text mb-6">
+                Here you can view and manage all users in the system. Click "View" to see more details about a user, or "Message" to start a conversation.
+            </p>
             <div className="overflow-auto rounded-md border border-border-gray bg-white">
                 <table className="min-w-full text-sm text-left text-gray-700">
                     <thead className="bg-gray-50 border-b border-border-gray">
