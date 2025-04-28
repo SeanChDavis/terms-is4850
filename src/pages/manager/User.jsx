@@ -7,10 +7,13 @@ import {
     orderBy,
     onSnapshot,
     updateDoc,
-    doc
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp
 } from "firebase/firestore";
 import {getUserDocument, updateUserRole} from "@/firebase/firestore.js";
-import {db} from "@/firebase/firebase-config.js";
+import { db } from "@/firebase/firebase-config";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import {MdInfoOutline} from "react-icons/md";
 import {formatDisplayDate, formatTime} from "../../utils/formatters";
@@ -34,6 +37,31 @@ export default function ManagerUserView() {
     const totalPages = Math.ceil(requests.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentRequests = requests.slice(startIndex, startIndex + itemsPerPage);
+
+    const handleMessageUser = async () => {
+        if (!currentUser || !user) return;
+
+        const ids = [currentUser.uid, user.uid].sort();
+        const threadId = ids.join("_");
+
+        const threadRef = doc(db, "threads", threadId);
+        const threadSnap = await getDoc(threadRef);
+
+        if (!threadSnap.exists()) {
+            await setDoc(threadRef, {
+                participants: ids,
+                managerId: currentUser.uid,
+                employeeId: user.uid,
+                createdBy: currentUser.uid,
+                createdAt: serverTimestamp(),
+                lastMessage: "",
+                lastUpdated: serverTimestamp(),
+            });
+        }
+
+        navigate(`/manager/messages/${threadId}`);
+    };
+
 
     useEffect(() => {
         async function fetchUser() {
@@ -113,12 +141,20 @@ export default function ManagerUserView() {
                     ) : (
                         <>
                             <p className="font-semibold mb-2">Actions:</p>
-                            <button
-                                onClick={toggleRole}
-                                className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark"
-                            >
-                                {user.role === "manager" ? "Demote to Employee" : "Promote to Manager"}
-                            </button>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <button
+                                    onClick={toggleRole}
+                                    className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark"
+                                >
+                                    {user.role === "manager" ? "Demote to Employee" : "Promote to Manager"}
+                                </button>
+                                <button
+                                    onClick={handleMessageUser}
+                                    className="text-sm px-4 py-2 bg-emerald-700 text-white font-semibold rounded cursor-pointer hover:bg-emerald-900"
+                                >
+                                    Message User
+                                </button>
+                            </div>
                         </>
                     )}
                 </div>
@@ -244,7 +280,8 @@ export default function ManagerUserView() {
                                     <div
                                         className="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0">
                                         <DialogPanel
-                                            className="w-full relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+                                            className="w-full relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+                                        >
                                             <div>
                                                 <DialogTitle
                                                     as="h3"
