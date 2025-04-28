@@ -83,9 +83,13 @@ export default function UserNotes({ userId }) {
     };
 
     const handleDelete = async (id) => {
-        await deleteDoc(doc(db, "notes", id));
-        setSelectedNote(null);
-        setOpen(false);
+        try {
+            await deleteDoc(doc(db, "notes", id));
+            setSelectedNote(null);
+            setOpen(false);
+        } catch (error) {
+            console.error("Error deleting note:", error);
+        }
     };
 
     const filteredNotes = showMineOnly

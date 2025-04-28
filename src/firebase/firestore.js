@@ -48,12 +48,16 @@ export async function updateUserRole(uid, newRole, currentUid = null) {
 
 // Add a new note
 export const addUserNote = async (userId, managerId, content) => {
-    await addDoc(collection(db, "notes"), {
-        userId,
-        managerId,
-        content,
-        createdAt: serverTimestamp(),
-    });
+    try {
+        await addDoc(collection(db, "notes"), {
+            userId,
+            managerId,
+            content,
+            createdAt: serverTimestamp(),
+        });
+    } catch (error) {
+        console.error("Error adding user note:", error);
+    }
 };
 
 // Fetch notes for a user
@@ -64,7 +68,7 @@ export const getUserNotes = async (userId) => {
         orderBy("createdAt", "desc")
     );
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
 };
 
 // Delete a note by ID
