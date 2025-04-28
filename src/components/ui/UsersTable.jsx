@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getAllUsers } from "@/firebase/firestore.js";
-import useCurrentUser from "../../hooks/useCurrentUser";
-import { useNavigate } from "react-router-dom";
+import useCurrentUser from "@/hooks/useCurrentUser";
 import { db } from "@/firebase/firebase-config.js";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 

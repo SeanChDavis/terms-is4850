@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signUp, signInWithGoogle } from '../../firebase/auth';
-import { useToast } from '../../context/ToastContext.jsx';
-import {createUserDocument, getUserDocument} from '../../firebase/firestore';
-import SiteLogo from "../../components/ui/SiteLogo.jsx";
-import {auth} from "../../firebase/firebase-config.js";
+import { signUp, signInWithGoogle } from '@/firebase/auth';
+import { useToast } from '@/context/ToastContext';
+import {createUserDocument, getUserDocument} from '@/firebase/firestore';
+import SiteLogo from "@/components/ui/SiteLogo";
+import {auth} from "@/firebase/firebase-config";
 
 const Register = () => {
     const { addToast } = useToast();

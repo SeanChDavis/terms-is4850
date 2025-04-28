@@ -1,13 +1,13 @@
-import useCurrentUser from "../../hooks/useCurrentUser";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import {useFilteredAnnouncements} from "@/hooks/useFilteredAnnouncements";
 import {formatDisplayDate} from "@/utils/formatters";
-import { useFilteredAnnouncements } from "@/hooks/useFilteredAnnouncements";
 import {NavLink} from "react-router-dom";
 
 export default function EmployeeDashboard() {
     const {userData, loading} = useCurrentUser();
     const announcements = useFilteredAnnouncements("employee", 10).filter(a => a.expiresAt);
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <div className="text-sm text-subtle-text">Loading...</div>;
 
     return (
         <>
@@ -25,12 +25,13 @@ export default function EmployeeDashboard() {
             ) : (
                 <>
                     <p className="max-w-3xl text-subtle-text">
-                        These announcements are time-sensitive and may expire soon. Please read them carefully and check back regularly for updates.
+                        These announcements are time-sensitive and may expire soon. Please read them carefully and check
+                        back regularly for updates.
                     </p>
                     <div className="my-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {announcements.map((a) => {
                             const isExpiring = Boolean(a.expiresAt);
-                            const timeLeft = isExpiring ? formatDisplayDate(a.expiresAt, { relative: true }) : null;
+                            const timeLeft = isExpiring ? formatDisplayDate(a.expiresAt, {relative: true}) : null;
 
                             return (
                                 <div
@@ -41,7 +42,7 @@ export default function EmployeeDashboard() {
                                     <div className="mb-5 whitespace-pre-line">{a.body}</div>
                                     <p className="text-sm border-t-1 border-amber-100 pt-3.5 mt-auto">
                                         This announcement was posted{" "}
-                                        {formatDisplayDate(a.createdAt, { relative: true })}{". "}
+                                        {formatDisplayDate(a.createdAt, {relative: true})}{". "}
                                         {isExpiring && `It expires ${formatDisplayDate(a.expiresAt)} (${timeLeft}).`}
                                     </p>
                                 </div>

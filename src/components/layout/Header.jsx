@@ -1,4 +1,4 @@
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import SiteLogo from '../ui/SiteLogo';
 import { HiOutlineMenuAlt2 } from 'react-icons/hi';

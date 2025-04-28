@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/firebase/firebase-config";
-import { formatDisplayDate, formatTime } from "../../utils/formatters";
+import { formatDisplayDate, formatTime } from "@/utils/formatters";
 import { Link } from "react-router-dom";
 
 // Expand multi-day or custom requests into individual days
@@ -129,45 +129,6 @@ const TimeOffSummary = () => {
                         Return to Schedule Page
                     </Link>
                 </div>
-                <div>
-                    <h2 className={"text-lg font-semibold mb-2"}>
-                        Filter Requests
-                    </h2>
-                    <p className="text-subtle-text mb-4">
-                        Use the filters below to narrow down the time-off requests by date range and status. By default, the summary shows all approved requests starting from the beginning of the current week.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <div>
-                            <label className="block text-sm font-medium mb-1 text-gray-700">Start Date</label>
-                            <input
-                                type="date"
-                                value={startDateFilter}
-                                onChange={e => setStartDateFilter(e.target.value)}
-                                className="text-sm border rounded px-2 py-1"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1 text-gray-700">End Date</label>
-                            <input
-                                type="date"
-                                value={endDateFilter}
-                                onChange={e => setEndDateFilter(e.target.value)}
-                                className="text-sm border rounded px-2 py-1"
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div className="flex flex-wrap gap-6 items-end mt-5">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                            type="checkbox"
-                            checked={showPending}
-                            onChange={() => setShowPending(prev => !prev)}
-                            className="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0 focus:ring-2 focus:ring-offset-white"
-                        />
-                        Show pending requests
-                    </label>
-                </div>
             </div>
 
             {loading ? (
@@ -175,39 +136,80 @@ const TimeOffSummary = () => {
             ) : filteredDates.length === 0 ? (
                 <p>No requests found for the current filter.</p>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredDates.map(date => (
-                        <div
-                            key={date}
-                            className="rounded-lg border border-border-gray bg-white p-4 shadow-md shadow-gray-200"
-                        >
-                            <h3 className="text-md font-semibold mb-2 text-primary">{formatDisplayDate(date)}</h3>
-                            <div className="space-y-4 text-sm text-gray-800">
-                                {expandedByDate[date].map((entry, idx) => (
-                                    <div key={idx} className="border-l-4 pl-3 border-gray-200">
-                                        <p className="font-semibold">{entry.name}</p>
-                                        <p className="text-subtle-text">
-                                            {entry.type === "single" && "Full Day Off (via Single Day)"}
-                                            {entry.type === "multi" && "Full Day Off (via Multi-Day)"}
-                                            {entry.type === "custom" && (
-                                                <>
-                                                    {entry.startTime && !entry.endTime && `Off After ${formatTime(entry.startTime)}`}
-                                                    {!entry.startTime && entry.endTime && `Off Until ${formatTime(entry.endTime)}`}
-                                                    {entry.startTime && entry.endTime && `${formatTime(entry.startTime)} – ${formatTime(entry.endTime)}`}
-                                                    {!entry.startTime && !entry.endTime && "Full Day Off"}
-                                                    {" (via Custom Range)"}
-                                                </>
-                                            )}
-                                        </p>
-                                        {entry.status === "pending" && (
-                                            <p className="text-yellow-600 font-medium">Pending</p>
-                                        )}
-                                    </div>
-                                ))}
+                <>
+                    <div className="mb-4">
+                        <h2 className={"text-lg font-semibold mb-2"}>
+                            Filter Requests
+                        </h2>
+                        <p className="max-w-3xl text-subtle-text mb-4">
+                            Use the filters below to narrow down the time-off requests by date range and status. By default, the summary shows all approved requests starting from the beginning of the current week.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                                <input
+                                    type="date"
+                                    value={startDateFilter}
+                                    onChange={e => setStartDateFilter(e.target.value)}
+                                    className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">End Date</label>
+                                <input
+                                    type="date"
+                                    value={endDateFilter}
+                                    onChange={e => setEndDateFilter(e.target.value)}
+                                    className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                />
                             </div>
                         </div>
-                    ))}
-                </div>
+                    </div>
+                    <div className="flex flex-wrap gap-6 items-end mb-8">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={showPending}
+                                onChange={() => setShowPending(prev => !prev)}
+                                className="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0 focus:ring-2 focus:ring-offset-white"
+                            />
+                            Show pending requests
+                        </label>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredDates.map(date => (
+                            <div
+                                key={date}
+                                className="rounded-lg border border-border-gray bg-white p-4 shadow-md shadow-gray-200"
+                            >
+                                <h3 className="text-md font-semibold mb-2 text-primary">{formatDisplayDate(date)}</h3>
+                                <div className="space-y-4 text-sm text-gray-800">
+                                    {expandedByDate[date].map((entry, idx) => (
+                                        <div key={idx} className="border-l-4 pl-3 border-gray-200">
+                                            <p className="font-semibold">{entry.name}</p>
+                                            <p className="text-subtle-text">
+                                                {entry.type === "single" && "Full Day Off (via Single Day)"}
+                                                {entry.type === "multi" && "Full Day Off (via Multi-Day)"}
+                                                {entry.type === "custom" && (
+                                                    <>
+                                                        {entry.startTime && !entry.endTime && `Off After ${formatTime(entry.startTime)}`}
+                                                        {!entry.startTime && entry.endTime && `Off Until ${formatTime(entry.endTime)}`}
+                                                        {entry.startTime && entry.endTime && `${formatTime(entry.startTime)} – ${formatTime(entry.endTime)}`}
+                                                        {!entry.startTime && !entry.endTime && "Full Day Off"}
+                                                        {" (via Custom Range)"}
+                                                    </>
+                                                )}
+                                            </p>
+                                            {entry.status === "pending" && (
+                                                <p className="text-yellow-600 font-medium">Pending</p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
             )}
         </div>
     );
