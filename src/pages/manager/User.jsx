@@ -12,11 +12,11 @@ import {
     setDoc,
     serverTimestamp
 } from "firebase/firestore";
-import {getUserDocument, updateUserRole} from "@/firebase/firestore.js";
+import {getUserDocument, updateUserRole} from "@/firebase/firestore";
 import { db } from "@/firebase/firebase-config";
-import useCurrentUser from "../../hooks/useCurrentUser";
+import useCurrentUser from "@/hooks/useCurrentUser";
 import {MdInfoOutline} from "react-icons/md";
-import {formatDisplayDate, formatTime} from "../../utils/formatters";
+import {formatDisplayDate, formatTime} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 import UserNotes from "@/components/manager/UserNotes";
 

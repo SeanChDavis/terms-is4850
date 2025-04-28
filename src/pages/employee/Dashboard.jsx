@@ -1,4 +1,4 @@
-import useCurrentUser from "../../hooks/useCurrentUser";
+import useCurrentUser from "@/hooks/useCurrentUser";
 import {useFilteredAnnouncements} from "@/hooks/useFilteredAnnouncements";
 import {formatDisplayDate} from "@/utils/formatters";
 import {NavLink} from "react-router-dom";

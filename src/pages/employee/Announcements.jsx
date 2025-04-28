@@ -1,5 +1,5 @@
-import { useFilteredAnnouncements } from "@/hooks/useFilteredAnnouncements.jsx";
-import { formatDisplayDate } from "@/utils/formatters.jsx";
+import { useFilteredAnnouncements } from "@/hooks/useFilteredAnnouncements";
+import { formatDisplayDate } from "@/utils/formatters";
 
 export default function EmployeeAnnouncements() {
     const announcements = useFilteredAnnouncements("employee", 10);

@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
 import {collection, getDocs, query, orderBy, doc, updateDoc} from "firebase/firestore";
-import {db} from "@/firebase/firebase-config.js";
-import {formatDisplayDate, formatTime} from "../../utils/formatters";
+import {db} from "@/firebase/firebase-config";
+import {formatDisplayDate, formatTime} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/react';
-import ManagerUploadSchedule from "../../components/manager/UploadSchedule.jsx";
-import ViewSchedule from "../../components/ui/ViewSchedule.jsx";
+import ManagerUploadSchedule from "@/components/manager/UploadSchedule";
+import ViewSchedule from "@/components/ui/ViewSchedule";
 import {Link} from "react-router-dom";
 
 const ManagerSchedule = () => {

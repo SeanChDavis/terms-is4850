@@ -10,11 +10,11 @@ import {
     doc
 } from "firebase/firestore";
 import {useEffect, useState} from "react";
-import {db} from "@/firebase/firebase-config.js";
-import {useAuth} from "../../context/AuthContext";
-import {formatDisplayDate, formatTime} from "../../utils/formatters";
+import {db} from "@/firebase/firebase-config";
+import {useAuth} from "@/context/AuthContext";
+import {formatDisplayDate, formatTime} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
-import ViewSchedule from "../../components/ui/ViewSchedule.jsx";
+import ViewSchedule from "@/components/ui/ViewSchedule";
 
 const EmployeeSchedule = () => {
     const [requests, setRequests] = useState([]);

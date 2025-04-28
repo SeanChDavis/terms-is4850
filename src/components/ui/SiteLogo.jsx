@@ -1,5 +1,5 @@
-import LogoColor from '../../assets/terms-logo-color.svg';
-import LogoWhite from '../../assets/terms-logo-white.svg';
+import LogoColor from '@/assets/terms-logo-color.svg';
+import LogoWhite from '@/assets/terms-logo-white.svg';
 
 const SiteLogo = ({ variant = 'color', className = '' }) => {
     const logoSrc = variant === 'white' ? LogoWhite : LogoColor;

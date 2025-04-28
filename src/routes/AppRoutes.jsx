@@ -8,21 +8,21 @@ import Register from '@/pages/auth//Register';
 
 {/* Employee Pages */}
 import EmployeeDashboard from '@/pages/employee/Dashboard';
-import EmployeeSchedule from "@/pages/employee/Schedule.jsx";
-import EmployeeAnnouncements from "@/pages/employee/Announcements.jsx";
-import EmployeeMessages from "@/pages/employee/Messages.jsx";
+import EmployeeSchedule from "@/pages/employee/Schedule";
+import EmployeeAnnouncements from "@/pages/employee/Announcements";
+import EmployeeMessages from "@/pages/employee/Messages";
 
 {/* Manager Pages */}
 import ManagerDashboard from '@/pages/manager/Dashboard';
-import ManagerAnnouncements from "@/pages/manager/Announcements.jsx";
-import ManagerSchedule from "@/pages/manager/Schedule.jsx";
-import ManagerUserView from "@/pages/manager/User.jsx";
-import TimeOffSummary from "@/pages/manager/TimeOffSummary.jsx";
-import ManagerMessages from "@/pages/manager/Messages.jsx";
-import Users from "@/pages/manager/Users.jsx";
+import ManagerAnnouncements from "@/pages/manager/Announcements";
+import ManagerSchedule from "@/pages/manager/Schedule";
+import ManagerUserView from "@/pages/manager/User";
+import TimeOffSummary from "@/pages/manager/TimeOffSummary";
+import ManagerMessages from "@/pages/manager/Messages";
+import Users from "@/pages/manager/Users";
 
 {/* Shared Pages */}
-import UserProfile from "@/pages/shared/UserProfile.jsx";
+import UserProfile from "@/pages/shared/UserProfile";
 
 const AppRoutes = () => {
     return (

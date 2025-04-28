@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/firebase/firebase-config";
-import { formatDisplayDate, formatTime } from "../../utils/formatters";
+import { formatDisplayDate, formatTime } from "@/utils/formatters";
 import { Link } from "react-router-dom";
 
 // Expand multi-day or custom requests into individual days
