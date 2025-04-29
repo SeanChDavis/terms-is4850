@@ -28,7 +28,7 @@ const Register = () => {
             await createUserDocument(uid, {
                 email,
                 role: 'employee',
-                registerFlag: "False"
+                managerApproved: "False"
             });
 
             addToast({  // Add this toast
@@ -71,7 +71,7 @@ const Register = () => {
             await createUserDocument(uid, {
                 email,
                 role: 'employee', // Default all new users to employee
-                registerFlag: "False",
+                managerApproved: "False",
             });
 
             addToast({  // Add this toast
