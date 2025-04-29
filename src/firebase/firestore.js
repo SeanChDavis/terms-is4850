@@ -1,5 +1,17 @@
-import { collection, getDocs, doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
-import { db } from './firebase-config.js';
+import {
+    collection,
+    getDocs,
+    doc,
+    updateDoc,
+    setDoc, getDoc,
+    query,
+    where,
+    orderBy,
+    addDoc,
+    deleteDoc,
+    serverTimestamp
+} from 'firebase/firestore';
+import {db} from './firebase-config.js';
 
 // Create or overwrite a user document
 export const createUserDocument = async (uid, data) => {
@@ -31,5 +43,35 @@ export async function updateUserRole(uid, newRole, currentUid = null) {
         return;
     }
     const userRef = doc(db, "users", uid);
-    await updateDoc(userRef, { role: newRole });
+    await updateDoc(userRef, {role: newRole});
 }
+
+// Add a new note
+export const addUserNote = async (userId, managerId, content) => {
+    try {
+        await addDoc(collection(db, "notes"), {
+            userId,
+            managerId,
+            content,
+            createdAt: serverTimestamp(),
+        });
+    } catch (error) {
+        console.error("Error adding user note:", error);
+    }
+};
+
+// Fetch notes for a user
+export const getUserNotes = async (userId) => {
+    const q = query(
+        collection(db, "notes"),
+        where("userId", "==", userId),
+        orderBy("createdAt", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+};
+
+// Delete a note by ID
+export const deleteUserNote = async (noteId) => {
+    await deleteDoc(doc(db, "notes", noteId));
+};

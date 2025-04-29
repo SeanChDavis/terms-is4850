@@ -1,12 +1,40 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { getAllUsers, updateUserRole } from "../../firebase/firestore";
-import useCurrentUser from "../../hooks/useCurrentUser";
+import { Link, useNavigate } from "react-router-dom";
+import { getAllUsers } from "@/firebase/firestore.js";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import { db } from "@/firebase/firebase-config.js";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export default function UsersTable() {
     const { userData: currentUser } = useCurrentUser();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
+
+    const handleMessageUser = async (targetUserId) => {
+        if (!currentUser) return;
+
+        const ids = [currentUser.uid, targetUserId].sort();
+        const threadId = ids.join("_");
+
+        const threadRef = doc(db, "threads", threadId);
+        const threadSnap = await getDoc(threadRef);
+
+        if (!threadSnap.exists()) {
+            await setDoc(threadRef, {
+                participants: ids,
+                managerId: currentUser.uid,
+                employeeId: targetUserId,
+                createdBy: currentUser.uid,
+                createdAt: serverTimestamp(),
+                lastMessage: "",
+                lastUpdated: serverTimestamp(),
+            });
+        }
+
+        navigate(`/manager/messages/${threadId}`);
+    };
 
     useEffect(() => {
         async function fetchUsers() {
@@ -17,17 +45,9 @@ export default function UsersTable() {
         fetchUsers().catch(console.error);
     }, []);
 
-    const handleToggleRole = async (uid, currentRole) => {
-        const newRole = currentRole === "manager" ? "employee" : "manager";
-        await updateUserRole(uid, newRole, currentUser?.uid);
-        setUsers((prev) =>
-            prev.map((u) => (u.uid === uid ? { ...u, role: newRole } : u))
-        );
-    };
-
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
 
     // Pagination math
     const totalPages = Math.ceil(users.length / itemsPerPage);
@@ -38,7 +58,6 @@ export default function UsersTable() {
 
     return (
         <>
-            <h1 className="text-xl font-semibold mb-4">Manage Personnel</h1>
             <div className="overflow-auto rounded-md border border-border-gray bg-white">
                 <table className="min-w-full text-sm text-left text-gray-700">
                     <thead className="bg-gray-50 border-b border-border-gray">
@@ -70,20 +89,25 @@ export default function UsersTable() {
                             </td>
                             <td className="px-4 py-3">
                                 <div className="flex justify-end gap-1 items-center">
-                                    {user.uid !== currentUser?.uid && (
+                                    {user.uid !== currentUser?.uid ? (
                                         <>
                                             <button
-                                                onClick={() => handleToggleRole(user.uid, user.role)}
+                                                onClick={() => handleMessageUser(user.uid)}
                                                 className="text-primary cursor-pointer underline hover:no-underline"
                                             >
-                                                {user.role === "manager" ? "Demote" : "Promote"}
+                                                Message
                                             </button>
                                             <span className="text-subtle-text"> | </span>
+                                            <Link
+                                                to={`/manager/users/${user.uid}`}
+                                                className="text-primary cursor-pointer underline hover:no-underline"
+                                            >
+                                                View
+                                            </Link>
                                         </>
+                                    ) : (
+                                        <span className="text-subtle-text italic text-sm">—</span>
                                     )}
-                                    <Link to={`/manager/users/${user.uid}`} className="text-primary cursor-pointer underline hover:no-underline">
-                                        View
-                                    </Link>
                                 </div>
                             </td>
                         </tr>

@@ -1,6 +1,6 @@
-import ProfileForm from "../../components/ui/ProfileForm.jsx";
+import ProfileForm from "@/components/ui/ProfileForm";
 
-const EmployeeProfile = () => {
+const UserProfile = () => {
 
     return (
         <>
@@ -15,4 +15,4 @@ const EmployeeProfile = () => {
     );
 };
 
-export default EmployeeProfile;
+export default UserProfile;

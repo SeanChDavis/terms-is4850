@@ -2,7 +2,7 @@ import {useState} from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import {Outlet} from 'react-router-dom';
-import {useAuth} from "../../context/AuthContext.jsx";
+import {useAuth} from "@/context/AuthContext.jsx";
 
 const MainLayout = () => {
     const {user} = useAuth();

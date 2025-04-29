@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { useAuth } from "../../context/AuthContext";
-import { db } from "../../firebase/firebase-config.js";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
+import { db } from "@/firebase/firebase-config";
 
 const Profile = () => {
     const { user } = useAuth();
@@ -12,26 +12,35 @@ const Profile = () => {
         display_name: ""
     });
     const [loading, setLoading] = useState(true);
+    const [loadingUserData, setLoadingUserData] = useState(true);
+    const [savingProfile, setSavingProfile] = useState(false);
+
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState("");
 
     useEffect(() => {
         const loadUserData = async () => {
-            const docRef = doc(db, "users", user.uid);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                setForm({
-                    first_name: data.first_name || "",
-                    last_name: data.last_name || "",
-                    display_name: data.display_name || ""
-                });
+            try {
+                const docRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setForm({
+                        first_name: data.first_name || "",
+                        last_name: data.last_name || "",
+                        display_name: data.display_name || ""
+                    });
+                }
+            } catch (err) {
+                console.error("Error loading user data:", err);
+            } finally {
+                setLoadingUserData(false);
             }
-            setLoading(false);
         };
 
         loadUserData().catch(console.error);
     }, [user.uid]);
+
 
     // Clear success message after submission
     useEffect(() => {
@@ -47,7 +56,7 @@ const Profile = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        setSavingProfile(true);
         setError("");
         setSuccess(false);
 
@@ -59,10 +68,11 @@ const Profile = () => {
             console.error("Error submitting:", err);
             setError("Something went wrong. Please try again.");
         } finally {
-            setLoading(false);
+            setSavingProfile(false);
         }
-
     };
+
+    if (loadingUserData) return <div className="text-sm text-subtle-text">Loading...</div>;
 
     return (
         <>
@@ -116,10 +126,10 @@ const Profile = () => {
                         </div>
                         <button
                             type="submit"
-                            disabled={loading}
+                            disabled={savingProfile}
                             className="mt-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         >
-                            {loading ? "Updating..." : "Update Profile"}
+                            {savingProfile ? "Saving..." : "Update Profile"}
                         </button>
                     </form>
                 </div>
