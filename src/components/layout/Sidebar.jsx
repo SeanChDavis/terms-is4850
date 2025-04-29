@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
     const { user } = useAuth();
@@ -14,7 +14,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         { name: 'Announcements', path: 'announcements' },
         ...(basePath === '/manager'
             ? [
-                { name: 'System Tools', path: 'tools' },
+                { name: 'Users', path: 'users' },
+                { name: 'Tools', path: 'tools' },
             ]
             : []),
     ];

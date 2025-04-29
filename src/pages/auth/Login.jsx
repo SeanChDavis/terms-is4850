@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { login, signInWithGoogle } from "../../firebase/auth";
-import { useToast } from '../../context/ToastContext.jsx';
-import { createUserDocument, getUserDocument } from '../../firebase/firestore';
+import { login, signInWithGoogle } from "@/firebase/auth";
+import { useToast } from '@/context/ToastContext.jsx';
+import {createUserDocument, getUserDocument} from '@/firebase/firestore';
 import { useNavigate } from "react-router-dom";
-import SiteLogo from "../../components/ui/SiteLogo.jsx";
-import { auth } from "../../firebase/firebase-config.js";
-import GoogleAuthButton from "../../components/ui/GoogleAuthButton Style.jsx";
+import SiteLogo from "@/components/ui/SiteLogo";
+import {auth} from "@/firebase/firebase-config";
 
 const Login = () => {
     const { addToast } = useToast();
@@ -25,26 +24,29 @@ const Login = () => {
             let userDoc = await getUserDocument(uid);
 
             if (!userDoc) {
-                // No document - create one
-                userDoc = { email, role: 'employee' };
+                // No document at all — fallback (edge case)
+                userDoc = {email, role: 'employee'};
                 await createUserDocument(uid, userDoc);
             } else if (!userDoc.role) {
-                // Has doc but no role - update it
+                // Has a user doc but no role field
                 userDoc.role = 'employee';
-                await createUserDocument(uid, userDoc);
+                await createUserDocument(uid, userDoc); // Overwrites safely
             }
-
-            addToast({
+            addToast({  // Add this toast
                 type: 'success',
                 message: 'Logged in successfully!',
                 duration: 3000
             });
 
-            // Immediate redirect after successful login
-            navigate(userDoc.role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
+            // Redirect based on role
+            if (userDoc.role === 'manager') {
+                navigate('/manager/dashboard');
+            } else {
+                navigate('/employee/dashboard');
+            }
 
         } catch (err) {
-            addToast({
+            addToast({  // Add this toast
                 type: 'error',
                 message: err.message,
                 duration: 5000
@@ -61,41 +63,36 @@ const Login = () => {
             const userDoc = await getUserDocument(uid);
 
             if (!userDoc) {
-                await auth.signOut();
-                addToast({
-                    type: 'error',
-                    message: 'Account not found. Please register first.',
-                    duration: 5000
-                });
+                // User doesn't exist in our system
+                await auth.signOut(); // Sign them out immediately
+                setError('Account not found. Please register first.');
                 return;
             }
-
-            addToast({
+            addToast({  // Add this toast
                 type: 'success',
                 message: 'Logged in with Google successfully!',
                 duration: 3000
             });
 
-            // Immediate redirect after successful login
+            // Redirect based on role
             navigate(userDoc.role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
         } catch (err) {
-            const errorMessage = err.code === 'auth/account-exists-with-different-credential'
-                ? 'An account already exists with this email. Please log in with your email/password.'
-                : err.message;
-
-            addToast({
-                type: 'error',
-                message: errorMessage,
-                duration: 5000
-            });
-            setError(errorMessage);
+            // Handle specific Google auth errors
+            if (err.code === 'auth/account-exists-with-different-credential') {
+                setError('An account already exists with this email. Please log in with your email/password.');
+            } else {
+                setError(err.message);
+            }
         }
     };
+
 
     return (
         <div className="min-h-screen bg-primary flex items-center justify-center p-4">
             <form onSubmit={handleLogin} className="space-y-4 bg-white p-8 rounded shadow-md w-full max-w-md">
-                <SiteLogo variant="color" className="mb-6" />
+
+               <SiteLogo variant="color" className={`mb-6`} />
+
                 <h2 className="text-xl font-bold mb-4">Log Into Your Account</h2>
 
                 <label className="block mb-1 font-medium">Email</label>
@@ -125,19 +122,10 @@ const Login = () => {
                     Log In
                 </button>
 
-                <a
-                    href="/reset-password"
-                    className="text-sm text-primary hover:underline cursor-pointer"
-                >
-                    Forgot password?
-                </a>
-
-                <div className="mt-4">
-                    <GoogleAuthButton
-                        onClick={handleGoogleLogin}
-                        label="Sign in with Google"
-                    />
-                </div>
+                <p className="text-sm text-gray-600">
+                    Don't have an account? <a href="/register" className="text-primary hover:underline">Register</a>
+                </p>
+                <button onClick={handleGoogleLogin}>Sign in with Google</button>
             </form>
         </div>
     );

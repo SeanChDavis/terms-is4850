@@ -10,11 +10,11 @@ import {
     doc
 } from "firebase/firestore";
 import {useEffect, useState} from "react";
-import {db} from "@/firebase/firebase-config.js";
-import {useAuth} from "../../context/AuthContext";
-import {formatDisplayDate, formatTime} from "../../utils/formatters";
+import {db} from "@/firebase/firebase-config";
+import {useAuth} from "@/context/AuthContext";
+import {formatDisplayDate, formatTime} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
-import ViewSchedule from "../../components/ui/ViewSchedule.jsx";
+import ViewSchedule from "@/components/ui/ViewSchedule";
 
 const EmployeeSchedule = () => {
     const [requests, setRequests] = useState([]);
@@ -29,7 +29,9 @@ const EmployeeSchedule = () => {
     const [endTime, setEndTime] = useState("");
     const [details, setDetails] = useState("");
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
+
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState("");
 
@@ -50,6 +52,8 @@ const EmployeeSchedule = () => {
             }));
             setRequests(results);
         });
+
+        setLoading(false);
 
         return () => unsubscribe();
     }, [user]);
@@ -75,7 +79,7 @@ const EmployeeSchedule = () => {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        setLoadingSubmit(true);
         setError("");
         setSuccess(false);
 
@@ -91,13 +95,13 @@ const EmployeeSchedule = () => {
 
             if (selectedDay < tomorrow) {
                 setError("Requests must begin on a future date.");
-                setLoading(false);
+                setLoadingSubmit(false);
                 return;
             }
 
             if (requestType === "multi" && new Date(endDate) < new Date(startDate)) {
                 setError("End date must be after start date.");
-                setLoading(false);
+                setLoadingSubmit(false);
                 return;
             }
 
@@ -105,7 +109,7 @@ const EmployeeSchedule = () => {
 
                 if (!startDate || !endDate || !startTime || !endTime) {
                     setError("All date and time fields are required for custom requests.");
-                    setLoading(false);
+                    setLoadingSubmit(false);
                     return;
                 }
 
@@ -114,7 +118,7 @@ const EmployeeSchedule = () => {
 
                 if (end <= start) {
                     setError("End time must be after start time.");
-                    setLoading(false);
+                    setLoadingSubmit(false);
                     return;
                 }
             }
@@ -151,7 +155,7 @@ const EmployeeSchedule = () => {
             console.error("Error submitting request:", err);
             setError("Something went wrong. Please try again.");
         } finally {
-            setLoading(false);
+            setLoadingSubmit(false);
         }
     };
 
@@ -174,6 +178,8 @@ const EmployeeSchedule = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentRequests = requests.slice(startIndex, startIndex + itemsPerPage);
 
+    if (loading) return <div className="text-sm text-subtle-text">Loading...</div>;
+
     return (
         <>
             <div className={"max-w-xl pb-4 mb-8"}>
@@ -182,7 +188,7 @@ const EmployeeSchedule = () => {
                     schedule.</p>
             </div>
 
-            <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
                 <div>
 
                     {/* New Time-Off Request Form */}

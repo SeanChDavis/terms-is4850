@@ -1,19 +1,19 @@
 import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signUp, signInWithGoogle } from '../../firebase/auth';
-import { useToast } from '../../context/ToastContext.jsx';
-import {createUserDocument, getUserDocument} from '../../firebase/firestore';
-import SiteLogo from "../../components/ui/SiteLogo.jsx";
-import {auth} from "../../firebase/firebase-config.js";
-import GoogleAuthButton from "../../components/ui/GoogleAuthButton Style.jsx";
+import { signUp, signInWithGoogle } from '@/firebase/auth';
+import { useToast } from '@/context/ToastContext';
+import {createUserDocument, getUserDocument} from '@/firebase/firestore';
+import SiteLogo from "@/components/ui/SiteLogo";
+import {auth} from "@/firebase/firebase-config";
 
 const Register = () => {
     const { addToast } = useToast();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('employee');
     const [error, setError] = useState('');
-    const { user, role } = useAuth();
+    // const { user, role } = useAuth();
 
     useEffect(() => {
         if (user) {
