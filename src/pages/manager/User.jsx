@@ -153,6 +153,19 @@ export default function ManagerUserView() {
                                 <>
                                     <p className="font-semibold mb-2">Actions:</p>
                                     <div className="flex flex-col sm:flex-row gap-2">
+                                        {user.role === 'employee' && !user.managerApproved && (
+                                            <button
+                                                onClick={async () => {
+                                                    await updateDoc(doc(db, "users", user.uid), {
+                                                        managerApproved: true
+                                                    });
+                                                    setUser(prev => ({ ...prev, managerApproved: true }));
+                                                }}
+                                                className="text-sm px-4 py-2 bg-amber-600 text-white font-semibold rounded cursor-pointer hover:bg-amber-700"
+                                            >
+                                                Approve User
+                                            </button>
+                                        )}
                                         <button
                                             onClick={toggleRole}
                                             className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark"

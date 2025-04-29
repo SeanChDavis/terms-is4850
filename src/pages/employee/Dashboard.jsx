@@ -112,7 +112,7 @@ export default function EmployeeDashboard() {
                         </div>
                     </div>
 
-                    {/* Quick Stats */}
+                    {/* Quick Links */}
                     <div className={"my-12"}>
                         <div className="max-w-xl mb-4">
                             <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="quick-links" /></h2>

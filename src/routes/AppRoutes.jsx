@@ -6,6 +6,7 @@ import RoleProtectedRoute from '@/components/auth/RoleProtectedRoute';
 import Login from '@/pages/auth/Login';
 import Register from '@/pages/auth/Register';
 import ResetPassword from '@/pages/auth/ResetPassword';
+import PendingApproval from "@/pages/auth/PendingApproval.jsx";
 
 {/* Employee Pages */}
 import EmployeeDashboard from '@/pages/employee/Dashboard';
@@ -34,7 +35,7 @@ const AppRoutes = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/help" element={<Help />} />
+            <Route path="/pending-approval" element={<PendingApproval />} />
 
             {/* Protected Employee Routes */}
             <Route
@@ -73,6 +74,9 @@ const AppRoutes = () => {
                 <Route path="announcements" element={<ManagerAnnouncements />} />
                 <Route path="tools" element={<div>Manager System Tools Page</div>} />
             </Route>
+
+            {/* Shared Routes */}
+            <Route path="/help" element={<Help />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/login" />} />

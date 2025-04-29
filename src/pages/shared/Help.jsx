@@ -91,7 +91,10 @@ export default function Help() {
                                 <h3 className={"font-bold mb-2"}>Managers:</h3>
                                 <ul className={"list-disc pl-4 mb-3 pt-1"}>
                                     <li className={"mb-1"}>
-                                        Pending Time-Off Requests with a link to the Schedule page
+                                        Users Pending Approval count with a link to the Users page
+                                    </li>
+                                    <li className={"mb-1"}>
+                                        Pending Time-Off Requests count with a link to the Schedule page
                                     </li>
                                     <li className={"mb-1"}>
                                         Team Members count with a link to the Users page

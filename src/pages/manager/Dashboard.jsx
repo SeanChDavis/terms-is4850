@@ -14,6 +14,7 @@ export default function ManagerDashboard() {
     const [pendingCount, setPendingCount] = useState(0);
     const [teamMembersCount, setTeamMembersCount] = useState(0);
     const [ongoingThreadsCount, setOngoingThreadsCount] = useState(0);
+    const [unapprovedUsersCount, setUnapprovedUsersCount] = useState(0);
 
     useEffect(() => {
         if (!userData?.uid) return;
@@ -43,6 +44,11 @@ export default function ManagerDashboard() {
                 const usersQ = query(collection(db, "users"));
                 const usersSnap = await getDocs(usersQ);
                 setTeamMembersCount(usersSnap.size);
+
+                const unapprovedQ = query(collection(db, "users"), where("managerApproved", "==", false));
+                const unapprovedSnap = await getDocs(unapprovedQ);
+                setUnapprovedUsersCount(unapprovedSnap.size);
+
                 setStatsLoading(false);
             } catch (err) {
                 console.error("Failed to fetch dashboard data:", err);
@@ -99,7 +105,7 @@ export default function ManagerDashboard() {
                         </div>
                     </div>
 
-                    {/* Quick Stats */}
+                    {/* Quick Links */}
                     <div className={"my-12"}>
                         <div className="max-w-xl mb-4">
                             <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="quick-links" /></h2>
@@ -111,6 +117,18 @@ export default function ManagerDashboard() {
                             <div className="text-sm text-subtle-text italic py-6">Loading...</div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {unapprovedUsersCount > 0 && (
+                                    <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center bg-yellow-50">
+                                        <h4 className="text-yellow-800 font-bold text-sm mb-1">Users Pending Approval</h4>
+                                        <p className="text-2xl font-bold text-yellow-900">{unapprovedUsersCount}</p>
+                                        <NavLink
+                                            to="/manager/users"
+                                            className="block max-w-48 mx-auto mt-3 rounded-md bg-yellow-600 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-yellow-700"
+                                        >
+                                            Review Users
+                                        </NavLink>
+                                    </div>
+                                )}
                                 <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center">
                                     <h4 className="text-subtle-text font-bold text-sm mb-1">Pending Time-Off Requests</h4>
                                     <p className="text-2xl font-bold">{pendingCount}</p>
