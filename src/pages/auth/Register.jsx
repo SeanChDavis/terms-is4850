@@ -1,18 +1,19 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signUp, signInWithGoogle } from '@/firebase/auth';
 import { useToast } from '@/context/ToastContext';
 import {createUserDocument, getUserDocument} from '@/firebase/firestore';
 import SiteLogo from "@/components/ui/SiteLogo";
 import {auth} from "@/firebase/firebase-config";
+import GoogleAuthButton from "@/components/ui/GoogleAuthButton.jsx";
 
 const Register = () => {
     const { addToast } = useToast();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('employee'); // Hardcoded toggle for now
     const [error, setError] = useState('');
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -22,21 +23,29 @@ const Register = () => {
             const userCredential = await signUp(email, password);
             const uid = userCredential.user.uid;
 
-            // Save to Firestore
+
+            // Save to Firestore and new field
             await createUserDocument(uid, {
                 email,
-                role,
+                role: 'employee',
+                managerApproved: false,
+            });
+
+            addToast({  // Add this toast
+                type: 'success',
+                message: 'Registered successfully!',
+                duration: 3000
             });
 
             // Redirect
-            navigate(role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
+            navigate('/employee/dashboard');
         } catch (err) {
+            const errorMsg = 'This account is already registered. Please log in instead.';
             addToast({  // Add this toast
                 type: 'error',
-                message: err.message,
+                message: errorMsg,
                 duration: 5000
             });
-            setError(err.message);
         }
     };
 
@@ -61,7 +70,8 @@ const Register = () => {
 
             await createUserDocument(uid, {
                 email,
-                role: 'employee', // Default role for Google signups
+                role: 'employee', // Default all new users to employee
+                managerApproved: false,
             });
 
             addToast({  // Add this toast
@@ -102,19 +112,6 @@ const Register = () => {
                     required
                 />
 
-                <label className="block mb-1 font-medium">Select Role</label>
-                <p className="text-sm text-gray-600 mb-2">
-                    This is for dev purposes. In the final app, the role will be known by auth context and controlled by admin settings.
-                </p>
-                <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="w-full mb-4 p-2 border-2 border-border-gray rounded"
-                >
-                    <option value="employee">Employee</option>
-                    <option value="manager">Manager</option>
-                </select>
-
                 {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
 
                 <button
@@ -131,7 +128,12 @@ const Register = () => {
                     </a>
                 </p>
 
-                <button type="button" onClick={handleGoogleRegister}>Register with Google</button>
+                <div className="mt-4">
+                    <GoogleAuthButton
+                        onClick={handleGoogleRegister}
+                        label={ "Sign up with Google"}
+                    />
+                </div>
 
             </form>
         </div>

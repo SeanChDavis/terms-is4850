@@ -5,6 +5,7 @@ import RoleProtectedRoute from '@/components/auth/RoleProtectedRoute';
 {/* Auth Pages */}
 import Login from '@/pages/auth/Login';
 import Register from '@/pages/auth/Register';
+import ResetPassword from '@/pages/auth/ResetPassword';
 
 {/* Employee Pages */}
 import EmployeeDashboard from '@/pages/employee/Dashboard';
@@ -32,6 +33,7 @@ const AppRoutes = () => {
             {/* Public Auth Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/help" element={<Help />} />
 
             {/* Protected Employee Routes */}
