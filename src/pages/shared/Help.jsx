@@ -14,12 +14,12 @@ export default function Help() {
     return (
         <div className="p-6 max-w-3xl mx-auto text-gray-800">
 
-            <SiteLogo variant="color" className="ml-1 mb-6" />
-            <h1 className="text-xl font-bold mb-6">TERMS Help <span className={"text-sm"}>&</span> System Documentation</h1>
+            <div className="flex flex-col md:flex-row items-center md:justify-between mb-16">
+                <SiteLogo variant="color" className="ml-1" />
+                <h1 className="text-xl text-center md:text-right font-bold mt-4 md:mt-0">Help <span className={"text-sm"}>&</span> System Documentation</h1>
+            </div>
 
-            <hr className="my-8 border-gray-300" />
-
-            <section id="manager-dashboard" className="mb-8">
+            <section id="manager-dashboard" className="my-8">
                 <h2 className="text-xl font-semibold mb-2 flex items-center">
                     Manager Dashboard
                     <a
@@ -33,9 +33,9 @@ export default function Help() {
                 <p>View your account details, key system updates, and access to system tools.</p>
             </section>
 
-            <hr className="my-8 border-gray-300" />
+            <hr className="border-gray-300" />
 
-            <section id="manager-quick-links" className="mb-8">
+            <section id="manager-quick-links" className="my-8">
                 <h2 className="text-xl font-semibold mb-2 flex items-center">
                     Manager Quick Links
                     <a
@@ -49,10 +49,10 @@ export default function Help() {
                 <p>Quickly access important sections of the system, such as managing requests and viewing team members.</p>
             </section>
 
-            <hr className="my-8 border-gray-300" />
+            <hr className="border-gray-300" />
 
             {/* Time sensitive announcements */}
-            <section id="time-sensitive-announcements" className="mb-8">
+            <section id="time-sensitive-announcements" className="my-8">
                 <h2 className="text-xl font-semibold mb-2 flex items-center">
                     Time Sensitive Announcements
                     <a
