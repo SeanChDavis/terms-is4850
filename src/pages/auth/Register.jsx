@@ -110,8 +110,8 @@ const Register = () => {
                     This is for dev purposes. In the final app, the role will be known by auth context and controlled by admin settings.
                 </p>
                 <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
+                    value={userRole}
+                    onChange={(e) => setUserRole(e.target.value)}
                     className="w-full mb-4 p-2 border-2 border-border-gray rounded"
                 >
                     <option value="employee">Employee</option>
