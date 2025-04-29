@@ -12,9 +12,7 @@ const Register = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [userRole, setUserRole] = useState('employee');
     const [error, setError] = useState('');
-    // const { user, role } = useAuth();
 
 
     const handleSubmit = async (e) => {
@@ -25,21 +23,29 @@ const Register = () => {
             const userCredential = await signUp(email, password);
             const uid = userCredential.user.uid;
 
-            // Save to Firestore
+
+            // Save to Firestore and new field
             await createUserDocument(uid, {
                 email,
-                    role: userRole,
+                role: 'employee',
+                registerFlag: "False"
+            });
+
+            addToast({  // Add this toast
+                type: 'success',
+                message: 'Registered successfully!',
+                duration: 3000
             });
 
             // Redirect
-            navigate(userRole === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
+            navigate('/employee/dashboard');
         } catch (err) {
+            const errorMsg = 'This account is already registered. Please log in instead.';
             addToast({  // Add this toast
                 type: 'error',
-                message: err.message,
+                message: errorMsg,
                 duration: 5000
             });
-            setError(err.message);
         }
     };
 
@@ -104,19 +110,6 @@ const Register = () => {
                     className="w-full mb-4 p-2 border-2 border-border-gray rounded"
                     required
                 />
-
-                {/*<label className="block mb-1 font-medium">Select Role</label>*/}
-                {/*<p className="text-sm text-gray-600 mb-2">*/}
-                {/*    This is for dev purposes. In the final app, the role will be known by auth context and controlled by admin settings.*/}
-                {/*</p>*/}
-                {/*<select*/}
-                {/*    value={userRole}*/}
-                {/*    onChange={(e) => setUserRole(e.target.value)}*/}
-                {/*    className="w-full mb-4 p-2 border-2 border-border-gray rounded"*/}
-                {/*>*/}
-                {/*    <option value="employee">Employee</option>*/}
-                {/*    <option value="manager">Manager</option>*/}
-                {/*</select>*/}
 
                 {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
 
