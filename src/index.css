@@ -31,7 +31,3 @@ a {
     transition: all 0.2s ease;
 }
 
-/* For the Google button hover state */
-button:hover .google-icon {
-    filter: brightness(0.9);
-}
