@@ -121,7 +121,6 @@ const Login = () => {
                 >
                     Log In
                 </button>
-
                 <p className="text-sm text-gray-600">
                     Don't have an account? <a href="/register" className="text-primary hover:underline">Register</a>
                 </p>

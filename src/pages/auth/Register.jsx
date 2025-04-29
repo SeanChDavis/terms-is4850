@@ -5,6 +5,7 @@ import { useToast } from '@/context/ToastContext';
 import {createUserDocument, getUserDocument} from '@/firebase/firestore';
 import SiteLogo from "@/components/ui/SiteLogo";
 import {auth} from "@/firebase/firebase-config";
+import GoogleAuthButton from "@/components/ui/GoogleAuthButton.jsx";
 
 const Register = () => {
     const { addToast } = useToast();
