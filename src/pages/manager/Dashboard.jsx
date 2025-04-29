@@ -5,6 +5,7 @@ import {collection, query, where, getDocs, onSnapshot} from "firebase/firestore"
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { useFilteredAnnouncements } from "@/hooks/useFilteredAnnouncements";
 import { formatDisplayDate } from "@/utils/formatters";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 export default function ManagerDashboard() {
     const { userData, loading } = useCurrentUser();
@@ -55,7 +56,7 @@ export default function ManagerDashboard() {
     return (
         <>
             <div className="max-w-xl mb-4">
-                <h2 className="text-xl font-bold mb-2">Manager Dashboard</h2>
+                <h2 className="text-xl font-bold mb-2">Manager Dashboard <InfoLink anchor="manager-dashboard" /></h2>
                 <p className="text-subtle-text">
                     View your account details, key system updates, and access to system tools.
                 </p>
@@ -63,7 +64,7 @@ export default function ManagerDashboard() {
 
             {/* Body: Loading Guard */}
             {loading ? (
-                <div className="text-sm text-subtle-text italic p-6">Loading dashboard information...</div>
+                <div className="text-sm text-subtle-text italic">Loading...</div>
             ) : (
                 <>
                     {/* User Info */}
@@ -101,7 +102,7 @@ export default function ManagerDashboard() {
                     {/* Quick Stats */}
                     <div className={"my-12"}>
                         <div className="max-w-xl mb-4">
-                            <h2 className={"text-xl font-bold mb-2"}>Quick Links</h2>
+                            <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="manager-quick-links" /></h2>
                             <p className="text-subtle-text">
                                 Quickly access important sections of the system, such as managing requests and viewing team members.
                             </p>
@@ -145,7 +146,7 @@ export default function ManagerDashboard() {
                     </div>
 
                     {/* Time-Sensitive Announcements */}
-                    <h2 className="text-xl font-bold mb-2">Time-Sensitive Announcements</h2>
+                    <h2 className="text-xl font-bold mb-2">Time-Sensitive Announcements <InfoLink anchor="time-sensitive-announcements" /></h2>
                     {announcements.length === 0 ? (
                         <p className="text-subtle-text">There are no current announcements.</p>
                     ) : (

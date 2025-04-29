@@ -23,6 +23,7 @@ import Users from "@/pages/manager/Users";
 
 {/* Shared Pages */}
 import UserProfile from "@/pages/shared/UserProfile";
+import Help from "@/pages/shared/Help.jsx";
 
 const AppRoutes = () => {
     return (
@@ -31,6 +32,7 @@ const AppRoutes = () => {
             {/* Public Auth Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/help" element={<Help />} />
 
             {/* Protected Employee Routes */}
             <Route

@@ -86,7 +86,7 @@ export default function EmployeeDashboard() {
 
             {/* Body: Loading Guard */}
             {loading ? (
-                <div className="text-sm text-subtle-text italic p-6">Loading your dashboard...</div>
+                <div className="text-sm text-subtle-text italic">Loading...</div>
             ) : (
                 <>
                     {/* Account Overview */}
