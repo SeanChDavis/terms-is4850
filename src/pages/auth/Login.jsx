@@ -118,11 +118,11 @@ const Login = () => {
 
                 <button
                     type="submit"
-                    className="mt-2 w-full bg-primary text-white py-2 rounded hover:bg-primary-dark transition cursor-pointer"
+                    className="mt-2 w-full bg-primary text-white py-2 rounded hover:bg-primary-dark transition cursor-pointer "
                 >
                     Log In
                 </button>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 mb-1">
                     Don't have an account? <a href="/register" className="text-primary hover:underline">Register</a>
                 </p>
 
