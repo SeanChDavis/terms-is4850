@@ -3,8 +3,8 @@ import MainLayout from '@/components/layout/MainLayout';
 import RoleProtectedRoute from '@/components/auth/RoleProtectedRoute';
 
 {/* Auth Pages */}
-import Login from '@/pages/auth//Login';
-import Register from '@/pages/auth//Register';
+import Login from '@/pages/auth/Login';
+import Register from '@/pages/auth/Register';
 
 {/* Employee Pages */}
 import EmployeeDashboard from '@/pages/employee/Dashboard';
