@@ -11,11 +11,11 @@ export default function EmployeeMessages() {
                 <h2 className="text-xl font-bold mb-2">
                     Messages
                 </h2>
-                <p className={"text-subtle-text mb-4"}>
-                    View and respond to messages from management.
+                <p className={"text-subtle-text"}>
+                    View and respond to messages from management. Messages can only be initiated by management, but you can reply to any existing conversation.
                 </p>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-y-6 lg:gap-x-6 lg:h-[70vh]">
+            <div className="grid grid-cols-1 lg:divide-x divide-border-gray bg-white rounded-lg border border-border-gray lg:grid-cols-3 gap-y-6 lg:gap-x-6 lg:h-[70vh]">
                 <div className="col-span-1">
                     <Inbox
                         onSelect={setSelectedThread}
@@ -26,8 +26,8 @@ export default function EmployeeMessages() {
                     {selectedThread ? (
                         <ThreadView threadId={selectedThread} />
                     ) : (
-                        <div className={"bg-white rounded-lg border border-border-gray p-4 lg:p-6 h-full"}>
-                            <p className="text-gray-500 text-center my-6">Select a conversation to begin.</p>
+                        <div className={"p-4 lg:p-6 h-full"}>
+                            <p className="text-subtle-text text-center mt-6">Select a conversation to begin.</p>
                         </div>
                     )}
                 </div>

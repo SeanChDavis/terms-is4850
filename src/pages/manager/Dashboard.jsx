@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { db } from "@/firebase/firebase-config";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {collection, query, where, getDocs, onSnapshot} from "firebase/firestore";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { useFilteredAnnouncements } from "@/hooks/useFilteredAnnouncements";
 import { formatDisplayDate } from "@/utils/formatters";
@@ -9,9 +9,25 @@ import { formatDisplayDate } from "@/utils/formatters";
 export default function ManagerDashboard() {
     const { userData, loading } = useCurrentUser();
     const announcements = useFilteredAnnouncements("employee", 10).filter(a => a.expiresAt);
-
+    const [statsLoading, setStatsLoading] = useState(true);
     const [pendingCount, setPendingCount] = useState(0);
     const [teamMembersCount, setTeamMembersCount] = useState(0);
+    const [ongoingThreadsCount, setOngoingThreadsCount] = useState(0);
+
+    useEffect(() => {
+        if (!userData?.uid) return;
+
+        const q = query(
+            collection(db, "threads"),
+            where("participants", "array-contains", userData.uid)
+        );
+
+        const unsub = onSnapshot(q, (snapshot) => {
+            setOngoingThreadsCount(snapshot.size);
+        });
+
+        return () => unsub();
+    }, [userData?.uid]);
 
     useEffect(() => {
         async function loadDashboardCounts() {
@@ -26,8 +42,10 @@ export default function ManagerDashboard() {
                 const usersQ = query(collection(db, "users"));
                 const usersSnap = await getDocs(usersQ);
                 setTeamMembersCount(usersSnap.size);
+                setStatsLoading(false);
             } catch (err) {
                 console.error("Failed to fetch dashboard data:", err);
+                setStatsLoading(false);
             }
         }
 
@@ -88,28 +106,42 @@ export default function ManagerDashboard() {
                                 Quickly access important sections of the system, such as managing requests and viewing team members.
                             </p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center">
-                                <h4 className="font-bold text-md mb-1">Pending Requests</h4>
-                                <p className="text-3xl font-bold">{pendingCount}</p>
-                                <NavLink
-                                    to="/manager/schedule"
-                                    className="block max-w-48 mx-auto mt-3 rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-gray-800"
-                                >
-                                    Manage Requests
-                                </NavLink>
+                        {statsLoading ? (
+                            <div className="text-sm text-subtle-text italic py-6">Loading...</div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center">
+                                    <h4 className="text-subtle-text font-bold text-sm mb-1">Pending Time-Off Requests</h4>
+                                    <p className="text-2xl font-bold">{pendingCount}</p>
+                                    <NavLink
+                                        to="/manager/schedule"
+                                        className="block max-w-48 mx-auto mt-3 rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-gray-800"
+                                    >
+                                        Manage Requests
+                                    </NavLink>
+                                </div>
+                                <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center">
+                                    <h4 className="text-subtle-text font-bold text-sm mb-1">Team Members</h4>
+                                    <p className="text-2xl font-bold">{teamMembersCount}</p>
+                                    <NavLink
+                                        to="/manager/users"
+                                        className="block max-w-48 mx-auto mt-3 rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-gray-800"
+                                    >
+                                        Manage Users
+                                    </NavLink>
+                                </div>
+                                <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center">
+                                    <h4 className="text-subtle-text font-bold text-sm mb-1">Ongoing Conversations</h4>
+                                    <p className="text-2xl font-bold">{ongoingThreadsCount}</p>
+                                    <NavLink
+                                        to="/manager/messages"
+                                        className="block max-w-48 mx-auto mt-3 rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-gray-800"
+                                    >
+                                        View Messages
+                                    </NavLink>
+                                </div>
                             </div>
-                            <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center">
-                                <h4 className="font-bold text-md mb-1">Team Members</h4>
-                                <p className="text-3xl font-bold">{teamMembersCount}</p>
-                                <NavLink
-                                    to="/manager/users"
-                                    className="block max-w-48 mx-auto mt-3 rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-gray-800"
-                                >
-                                    View Users
-                                </NavLink>
-                            </div>
-                        </div>
+                        )}
                     </div>
 
                     {/* Time-Sensitive Announcements */}
@@ -137,8 +169,8 @@ export default function ManagerDashboard() {
                                             className="p-4 text-amber-950 rounded-lg bg-amber-50 h-full flex flex-col"
                                         >
                                             <h3 className="text-lg font-bold mb-2">{a.title}</h3>
-                                            <div className="mb-5 whitespace-pre-line">{a.body}</div>
-                                            <p className="text-sm border-t-1 border-amber-100 pt-3.5 mt-auto">
+                                            <div className="mb-2.5 whitespace-pre-line">{a.body}</div>
+                                            <p className="text-sm border-t-1 border-amber-100 pt-2.5 mt-auto">
                                                 This announcement was posted{" "}
                                                 {formatDisplayDate(a.createdAt, { relative: true })}{". "}
                                                 {isExpiring && `It expires ${formatDisplayDate(a.expiresAt)} (${timeLeft}).`}

@@ -1,24 +1,55 @@
-import { useEffect, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import { NavLink } from "react-router-dom";
 import { db } from "@/firebase/firebase-config";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {collection, query, where, getDocs, orderBy, limit, onSnapshot} from "firebase/firestore";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { useFilteredAnnouncements } from "@/hooks/useFilteredAnnouncements";
 import { formatDisplayDate } from "@/utils/formatters";
 
 export default function EmployeeDashboard() {
     const { userData, loading } = useCurrentUser();
-    const announcements = useFilteredAnnouncements("employee", 10).filter(a => a.expiresAt);
-
+    const rawAnnouncements = useFilteredAnnouncements("employee", 10);
+    const announcements = useMemo(() => {
+        return rawAnnouncements.filter(a => a.expiresAt);
+    }, [rawAnnouncements]);
     const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
-    const [approvedRequestsCount, setApprovedRequestsCount] = useState(0);
+    const [statsLoading, setStatsLoading] = useState(true);
+    const [latestScheduleUrl, setLatestScheduleUrl] = useState(null);
+    const [latestScheduleDate, setLatestScheduleDate] = useState(null);
+
+    useEffect(() => {
+        const q = query(
+            collection(db, "schedules"),
+            where("status", "==", "active"),
+            orderBy("uploadedAt", "desc"),
+            limit(1)
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            if (!snapshot.empty) {
+                const data = snapshot.docs[0].data();
+                // console.log("Fetched latest schedule:", data);
+
+                const maybeUrl = data.fileUrl;
+                const maybeDate = data.uploadedAt?.toDate();
+
+                setLatestScheduleUrl(typeof maybeUrl === "string" && maybeUrl.trim() ? maybeUrl : null);
+                setLatestScheduleDate(maybeDate || null);
+            } else {
+                console.log("No active schedules found.");
+                setLatestScheduleUrl(null);
+                setLatestScheduleDate(null);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     useEffect(() => {
         async function loadEmployeeStats() {
             if (!userData?.uid) return;
 
             try {
-                // Pending Requests for this employee
                 const pendingQ = query(
                     collection(db, "requests"),
                     where("userId", "==", userData.uid),
@@ -27,17 +58,17 @@ export default function EmployeeDashboard() {
                 const pendingSnap = await getDocs(pendingQ);
                 setPendingRequestsCount(pendingSnap.size);
 
-                // Approved Requests for this employee
                 const approvedQ = query(
                     collection(db, "requests"),
                     where("userId", "==", userData.uid),
                     where("status", "==", "approved")
                 );
                 const approvedSnap = await getDocs(approvedQ);
-                setApprovedRequestsCount(approvedSnap.size);
 
+                setStatsLoading(false);
             } catch (err) {
                 console.error("Failed to fetch employee stats:", err);
+                setStatsLoading(false);
             }
         }
 
@@ -88,28 +119,36 @@ export default function EmployeeDashboard() {
                                 Quickly access information about your pending time-off requests and more.
                             </p>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
-                            <div className="rounded-md border-1 border-border-gray p-4 text-center">
-                                <h4 className="font-bold text-md mb-1">Pending Requests</h4>
-                                <p className="text-3xl font-bold">{pendingRequestsCount}</p>
-                                <NavLink
-                                    to="/employee/schedule"
-                                    className="block max-w-48 mx-auto mt-3 rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-gray-800"
-                                >
-                                    View My Requests
-                                </NavLink>
+                        {statsLoading ? (
+                            <div className="text-sm text-subtle-text italic py-6">Loading...</div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {latestScheduleUrl && latestScheduleDate && (
+                                    <div className="rounded-md border-1 border-border-gray p-4 text-center">
+                                        <h4 className="text-subtle-text font-bold text-sm mb-1">Latest Schedule Upload</h4>
+                                        <p className="text-2xl font-bold mb-4">{formatDisplayDate(latestScheduleDate)}</p>
+                                        <a
+                                            href={latestScheduleUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="block max-w-48 mx-auto rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
+                                        >
+                                            View / Download
+                                        </a>
+                                    </div>
+                                )}
+                                <div className="rounded-md border-1 border-border-gray p-4 text-center">
+                                    <h4 className="text-subtle-text font-bold text-sm mb-1">Pending Time-Off Requests</h4>
+                                    <p className="text-2xl font-bold">{pendingRequestsCount}</p>
+                                    <NavLink
+                                        to="/employee/schedule"
+                                        className="block max-w-48 mx-auto mt-3 rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-gray-800"
+                                    >
+                                        {pendingRequestsCount === 0 ? "View Schedule Info" : "View My Requests"}
+                                    </NavLink>
+                                </div>
                             </div>
-                            {/*<div className="rounded-md border-1 border-border-gray p-4 text-center">*/}
-                            {/*    <h4 className="font-bold text-md mb-1">Approved Time Off</h4>*/}
-                            {/*    <p className="text-3xl font-bold">{approvedRequestsCount}</p>*/}
-                            {/*    <NavLink*/}
-                            {/*        to="/employee/schedule"*/}
-                            {/*        className="block max-w-48 mx-auto mt-3 rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-gray-800"*/}
-                            {/*    >*/}
-                            {/*        View Approved Dates*/}
-                            {/*    </NavLink>*/}
-                            {/*</div>*/}
-                        </div>
+                        )}
                     </div>
 
                     {/* Time-Sensitive Announcements */}
@@ -137,8 +176,8 @@ export default function EmployeeDashboard() {
                                             className="p-4 text-amber-950 rounded-lg bg-amber-50 h-full flex flex-col"
                                         >
                                             <h3 className="text-lg font-bold mb-2">{a.title}</h3>
-                                            <div className="mb-5 whitespace-pre-line">{a.body}</div>
-                                            <p className="text-sm border-t-1 border-amber-100 pt-3.5 mt-auto">
+                                            <div className="mb-2.5 whitespace-pre-line">{a.body}</div>
+                                            <p className="text-sm border-t-1 border-amber-100 pt-2.5 mt-auto">
                                                 This announcement was posted{" "}
                                                 {formatDisplayDate(a.createdAt, { relative: true })}{". "}
                                                 {isExpiring && `It expires ${formatDisplayDate(a.expiresAt)} (${timeLeft}).`}

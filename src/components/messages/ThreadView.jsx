@@ -79,21 +79,21 @@ export default function ThreadView({threadId}) {
     }, [messages]);
 
     return (
-        <div className="h-full flex flex-col bg-white rounded-lg border border-border-gray p-4">
+        <div className="h-full flex flex-col p-4">
             {loading ? (
                 <div className="text-sm text-subtle-text italic p-6">
                     Loading conversation...
                 </div>
             ) : (
                 <>
+                    <p className="text-subtle-text text-sm font-semibold text-right mb-2 mr-1">
+                        Your Messages: ↓
+                    </p>
                     <div
                         ref={scrollRef}
                         className="overflow-y-auto mb-4 pr-1"
                         style={{maxHeight: "calc(63vh - 150px)"}}
                     >
-                        <p className="text-subtle-text text-sm font-semibold text-right mb-2">
-                            Your Messages: ↓
-                        </p>
                         {messages.length > 0 ? (
                             messages.map((msg) => (
                                 <MessageBubble key={msg.id} message={msg} isSender={msg.senderId === user.uid}/>

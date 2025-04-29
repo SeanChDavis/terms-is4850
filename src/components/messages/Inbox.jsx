@@ -46,10 +46,14 @@ export default function Inbox({onSelect, selectedThreadId}) {
 
     return (
         <div
-            className="divide-y divide-border-gray bg-white rounded-lg border border-border-gray h-full overflow-y-auto">
+            className="divide-y divide-border-gray h-full overflow-y-auto">
             <h2 className="text-md font-semibold p-4">Inbox</h2>
             {loadingUsers ? (
                 <div className="p-4 text-sm text-subtle-text">Loading...</div>
+            ) : threads.length === 0 ? (
+                <div className="p-4 text-sm text-subtle-text italic text-center">
+                    No conversations yet.
+                </div>
             ) : (
                 threads.map((thread) => {
                     const otherUserId = thread.participants.find((id) => id !== user.uid);
