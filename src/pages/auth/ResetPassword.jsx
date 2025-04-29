@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { sendPasswordResetEmail } from "../../firebase/auth";
+import { sendPasswordResetEmail } from "@/firebase/auth.js";
 import { useToast } from "../../context/ToastContext";
 import SiteLogo from "../../components/ui/SiteLogo.jsx";
 
