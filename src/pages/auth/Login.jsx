@@ -5,6 +5,7 @@ import {createUserDocument, getUserDocument} from '@/firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import SiteLogo from "@/components/ui/SiteLogo";
 import {auth} from "@/firebase/firebase-config";
+import GoogleAuthButton from "@/components/ui/GoogleAuthButton.jsx";
 
 const Login = () => {
     const { addToast } = useToast();
@@ -117,15 +118,26 @@ const Login = () => {
 
                 <button
                     type="submit"
-                    className="mt-2 w-full bg-primary text-white py-2 rounded hover:bg-primary-dark transition cursor-pointer"
+                    className="mt-2 w-full bg-primary text-white py-2 rounded hover:bg-primary-dark transition cursor-pointer "
                 >
                     Log In
                 </button>
-
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 mb-1">
                     Don't have an account? <a href="/register" className="text-primary hover:underline">Register</a>
                 </p>
-                <button onClick={handleGoogleLogin}>Sign in with Google</button>
+
+                <a
+                    href="/reset-password"
+                    className="text-sm text-primary hover:underline cursor-pointer"
+                >
+                    Forgot password?
+                </a>
+                <div className="mt-4">
+                    <GoogleAuthButton
+                        onClick={handleGoogleLogin}
+                        label={ "Sign in with Google"}
+                    />
+                </div>
             </form>
         </div>
     );
