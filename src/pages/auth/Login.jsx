@@ -128,7 +128,7 @@ const Login = () => {
                 <div className="mt-4">
                     <GoogleAuthButton
                         onClick={handleGoogleLogin}
-                        label={ "Sign up with Google"}
+                        label={ "Sign in with Google"}
                     />
                 </div>
             </form>
