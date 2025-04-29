@@ -63,7 +63,7 @@ export default function Help() {
                             </h2>
                             <div className={sectionContentClasses}>
                                 <p className={"mb-0"}>
-                                    The Dashboard is the landing page for both managers and employees, providing quick access to key features and information. It also provides a snapshot of the current (logged in) user's profile. It is the central hub for accessing quick information about <a className={"underline hover:no-underline"} href="#time-off-requests">time-off requests</a>, viewing <a className={"underline hover:no-underline"} href="#time-sensitive-announcements">time-sensitive announcements</a>, and more.
+                                    The Dashboard is the landing page for both managers and employees, providing quick access to relevant features and information. It also provides a snapshot of the current (logged in) user's profile. It is the central hub for accessing quick information about <a className={"underline hover:no-underline"} href="#time-off-requests">time-off requests</a>, viewing <a className={"underline hover:no-underline"} href="#time-sensitive-announcements">time-sensitive announcements</a>, and more. Each element on the dashboard has its own documentation below.
                                 </p>
                             </div>
                         </section>
@@ -72,7 +72,7 @@ export default function Help() {
 
                         <section id="quick-links" className={sectionClasses}>
                             <h2 className={sectionHeadingClasses}>
-                                Quick Links
+                                Dashboard Quick Links
                                 <span
                                     onClick={() => {
                                         copyCurrentUrlWithHash('#quick-links');
@@ -134,7 +134,7 @@ export default function Help() {
                                     Announcements are a way for managers to communicate information to their team members. They can be used to share updates, policy changes, or other relevant information. Announcements can be created to be visible to all team members, or to specific roles within the organization (Employees or Managers).
                                 </p>
                                 <p className={"mb-3"}>
-                                    There are two types of announcements: Time-Sensitive and General. Time-Sensitive announcements are displayed prominently on the dashboard and are meant to be viewed immediately, while General announcements can be viewed on the Announcements page.
+                                    There are two types of announcements: Time-Sensitive and General. <a className={"underline hover:no-underline"} href="#time-sensitive-announcements">Time-Sensitive Announcements</a> are displayed prominently on the dashboard and are meant to be viewed immediately, while General announcements can be viewed on the Announcements page.
                                 </p>
                                 <h3 className={"font-bold mb-2"}>Creating Announcements:</h3>
                                 <ul className={"list-disc pl-4 mb-3 pt-1"}>
@@ -156,7 +156,7 @@ export default function Help() {
 
                         <hr className="border-gray-300" />
 
-                        {/* Time sensitive announcements */}
+                        {/* Time-sensitive announcements */}
                         <section id="time-sensitive-announcements" className={sectionClasses}>
                             <h2 className={sectionHeadingClasses}>
                                 Time-Sensitive Announcements
@@ -189,7 +189,7 @@ export default function Help() {
                         {/* Manage Profile */}
                         <section id="manage-profile" className={sectionClasses}>
                             <h2 className={sectionHeadingClasses}>
-                                Manage Your Profile
+                                Profile Management
                                 <span
                                     onClick={() => {
                                         copyCurrentUrlWithHash('#manage-profile');
@@ -300,7 +300,7 @@ export default function Help() {
                         {/* manage-time-off-requests */}
                         <section id="manage-time-off-requests" className={sectionClasses}>
                             <h2 className={sectionHeadingClasses}>
-                                Manage Time-Off Requests
+                                Managing Time-Off Requests
                                 <span
                                     onClick={() => {
                                         copyCurrentUrlWithHash('#manage-time-off-requests');
@@ -333,7 +333,7 @@ export default function Help() {
                         {/* time-off-summary */}
                         <section id="time-off-summary" className={sectionClasses}>
                             <h2 className={sectionHeadingClasses}>
-                                Time-Off Summary
+                                Using Time-Off Summary
                                 <span
                                     onClick={() => {
                                         copyCurrentUrlWithHash('#time-off-summary');
@@ -466,25 +466,25 @@ export default function Help() {
                                         Managers can click the "Message" link (<a className={"underline hover:no-underline"} href="#messages">#</a>) next to a user to initiate a conversation with them directly from the Users page.
                                     </li>
                                     <li className={"mb-1"}>
-                                        Managers can click the "View" link next to a user to view their dedicated user profile page.
+                                        Managers can click the "View" link next to a user to view their dedicated user details page.
                                     </li>
                                 </ul>
                                 <h3 className={"font-bold mb-2"}>Individual Users:</h3>
                                 <p className={"mb-0"}>
-                                    Each user has a dedicated profile page that provides more detailed information about them, including their role, contact information, any relevant notes, and time-off requests history. See the <a className={"underline hover:no-underline"} href="#user-profile">User Profile</a> section below for more details.
+                                    Each user has a dedicated profile page that provides more detailed information about them, including their role, contact information, any relevant notes, and time-off requests history. See the <a className={"underline hover:no-underline"} href="#user-details">User Details</a> section below for more details.
                                 </p>
                             </div>
                         </section>
 
                         <hr className="border-gray-300" />
 
-                        {/* user-profile */}
-                        <section id="user-profile" className={sectionClasses}>
+                        {/* user-details */}
+                        <section id="user-details" className={sectionClasses}>
                             <h2 className={sectionHeadingClasses}>
-                                User Profile
+                                User Details
                                 <span
                                     onClick={() => {
-                                        copyCurrentUrlWithHash('#user-profile');
+                                        copyCurrentUrlWithHash('#user-details');
                                     }}
                                     className={sectionLinkClasses}
                                     aria-label="Copy link to User Profile"
@@ -495,14 +495,14 @@ export default function Help() {
                             </h2>
                             <div className={sectionContentClasses}>
                                 <p className={"mb-3"}>
-                                    The User Profile page provides detailed information about a specific user, including their role, contact information, and time-off requests history.
+                                    The User Details page provides detailed information about a specific user, including their role, contact information, and time-off requests history.
                                 </p>
                                 <p className={"mb-3"}>
-                                    Managers can take specific actions from the User Profile page, such as promoting or demoting their user role in the system, or sending a message directly to the user.
+                                    Managers can take specific actions from the User Details page, such as promoting or demoting their user role in the system, or sending a message directly to the user.
                                 </p>
                                 <h3 className={"font-bold mb-2"}>Important Detail:</h3>
                                 <p className={"mb-0"}>
-                                    Managers can create Notes for each user, which are private notes that only managers can see on this user's profile. These notes can be used to keep track of important information about the user, such as performance feedback or other relevant details. See the <a className={"underline hover:no-underline"} href="#notes">Notes</a> section below for more details.
+                                    Managers can create Notes for each user, which are private notes that only managers can see on this user's details page. These notes can be used to keep track of important information about the user, such as performance feedback or other relevant details. See the <a className={"underline hover:no-underline"} href="#notes">Notes</a> section below for more details.
                                 </p>
                             </div>
                         </section>

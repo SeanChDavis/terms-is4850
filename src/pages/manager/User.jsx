@@ -120,7 +120,7 @@ export default function ManagerUserView() {
     return (
         <>
             <div className={"max-w-xl mb-8"}>
-                <h2 className="text-xl font-bold mb-2">System User Details <InfoLink anchor="user-profile" /></h2>
+                <h2 className="text-xl font-bold mb-2">System User Details <InfoLink anchor="user-details" /></h2>
                 <p className={"text-subtle-text"}>
                     View information about the user and manage their role.
                 </p>
