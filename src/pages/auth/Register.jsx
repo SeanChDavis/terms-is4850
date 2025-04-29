@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signUp, signInWithGoogle } from '@/firebase/auth';
 import { useToast } from '@/context/ToastContext';
