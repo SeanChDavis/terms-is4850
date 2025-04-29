@@ -12,15 +12,10 @@ const Register = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('employee');
+    const [userRole, setUserRole] = useState('employee');
     const [error, setError] = useState('');
     // const { user, role } = useAuth();
 
-    useEffect(() => {
-        if (user) {
-            navigate(role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
-        }
-    }, [user, role, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,11 +28,11 @@ const Register = () => {
             // Save to Firestore
             await createUserDocument(uid, {
                 email,
-                role,
+                role: userRole,
             });
 
             // Redirect
-            navigate(role === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
+            navigate(userRole === 'manager' ? '/manager/dashboard' : '/employee/dashboard');
         } catch (err) {
             addToast({  // Add this toast
                 type: 'error',
