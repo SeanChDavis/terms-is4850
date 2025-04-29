@@ -28,7 +28,7 @@ const Register = () => {
             // Save to Firestore
             await createUserDocument(uid, {
                 email,
-                role: userRole,
+                    role: userRole,
             });
 
             // Redirect
@@ -105,18 +105,18 @@ const Register = () => {
                     required
                 />
 
-                <label className="block mb-1 font-medium">Select Role</label>
-                <p className="text-sm text-gray-600 mb-2">
-                    This is for dev purposes. In the final app, the role will be known by auth context and controlled by admin settings.
-                </p>
-                <select
-                    value={userRole}
-                    onChange={(e) => setUserRole(e.target.value)}
-                    className="w-full mb-4 p-2 border-2 border-border-gray rounded"
-                >
-                    <option value="employee">Employee</option>
-                    <option value="manager">Manager</option>
-                </select>
+                {/*<label className="block mb-1 font-medium">Select Role</label>*/}
+                {/*<p className="text-sm text-gray-600 mb-2">*/}
+                {/*    This is for dev purposes. In the final app, the role will be known by auth context and controlled by admin settings.*/}
+                {/*</p>*/}
+                {/*<select*/}
+                {/*    value={userRole}*/}
+                {/*    onChange={(e) => setUserRole(e.target.value)}*/}
+                {/*    className="w-full mb-4 p-2 border-2 border-border-gray rounded"*/}
+                {/*>*/}
+                {/*    <option value="employee">Employee</option>*/}
+                {/*    <option value="manager">Manager</option>*/}
+                {/*</select>*/}
 
                 {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
 

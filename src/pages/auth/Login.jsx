@@ -125,6 +125,13 @@ const Login = () => {
                 <p className="text-sm text-gray-600">
                     Don't have an account? <a href="/register" className="text-primary hover:underline">Register</a>
                 </p>
+
+                <a
+                    href="/reset-password"
+                    className="text-sm text-primary hover:underline cursor-pointer"
+                >
+                    Forgot password?
+                </a>
                 <div className="mt-4">
                     <GoogleAuthButton
                         onClick={handleGoogleLogin}
