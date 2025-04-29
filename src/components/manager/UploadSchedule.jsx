@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { storage, db } from "@/firebase/firebase-config";
 import { useAuth } from "@/context/AuthContext";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 const ManagerUploadSchedule = () => {
     const { user } = useAuth();
@@ -77,7 +78,7 @@ const ManagerUploadSchedule = () => {
         <>
             <div className="divide-y divide-border-gray border border-border-gray rounded-md bg-white">
                 <div className="px-4 py-5 sm:px-6">
-                    <h2 className="text-lg font-semibold mb-2">Upload Schedule</h2>
+                    <h2 className="text-lg font-semibold mb-2">Upload Schedule <InfoLink anchor="schedule-visibility" /></h2>
                     <p className="text-sm text-subtle-text">
                         Upload a PDF or image of the most recent work schedule for employees to view and download.
                     </p>

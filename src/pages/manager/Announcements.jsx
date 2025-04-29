@@ -14,6 +14,7 @@ import {
 import useCurrentUser from "@/hooks/useCurrentUser";
 import {formatDisplayDate} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/react';
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 export default function ManagerAnnouncements() {
     const [announcements, setAnnouncements] = useState([]);
@@ -158,7 +159,7 @@ export default function ManagerAnnouncements() {
     return (
         <>
             <div className={"max-w-xl mb-8"}>
-                <h2 className={`text-xl font-bold mb-2`}>System Announcements</h2>
+                <h2 className={`text-xl font-bold mb-2`}>System Announcements <InfoLink anchor="announcements" /></h2>
                 <p className={"text-subtle-text"}>
                     Use this page to create announcements that will be visible to all employees. You can post updates,
                     important notices, or general information that needs to be communicated across the organization.
@@ -174,7 +175,7 @@ export default function ManagerAnnouncements() {
                     <div
                         className={"max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
                         <div className="px-4 py-5 sm:px-6">
-                            <h2 className="text-base/7 font-semibold">Create New Announcement</h2>
+                            <h2 className="text-base/7 font-semibold">Create New Announcement <InfoLink anchor="announcements" /></h2>
                             <p className="mt-1 text-sm/6 text-subtle-text">
                                 Fill out the form below to post a new announcement.
                             </p>
@@ -254,7 +255,7 @@ export default function ManagerAnnouncements() {
 
                     {/* Announcement List */}
                     <div className="mt-10">
-                        <h2 className="text-xl font-semibold mb-0">Past Announcements</h2>
+                        <h2 className="text-xl font-semibold mb-0">Past Announcements <InfoLink anchor="announcements" /></h2>
                         <div className="flex justify-between items-center mb-4">
                             <button
                                 onClick={() => setShowMineOnly(prev => !prev)}

@@ -27,10 +27,6 @@ const MainLayout = () => {
 
                 {/* Main content */}
                 <main className="flex-1 overflow-y-auto bg-white p-6 md:p-8 xl:ps-10">
-                    {/* User info - TODO: Bring back once we have a cleaner display name */}
-                    {/*<div className="text-right text-sm text-subtle-text border-b-1 border-light-gray-alt pb-3 mb-5">*/}
-                    {/*    <p className={`mb-0`}>Logged in as <span className="font-semibold">{user?.email}</span></p>*/}
-                    {/*</div>*/}
                     <Outlet/>
                 </main>
             </div>

@@ -1,5 +1,6 @@
 import { useFilteredAnnouncements } from "@/hooks/useFilteredAnnouncements";
 import { formatDisplayDate } from "@/utils/formatters";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 export default function EmployeeAnnouncements() {
     const announcements = useFilteredAnnouncements("employee", 10);
@@ -13,7 +14,7 @@ export default function EmployeeAnnouncements() {
     return (
         <>
             <div className="max-w-3xl pb-4 mb-8">
-                <h2 className="text-xl font-bold mb-2">System Announcements</h2>
+                <h2 className="text-xl font-bold mb-2">System Announcements <InfoLink anchor="announcements" /></h2>
                 <p className="text-subtle-text">
                     Here you can find important announcements and updates from management.
                     Check back regularly for new information.
@@ -26,7 +27,7 @@ export default function EmployeeAnnouncements() {
                 </div>
             ) : (
                 <div>
-                    <h2 className="text-xl font-bold mb-2">All Announcements</h2>
+                    <h2 className="text-xl font-bold mb-2">All Announcements <InfoLink anchor="announcements" /></h2>
                     {sortedAnnouncements.length === 0 ? (
                         <p className="text-gray-500">There are no current announcements.</p>
                     ) : (

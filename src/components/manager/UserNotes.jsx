@@ -15,6 +15,7 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/re
 import { useAuth } from "@/context/AuthContext";
 import { formatDisplayDate } from "@/utils/formatters";
 import { getDocs } from "firebase/firestore";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 export default function UserNotes({ userId }) {
     const { user } = useAuth();
@@ -113,7 +114,7 @@ export default function UserNotes({ userId }) {
     return (
         <div className={"mt-12 mb-10"}>
             <div className="max-w-lg mb-4">
-                <h2 className="text-xl font-bold mb-2">Add User Note</h2>
+                <h2 className="text-xl font-bold mb-2">Add User Note <InfoLink anchor="notes" /></h2>
                 <p className="text-subtle-text">
                     Document important information related to this user. Notes are only visible to managers.
                 </p>
@@ -122,7 +123,7 @@ export default function UserNotes({ userId }) {
             {/* Add Note Form */}
             <div className="max-w-md divide-y divide-border-gray overflow-hidden border border-border-gray rounded-md bg-white">
                 <div className="px-4 py-5 sm:px-6">
-                    <h2 className="text-base font-semibold">Create New Note</h2>
+                    <h2 className="text-base font-semibold">Create New Note <InfoLink anchor="notes" /></h2>
                     <p className="mt-1 text-sm text-subtle-text">
                         Add a new internal note regarding this user.
                     </p>
@@ -156,7 +157,7 @@ export default function UserNotes({ userId }) {
 
             {/* Notes List */}
             <div className="mt-10">
-                <h2 className="text-xl font-semibold mb-0">Previous Notes</h2>
+                <h2 className="text-xl font-semibold mb-0">Past Notes <InfoLink anchor="notes" /></h2>
                 {filteredNotes.length === 0 ? (
                     <p className="mt-3 text-sm italic text-subtle-text">
                         {showMineOnly

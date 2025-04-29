@@ -15,6 +15,7 @@ import {useAuth} from "@/context/AuthContext";
 import {formatDisplayDate, formatTime} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 import ViewSchedule from "@/components/ui/ViewSchedule";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 const EmployeeSchedule = () => {
     const [requests, setRequests] = useState([]);
@@ -183,7 +184,7 @@ const EmployeeSchedule = () => {
     return (
         <>
             <div className={"max-w-xl pb-4 mb-8"}>
-                <h2 className={`text-xl font-bold mb-2`}>Work Schedule Information</h2>
+                <h2 className={`text-xl font-bold mb-2`}>Work Schedule Information <InfoLink anchor="work-schedule-information" /></h2>
                 <p className={"text-subtle-text"}>View, manage, or submit requests to be excluded from the work
                     schedule.</p>
             </div>
@@ -195,7 +196,7 @@ const EmployeeSchedule = () => {
                     <div
                         className={"divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
                         <div className="px-4 py-5 sm:px-6">
-                            <h2 className="text-base/7 font-semibold">Create New Time-Off Request</h2>
+                            <h2 className="text-base/7 font-semibold">Create New Time-Off Request <InfoLink anchor="time-off-requests" /></h2>
                             <p className="mt-1 text-sm/6 text-subtle-text">
                                 Request off a single day, multiple days, or specific date/time range. All requests are subject to
                                 management approval.
@@ -324,7 +325,7 @@ const EmployeeSchedule = () => {
 
             {/* Existing Requests table */}
             <div className="mt-10">
-                <h2 className="text-xl font-bold mb-2">Your Requests</h2>
+                <h2 className="text-xl font-bold mb-2">Your Requests <InfoLink anchor="time-off-requests" /></h2>
                 <p className={"text-subtle-text"}>
                     You may delete <span className={"font-semibold"}>pending</span> requests at any time.
                 </p>
