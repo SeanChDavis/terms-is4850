@@ -5,6 +5,7 @@ import {createUserDocument, getUserDocument} from '@/firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import SiteLogo from "@/components/ui/SiteLogo";
 import {auth} from "@/firebase/firebase-config";
+import GoogleAuthButton from "@/components/ui/GoogleAuthButton.jsx";
 
 const Login = () => {
     const { addToast } = useToast();
@@ -124,7 +125,12 @@ const Login = () => {
                 <p className="text-sm text-gray-600">
                     Don't have an account? <a href="/register" className="text-primary hover:underline">Register</a>
                 </p>
-                <button onClick={handleGoogleLogin}>Sign in with Google</button>
+                <div className="mt-4">
+                    <GoogleAuthButton
+                        onClick={handleGoogleLogin}
+                        label={ "Sign up with Google"}
+                    />
+                </div>
             </form>
         </div>
     );
