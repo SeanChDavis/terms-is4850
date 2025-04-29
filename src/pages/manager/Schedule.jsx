@@ -6,6 +6,7 @@ import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/reac
 import ManagerUploadSchedule from "@/components/manager/UploadSchedule";
 import ViewSchedule from "@/components/ui/ViewSchedule";
 import {Link} from "react-router-dom";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 const ManagerSchedule = () => {
     const [userMap, setUserMap] = useState({});
@@ -99,7 +100,7 @@ const ManagerSchedule = () => {
     return (
         <>
             <div className={"max-w-xl pb-4 mb-8"}>
-                <h2 className={`text-xl font-bold mb-2`}>Work Schedule Information</h2>
+                <h2 className={`text-xl font-bold mb-2`}>Work Schedule Information <InfoLink anchor="work-schedule-information" /></h2>
                 <p className={"text-subtle-text"}>
                     As a manager, you can view all time-off requests submitted by employees. You can approve or deny
                     requests based on your discretion.
@@ -111,7 +112,7 @@ const ManagerSchedule = () => {
             ) : (
                 <>
                     <div className="mt-6">
-                        <h1 className="text-xl font-semibold mb-0">Manage Time-Off Requests</h1>
+                        <h1 className="text-xl font-semibold mb-0">Manage Time-Off Requests <InfoLink anchor="manage-time-off-requests" /></h1>
                         {requests.length > 0 && (
                             <div className="flex justify-between items-center mb-4">
                                 <button
@@ -313,7 +314,7 @@ const ManagerSchedule = () => {
 
                     {requests.length > 0 && (
                         <div className={"space-y-2 mb-12 lg:mb-20"}>
-                            <h2 className="text-xl font-semibold mt-10">Time Off Summary</h2>
+                            <h2 className="text-xl font-semibold mt-10">Time Off Summary <InfoLink anchor="time-off-summary" /></h2>
                             <p className="max-w-2xl text-subtle-text mb-6">
                                 The Time Off Summary provides a breakdown of all time-off requests by date, helping you build the schedule effectively.
                             </p>

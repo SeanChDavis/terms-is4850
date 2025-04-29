@@ -12,6 +12,7 @@ import {
 import { ref, deleteObject } from "firebase/storage";
 import { db, storage } from "@/firebase/firebase-config";
 import { formatDisplayDate } from "@/utils/formatters";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 const getStoragePathFromUrl = (url) => {
     const start = url.indexOf("/o/") + 3;
@@ -91,7 +92,7 @@ const ViewSchedule = ({ canDelete = false }) => {
 
     return (
         <div id="view-schedule-box" className="lg:pt-5 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">Latest Uploaded Schedule</h2>
+            <h2 className="text-lg font-semibold mb-2">Latest Uploaded Schedule <InfoLink anchor="schedule-visibility" /></h2>
 
             {latestSchedule ? (
                 <div>

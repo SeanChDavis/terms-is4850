@@ -3,6 +3,7 @@ import Inbox from "@/components/messages/Inbox";
 import ThreadView from "@/components/messages/ThreadView";
 import NewMessageModal from "@/components/messages/NewMessageModal";
 import { useParams, useNavigate } from "react-router-dom";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 export default function ManagerMessages() {
     const [showModal, setShowModal] = useState(false);
@@ -27,7 +28,7 @@ export default function ManagerMessages() {
         <>
             <div className="max-w-xl pb-4 mb-8">
                 <h2 className="text-xl font-bold mb-2">
-                    Messages
+                    Messages <InfoLink anchor="messages" />
                 </h2>
                 <p className={"text-subtle-text mb-4"}>
                     Manage, view, and respond to messages from team members and employees. You may also create new messages.

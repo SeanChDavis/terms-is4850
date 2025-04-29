@@ -56,7 +56,7 @@ export default function ManagerDashboard() {
     return (
         <>
             <div className="max-w-xl mb-4">
-                <h2 className="text-xl font-bold mb-2">Manager Dashboard <InfoLink anchor="manager-dashboard" /></h2>
+                <h2 className="text-xl font-bold mb-2">Manager Dashboard <InfoLink anchor="user-dashboard" /></h2>
                 <p className="text-subtle-text">
                     View your account details, key system updates, and access to system tools.
                 </p>
@@ -102,7 +102,7 @@ export default function ManagerDashboard() {
                     {/* Quick Stats */}
                     <div className={"my-12"}>
                         <div className="max-w-xl mb-4">
-                            <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="manager-quick-links" /></h2>
+                            <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="quick-links" /></h2>
                             <p className="text-subtle-text">
                                 Quickly access important sections of the system, such as managing requests and viewing team members.
                             </p>

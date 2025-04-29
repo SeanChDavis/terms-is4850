@@ -19,6 +19,7 @@ import {MdInfoOutline} from "react-icons/md";
 import {formatDisplayDate, formatTime} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 import UserNotes from "@/components/manager/UserNotes";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 export default function ManagerUserView() {
     const {userData: currentUser} = useCurrentUser();
@@ -119,7 +120,7 @@ export default function ManagerUserView() {
     return (
         <>
             <div className={"max-w-xl mb-8"}>
-                <h2 className="text-xl font-bold mb-2">System User Details</h2>
+                <h2 className="text-xl font-bold mb-2">System User Details <InfoLink anchor="user-profile" /></h2>
                 <p className={"text-subtle-text"}>
                     View information about the user and manage their role.
                 </p>
@@ -171,7 +172,7 @@ export default function ManagerUserView() {
                     </div>
 
                     <div className="mt-10">
-                        <h3 className="text-xl font-bold mb-2">User Time-Off Requests History</h3>
+                        <h3 className="text-xl font-bold mb-2">User Time-Off Requests History <InfoLink anchor="manage-time-off-requests" /></h3>
                         {requests.length === 0 ? (
                             <p className="mt-3 text-sm italic text-subtle-text">No requests submitted by this user.</p>
                         ) : (
