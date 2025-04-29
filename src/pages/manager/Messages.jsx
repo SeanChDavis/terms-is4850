@@ -39,7 +39,7 @@ export default function ManagerMessages() {
                     Create New Message
                 </button>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-y-6 lg:gap-x-6 lg:h-[70vh]">
+            <div className="grid grid-cols-1 lg:divide-y-0 lg:divide-x divide-border-gray bg-white rounded-lg border border-border-gray lg:grid-cols-3 gap-y-6 lg:gap-x-6 lg:h-[70vh]">
                 <div className="col-span-1">
                     <Inbox
                         onSelect={handleSelectThread}
@@ -50,8 +50,8 @@ export default function ManagerMessages() {
                     {selectedThread ? (
                         <ThreadView threadId={selectedThread} />
                     ) : (
-                        <div className={"bg-white rounded-lg border border-border-gray p-4 lg:p-6 h-full"}>
-                            <p className="text-gray-500 text-center mt-6">Select a conversation to begin.</p>
+                        <div className={"p-4 lg:p-6 h-full"}>
+                            <p className="text-subtle-text text-center mt-6">Select a conversation to begin.</p>
                         </div>
                     )}
                 </div>

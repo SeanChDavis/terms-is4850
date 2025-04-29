@@ -51,9 +51,9 @@ export default function EmployeeAnnouncements() {
                                             }`}
                                         >
                                             <h3 className="text-lg font-bold mb-2">{a.title}</h3>
-                                            <p className="mb-5 whitespace-pre-line">{a.body}</p>
+                                            <p className="mb-2.5 whitespace-pre-line">{a.body}</p>
                                             <p
-                                                className={`text-sm border-t-1 pt-3.5 mt-auto ${
+                                                className={`text-sm border-t-1 pt-2.5 mt-auto ${
                                                     isExpiring
                                                         ? "border-amber-100"
                                                         : "border-gray-200"

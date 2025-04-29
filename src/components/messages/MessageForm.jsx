@@ -17,7 +17,7 @@ export default function MessageForm({ threadId, recipientId }) {
             recipientId,
             message: text.trim(),
             timestamp: serverTimestamp(),
-            read: false,
+            readBy: [user.uid],
         };
 
         try {
