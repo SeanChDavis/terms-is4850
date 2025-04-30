@@ -18,15 +18,13 @@ const ResetPassword = () => {
             await sendPasswordResetEmail(email);
             addToast({
                 type: 'success',
-                message: 'Password reset email sent! Check your inbox.',
-                duration: 5000
+                message: 'Password reset email sent! Check your inbox.'
             });
             navigate('/login');
         } catch (err) {
             addToast({
                 type: 'error',
-                message: err.message,
-                duration: 5000
+                message: err.message
             });
             setError(err.message);
         }

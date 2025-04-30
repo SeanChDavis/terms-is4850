@@ -15,8 +15,10 @@ import useCurrentUser from "@/hooks/useCurrentUser";
 import {formatDisplayDate} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/react';
 import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useToast} from "@/context/ToastContext";
 
 export default function ManagerAnnouncements() {
+    const {addToast} = useToast();
     const [announcements, setAnnouncements] = useState([]);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
     const [open, setOpen] = useState(false);
@@ -31,8 +33,6 @@ export default function ManagerAnnouncements() {
     const [body, setBody] = useState("");
     const [expiresAt, setExpiresAt] = useState("");
     const [submitting, setSubmitting] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const q = query(
@@ -73,7 +73,6 @@ export default function ManagerAnnouncements() {
         }
     };
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitting(true);
@@ -87,7 +86,10 @@ export default function ManagerAnnouncements() {
                 today.setHours(0, 0, 0, 0);
 
                 if (expDate <= today) {
-                    setError("Expiration must be at least one full day in the future.");
+                    addToast({
+                        type: "error",
+                        message: "Expiration date must be in the future.",
+                    })
                     setSubmitting(false);
                     return;
                 }
@@ -112,11 +114,17 @@ export default function ManagerAnnouncements() {
             setBody("");
             setVisibleTo("all");
             setExpiresAt("");
-            setSuccess(true);
-            setTimeout(() => setSuccess(false), 4000);
+
+            addToast({
+                type: "success",
+                message: "Announcement posted successfully!",
+            })
         } catch (err) {
             console.error("Failed to create announcement:", err);
-            setError("Could not post announcement. Please try again.");
+            addToast({
+                type: "error",
+                message: "Failed to post announcement. Please try again.",
+            });
         } finally {
             setSubmitting(false);
         }
@@ -124,8 +132,20 @@ export default function ManagerAnnouncements() {
 
     // Delete an announcement
     const deleteAnnouncement = async (id) => {
-        const docRef = doc(db, "announcements", id);
-        await deleteDoc(docRef);
+        try {
+            const docRef = doc(db, "announcements", id);
+            await deleteDoc(docRef);
+            addToast({
+                type: "success",
+                message: "Announcement deleted successfully."
+            });
+        } catch (err) {
+            console.error("Failed to delete announcement:", err);
+            addToast({
+                type: "error",
+                message: "Failed to delete announcement. Please try again.",
+            });
+        }
     };
 
     // Announcements & Pagination state
@@ -243,14 +263,6 @@ export default function ManagerAnnouncements() {
                                 </button>
                             </form>
                         </div>
-                    </div>
-                    <div className="h-5 mt-2">
-                        {success && (
-                            <div className="text-green-600 text-sm">Announcement posted successfully.</div>
-                        )}
-                        {error && (
-                            <div className="text-red-600 text-sm">{error}</div>
-                        )}
                     </div>
 
                     {/* Announcement List */}

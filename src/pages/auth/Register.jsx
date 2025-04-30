@@ -52,20 +52,18 @@ const Register = () => {
                 managerApproved: false,
             });
 
-            addToast({  // Add this toast
+            addToast({
                 type: 'success',
                 message: 'Registered successfully!',
-                duration: 3000
             });
 
             // Redirect
             navigate('/employee/dashboard');
         } catch (err) {
             const errorMsg = 'This account is already registered. Please log in instead.';
-            addToast({  // Add this toast
+            addToast({
                 type: 'error',
                 message: errorMsg,
-                duration: 5000
             });
         }
     };

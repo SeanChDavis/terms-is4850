@@ -9,7 +9,7 @@ import InfoLink from "@/components/ui/InfoLink.jsx";
 
 export default function ManagerDashboard() {
     const { userData, loading } = useCurrentUser();
-    const announcements = useFilteredAnnouncements("employee", 10).filter(a => a.expiresAt);
+    const announcements = useFilteredAnnouncements(["manager", "all"], 20).filter(a => a.expiresAt);
     const [statsLoading, setStatsLoading] = useState(true);
     const [pendingCount, setPendingCount] = useState(0);
     const [teamMembersCount, setTeamMembersCount] = useState(0);

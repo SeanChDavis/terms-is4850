@@ -9,7 +9,7 @@ import InfoLink from "@/components/ui/InfoLink.jsx";
 
 export default function EmployeeDashboard() {
     const { userData, loading } = useCurrentUser();
-    const rawAnnouncements = useFilteredAnnouncements("employee", 10);
+    const rawAnnouncements = useFilteredAnnouncements(["employee", "all"], 20);
     const announcements = useMemo(() => {
         return rawAnnouncements.filter(a => a.expiresAt);
     }, [rawAnnouncements]);

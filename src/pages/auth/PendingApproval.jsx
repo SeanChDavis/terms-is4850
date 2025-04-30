@@ -1,9 +1,11 @@
 import {Navigate, useNavigate} from "react-router-dom";
 import {useAuth} from "@/context/AuthContext";
 import SiteLogo from '@/components/ui/SiteLogo';
+import {useToast} from "@/context/ToastContext";
 
 export default function PendingApproval() {
     const {logout} = useAuth();
+    const {addToast} = useToast();
     const {user, role, managerApproved} = useAuth();
 
     if (user && (role !== 'employee' || managerApproved === true)) {
@@ -16,6 +18,7 @@ export default function PendingApproval() {
     const handleLogout = async () => {
         await logout();
         navigate("/login");
+        addToast({type: 'success', message: 'Logged out successfully.'});
     };
 
     return (

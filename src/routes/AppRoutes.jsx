@@ -22,6 +22,7 @@ import ManagerUserView from "@/pages/manager/User";
 import TimeOffSummary from "@/pages/manager/TimeOffSummary";
 import ManagerMessages from "@/pages/manager/Messages";
 import Users from "@/pages/manager/Users";
+import SystemTools from "@/pages/manager/Tools";
 
 {/* Shared Pages */}
 import UserProfile from "@/pages/shared/UserProfile";
@@ -72,7 +73,7 @@ const AppRoutes = () => {
                 <Route path="schedule/time-off-summary" element={<TimeOffSummary />} />
                 <Route path="messages/:threadId?" element={<ManagerMessages />} />
                 <Route path="announcements" element={<ManagerAnnouncements />} />
-                <Route path="tools" element={<div>Manager System Tools Page</div>} />
+                <Route path="tools" element={<SystemTools />} />
             </Route>
 
             {/* Shared Routes */}

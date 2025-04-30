@@ -7,8 +7,10 @@ import ManagerUploadSchedule from "@/components/manager/UploadSchedule";
 import ViewSchedule from "@/components/ui/ViewSchedule";
 import {Link} from "react-router-dom";
 import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useToast} from "@/context/ToastContext";
 
 const ManagerSchedule = () => {
+    const {addToast} = useToast();
     const [userMap, setUserMap] = useState({});
     const [requests, setRequests] = useState([]);
     const [selectedRequest, setSelectedRequest] = useState(null);
@@ -75,10 +77,17 @@ const ManagerSchedule = () => {
 
             // Make sure to fetch the updated requests after updating the status
             await fetchRequests();
+            addToast({
+                type: "success",
+                message: `Request ${newStatus} successfully!`
+            });
             setSelectedRequest(null);
         } catch (err) {
             console.error("Error updating status:", err);
-            alert("Could not update request. Please try again.");
+            addToast({
+                type: "error",
+                message: `Failed to update request status: ${err.message}`
+            });
         }
     };
 

@@ -1,5 +1,5 @@
 import ProfileForm from "@/components/ui/ProfileForm";
-import InfoLink from "@/components/ui/InfoLink.jsx";
+import InfoLink from "@/components/ui/InfoLink";
 
 const UserProfile = () => {
 

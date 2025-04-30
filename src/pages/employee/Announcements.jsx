@@ -3,7 +3,7 @@ import { formatDisplayDate } from "@/utils/formatters";
 import InfoLink from "@/components/ui/InfoLink.jsx";
 
 export default function EmployeeAnnouncements() {
-    const announcements = useFilteredAnnouncements("employee", 10);
+    const announcements = useFilteredAnnouncements(["employee", "all"], 20);
 
     const sortedAnnouncements = [...announcements].sort((a, b) => {
         if (a.expiresAt && !b.expiresAt) return -1;

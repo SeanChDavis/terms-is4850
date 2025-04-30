@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { getAllUsers } from "@/firebase/firestore.js";
+import {useEffect, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {getAllUsers} from "@/firebase/firestore.js";
 import useCurrentUser from "@/hooks/useCurrentUser";
-import { db } from "@/firebase/firebase-config.js";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import {db} from "@/firebase/firebase-config.js";
+import {doc, getDoc, setDoc, serverTimestamp} from "firebase/firestore";
+import {useToast} from "@/context/ToastContext.jsx";
 
 export default function UsersTable() {
-    const { userData: currentUser } = useCurrentUser();
+    const {userData: currentUser} = useCurrentUser();
     const [users, setUsers] = useState([]);
+    const {addToast} = useToast();
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
     const [showOnlyUnapproved, setShowOnlyUnapproved] = useState(false);
@@ -54,6 +56,7 @@ export default function UsersTable() {
             setUsers(sorted);
             setLoading(false);
         }
+
         fetchUsers().catch(console.error);
     }, []);
 
@@ -103,10 +106,10 @@ export default function UsersTable() {
                 <table className="min-w-full text-sm text-left text-gray-700">
                     <thead className="bg-gray-50 border-b border-border-gray">
                     <tr>
-                        <th className="px-4 py-3 font-semibold" style={{ width: "170px" }}>Name</th>
+                        <th className="px-4 py-3 font-semibold" style={{width: "170px"}}>Name</th>
                         <th className="px-4 py-3 font-semibold">Email Address</th>
-                        <th className="px-4 py-3 font-semibold" style={{ width: "150px" }}>Current Role</th>
-                        <th className="px-4 py-3 font-semibold text-right" style={{ width: "170px" }}>Actions</th>
+                        <th className="px-4 py-3 font-semibold" style={{width: "150px"}}>Current Role</th>
+                        <th className="px-4 py-3 font-semibold text-right" style={{width: "170px"}}>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -121,21 +124,23 @@ export default function UsersTable() {
                         >
                             <td className="px-4 py-3 whitespace-nowrap">
                                 {user?.display_name ||
-                                 `${user?.first_name || ''} ${user?.last_name || ''}`.trim() ||
-                                 "—"}
+                                    `${user?.first_name || ''} ${user?.last_name || ''}`.trim() ||
+                                    "—"}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">{user.email}</td>
                             <td className="px-4 py-3 capitalize whitespace-nowrap">
                                 <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                                    <span className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium ${
-                                        user.role === "employee"
-                                            ? "bg-green-50 text-gray-600"
-                                            : "bg-blue-50 text-gray-600"
-                                    }`}>
+                                    <span
+                                        className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium ${
+                                            user.role === "employee"
+                                                ? "bg-green-50 text-gray-600"
+                                                : "bg-blue-50 text-gray-600"
+                                        }`}>
                                       {user.role}
                                     </span>
                                     {!user.managerApproved && user.role === "employee" && (
-                                        <span className="inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium bg-amber-100 text-amber-800">
+                                        <span
+                                            className="inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium bg-amber-100 text-amber-800">
                                             Pending Approval
                                         </span>
                                     )}

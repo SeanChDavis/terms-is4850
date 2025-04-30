@@ -550,6 +550,30 @@ export default function Help() {
                             </div>
                         </section>
 
+                        <hr className="border-gray-300" />
+
+                        {/* tools */}
+                        <section id="tools" className={sectionClasses}>
+                            <h2 className={sectionHeadingClasses}>
+                                System Tools
+                                <span
+                                    onClick={() => {
+                                        copyCurrentUrlWithHash('#tools');
+                                    }}
+                                    className={sectionLinkClasses}
+                                    aria-label="Copy link to System Tools"
+                                    title={sectionLinkTitle}
+                                >
+                                    <FaLink className="text-sm"/>
+                                </span>
+                            </h2>
+                            <div className={sectionContentClasses}>
+                                <p className={"mb-3"}>
+                                    The System Tools section provides access to various tools that help manage and maintain the system. These tools are available to managers only.
+                                </p>
+                            </div>
+                        </section>
+
                     </div>
                 </div>
             </div>

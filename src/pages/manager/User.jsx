@@ -21,9 +21,11 @@ import {formatDisplayDate, formatTime} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 import UserNotes from "@/components/manager/UserNotes";
 import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useToast} from "@/context/ToastContext";
 
 export default function ManagerUserView() {
     const {userData: currentUser} = useCurrentUser();
+    const {addToast} = useToast();
     const {id} = useParams();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -98,12 +100,15 @@ export default function ManagerUserView() {
         return () => unsubscribe();
     }, [id]);
 
-
     const toggleRole = async () => {
         if (!user) return;
         const newRole = user.role === "manager" ? "employee" : "manager";
         await updateUserRole(user.uid, newRole, currentUser?.uid);
         setUser(prev => ({...prev, role: newRole}));
+        addToast({
+            type: "success",
+            message: `User role updated to ${newRole}.`
+        });
     };
 
     const handleStatusUpdate = async (id, newStatus) => {
@@ -111,10 +116,17 @@ export default function ManagerUserView() {
             await updateDoc(doc(db, "requests", id), {
                 status: newStatus,
             });
+            addToast({
+                type: "success",
+                message: `Request ${newStatus} successfully.`
+            });
             setSelectedRequest(null);
         } catch (err) {
             console.error("Error updating status:", err);
-            alert("Could not update request. Please try again.");
+            addToast({
+                type: "error",
+                message: `Failed to update request status: ${err.message}`
+            });
         }
     };
 
@@ -146,6 +158,10 @@ export default function ManagerUserView() {
                                             managerApproved: true
                                         });
                                         setUser(prev => ({ ...prev, managerApproved: true }));
+                                        addToast({
+                                            type: "success",
+                                            message: "User approved successfully. You may now perform actions on this user."
+                                        });
                                     }}
                                     className="text-sm px-4 py-2 bg-amber-600 text-white font-semibold rounded-md cursor-pointer hover:bg-amber-700"
                                 >
@@ -156,6 +172,10 @@ export default function ManagerUserView() {
                                         if (!confirm("Are you sure you want to deny and delete this user?")) return;
                                         await deleteDoc(doc(db, "users", user.uid));
                                         navigate("/manager/users");
+                                        addToast({
+                                            type: "success",
+                                            message: "User denied and deleted successfully."
+                                        });
                                     }}
                                     className="w-full sm:w-auto rounded-md bg-red-800 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-red-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-900"
                                 >
@@ -184,6 +204,13 @@ export default function ManagerUserView() {
                                           className="text-subtle-text cursor-pointer underline hover:no-underline">Edit your
                                         details.</Link>
                                 </p>
+                            ) : user.role === "employee" && !user.managerApproved ? (
+                                <>
+                                    <p className="font-semibold mb-2">Actions:</p>
+                                    <p className="flex flex-wrap items-center gap-1 text-sm text-subtle-text">
+                                        <MdInfoOutline/> This user is awaiting manager approval. Actions are not allowed.
+                                    </p>
+                                </>
                             ) : (
                                 <>
                                     <p className="font-semibold mb-2">Actions:</p>

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { db } from "@/firebase/firebase-config";
+import {useState, useEffect} from "react";
+import {db} from "@/firebase/firebase-config";
 import {
     collection,
     addDoc,
@@ -10,11 +10,13 @@ import {
     doc,
     setDoc,
 } from "firebase/firestore";
-import { useAuth } from "@/context/AuthContext";
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
+import {useAuth} from "@/context/AuthContext";
+import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
+import {useToast} from "@/context/ToastContext";
 
-export default function NewMessageModal({ isOpen, onClose, onSelect }) {
-    const { user } = useAuth();
+export default function NewMessageModal({isOpen, onClose, onSelect}) {
+    const {user} = useAuth();
+    const {addToast} = useToast();
     const [employees, setEmployees] = useState([]);
     const [selected, setSelected] = useState("");
     const [initialMessage, setInitialMessage] = useState("");
@@ -23,8 +25,7 @@ export default function NewMessageModal({ isOpen, onClose, onSelect }) {
         const fetchRecipients = async () => {
             const q = query(collection(db, "users")); // no role filter
             const snapshot = await getDocs(q);
-            const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
+            const users = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
             const filtered = users.filter((u) => u.id !== user.uid); // don't list yourself
             setEmployees(filtered);
         };
@@ -61,8 +62,16 @@ export default function NewMessageModal({ isOpen, onClose, onSelect }) {
 
             onClose();
             onSelect(threadId);
+            addToast({
+                type: "success",
+                message: "Conversation started successfully!"
+            });
         } catch (error) {
             console.error("Failed to start conversation:", error);
+            addToast({
+                type: "error",
+                message: "Failed to start conversation. Please try again."
+            });
         }
     };
 
