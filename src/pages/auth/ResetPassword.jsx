@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { sendPasswordResetEmail } from "@/firebase/auth.js";
-import { useToast } from "../../context/ToastContext";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {sendPasswordResetEmail} from "@/firebase/auth.js";
+import {useToast} from "../../context/ToastContext";
 import SiteLogo from "../../components/ui/SiteLogo.jsx";
 
 const ResetPassword = () => {
-    const { addToast } = useToast();
+    const {addToast} = useToast();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
@@ -35,7 +35,7 @@ const ResetPassword = () => {
     return (
         <div className="min-h-screen bg-primary flex items-center justify-center p-4">
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-full max-w-md">
-                <SiteLogo variant="color" className="mb-6" />
+                <SiteLogo variant="color" className="mb-6"/>
                 <h2 className="text-xl font-bold mb-4">Reset Password</h2>
 
                 <label className="block mb-1 font-medium">Email</label>

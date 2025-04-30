@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import RoleProtectedRoute from '@/components/auth/RoleProtectedRoute';
+import RoleProtectedRoute from '@/routes/RoleProtectedRoute.jsx';
 
 {/* Auth Pages */}
 import Login from '@/pages/auth/Login';

@@ -1,19 +1,40 @@
-import {useState} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { signUp, signInWithGoogle } from '@/firebase/auth';
-import { useToast } from '@/context/ToastContext';
+import {useState, useEffect} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {signUp, signInWithGoogle} from '@/firebase/auth';
+import {useToast} from '@/context/ToastContext';
 import {createUserDocument, getUserDocument} from '@/firebase/firestore';
 import SiteLogo from "@/components/ui/SiteLogo";
 import {auth} from "@/firebase/firebase-config";
 import GoogleAuthButton from "@/components/ui/GoogleAuthButton.jsx";
+import {useAuth} from "@/context/AuthContext";
 
 const Register = () => {
-    const { addToast } = useToast();
+    const {user, role, managerApproved} = useAuth();
+    const {addToast} = useToast();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Redirect logic based on user role and approval status
+    useEffect(() => {
+        if (!user || role === null || managerApproved === null) return;
+
+        const currentPath = location.pathname;
+
+        if (role === 'employee' && managerApproved === false) {
+            if (currentPath !== '/pending-approval') {
+                navigate('/pending-approval');
+            }
+        } else {
+            const target = `/${role}/dashboard`;
+            if (currentPath !== target) {
+                navigate(target);
+            }
+        }
+    }, [user, role, managerApproved, location.pathname, navigate]);
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -61,7 +82,7 @@ const Register = () => {
                 const errorMsg = 'This account is already registered. Please log in instead.';
                 addToast({  // Add this toast
                     type: 'error',
-                    message:  errorMsg,
+                    message: errorMsg,
                     duration: 5000
                 });
                 await auth.signOut();
@@ -90,7 +111,7 @@ const Register = () => {
         <div className="min-h-screen bg-primary flex items-center justify-center p-4">
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-full max-w-md">
 
-                <SiteLogo variant="color" className={`mb-6`} />
+                <SiteLogo variant="color" className={`mb-6`}/>
 
                 <h2 className="text-xl font-bold mb-4">Register a New Account</h2>
 
@@ -131,7 +152,7 @@ const Register = () => {
                 <div className="mt-4">
                     <GoogleAuthButton
                         onClick={handleGoogleRegister}
-                        label={ "Sign up with Google"}
+                        label={"Sign up with Google"}
                     />
                 </div>
 
