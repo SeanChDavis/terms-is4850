@@ -172,7 +172,7 @@ const ManagerSchedule = () => {
                                             </td>
                                             <td className="px-4 py-3 capitalize">
                                         <span className={`font-bold
-                                            ${r.status === "pending" ? "text-yellow-600" :
+                                            ${r.status === "pending" ? "text-amber-600" :
                                             r.status === "approved" ? "text-green-600" :
                                                 r.status === "denied" ? "text-red-600" : ""
                                         }`}

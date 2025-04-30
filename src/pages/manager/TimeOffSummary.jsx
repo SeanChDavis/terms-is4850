@@ -202,7 +202,7 @@ const TimeOffSummary = () => {
                                                 )}
                                             </p>
                                             {entry.status === "pending" && (
-                                                <p className="text-yellow-600 font-medium">Pending</p>
+                                                <p className="text-amber-600 font-medium">Pending</p>
                                             )}
                                         </div>
                                     ))}
