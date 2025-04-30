@@ -131,7 +131,7 @@ export default function ManagerUserView() {
                 <div className="text-sm text-subtle-text">Loading...</div>
             ) : (
                 <>
-                    {user.role === 'employee' && user.managerApproved === false && (
+                    {user.role === 'employee' && !user.managerApproved && (
                         <div className="bg-amber-100 text-amber-900 px-6 py-4 rounded-md flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-6">
                             <div>
                                 <p className="font-semibold text-sm mb-1">This user is awaiting manager approval.</p>
