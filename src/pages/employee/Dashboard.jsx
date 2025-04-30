@@ -5,10 +5,11 @@ import {collection, query, where, getDocs, orderBy, limit, onSnapshot} from "fir
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { useFilteredAnnouncements } from "@/hooks/useFilteredAnnouncements";
 import { formatDisplayDate } from "@/utils/formatters";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 export default function EmployeeDashboard() {
     const { userData, loading } = useCurrentUser();
-    const rawAnnouncements = useFilteredAnnouncements("employee", 10);
+    const rawAnnouncements = useFilteredAnnouncements(["employee", "all"], 20);
     const announcements = useMemo(() => {
         return rawAnnouncements.filter(a => a.expiresAt);
     }, [rawAnnouncements]);
@@ -78,7 +79,7 @@ export default function EmployeeDashboard() {
     return (
         <>
             <div className="max-w-xl mb-4">
-                <h2 className="text-2xl font-bold mb-2">Employee Dashboard</h2>
+                <h2 className="text-2xl font-bold mb-2">Employee Dashboard <InfoLink anchor="user-dashboard" /></h2>
                 <p className="text-subtle-text">
                     View your account information, request status updates, and important system announcements.
                 </p>
@@ -86,7 +87,7 @@ export default function EmployeeDashboard() {
 
             {/* Body: Loading Guard */}
             {loading ? (
-                <div className="text-sm text-subtle-text italic p-6">Loading your dashboard...</div>
+                <div className="text-sm text-subtle-text italic">Loading...</div>
             ) : (
                 <>
                     {/* Account Overview */}
@@ -103,7 +104,7 @@ export default function EmployeeDashboard() {
                             <div className="flex flex-col sm:flex-row gap-2">
                                 <NavLink
                                     to="/employee/profile"
-                                    className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark text-center"
+                                    className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded-md cursor-pointer hover:bg-primary-dark text-center"
                                 >
                                     Edit My Profile
                                 </NavLink>
@@ -111,10 +112,10 @@ export default function EmployeeDashboard() {
                         </div>
                     </div>
 
-                    {/* Quick Stats */}
+                    {/* Quick Links */}
                     <div className={"my-12"}>
                         <div className="max-w-xl mb-4">
-                            <h2 className={"text-xl font-bold mb-2"}>Quick Links</h2>
+                            <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="quick-links" /></h2>
                             <p className="text-subtle-text">
                                 Quickly access information about your pending time-off requests and more.
                             </p>
@@ -152,7 +153,7 @@ export default function EmployeeDashboard() {
                     </div>
 
                     {/* Time-Sensitive Announcements */}
-                    <h2 className="text-xl font-bold mb-2">Time-Sensitive Announcements</h2>
+                    <h2 className="text-xl font-bold mb-2">Time-Sensitive Announcements <InfoLink anchor="time-sensitive-announcements" /></h2>
                     {announcements.length === 0 ? (
                         <p className="text-subtle-text">There are no current announcements.</p>
                     ) : (

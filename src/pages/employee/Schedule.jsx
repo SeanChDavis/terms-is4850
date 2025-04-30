@@ -15,8 +15,11 @@ import {useAuth} from "@/context/AuthContext";
 import {formatDisplayDate, formatTime} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 import ViewSchedule from "@/components/ui/ViewSchedule";
+import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useToast} from "@/context/ToastContext";
 
 const EmployeeSchedule = () => {
+    const {addToast} = useToast();
     const [requests, setRequests] = useState([]);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [open, setOpen] = useState(false);
@@ -31,9 +34,6 @@ const EmployeeSchedule = () => {
 
     const [loading, setLoading] = useState(true);
     const [loadingSubmit, setLoadingSubmit] = useState(false);
-
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState("");
 
     // Get requests from Firestore
     useEffect(() => {
@@ -58,14 +58,6 @@ const EmployeeSchedule = () => {
         return () => unsubscribe();
     }, [user]);
 
-    // Clear success message after submission
-    useEffect(() => {
-        if (success) {
-            const timer = setTimeout(() => setSuccess(false), 10000);
-            return () => clearTimeout(timer);
-        }
-    }, [success]);
-
     // Reset form fields when component mounts
     const resetForm = () => {
         setRequestType("");
@@ -80,8 +72,6 @@ const EmployeeSchedule = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoadingSubmit(true);
-        setError("");
-        setSuccess(false);
 
         try {
 
@@ -94,13 +84,19 @@ const EmployeeSchedule = () => {
             const selectedDay = new Date(year, month - 1, day);
 
             if (selectedDay < tomorrow) {
-                setError("Requests must begin on a future date.");
+                addToast({
+                    type: "error",
+                    message: "Requests must begin on a future date.",
+                })
                 setLoadingSubmit(false);
                 return;
             }
 
             if (requestType === "multi" && new Date(endDate) < new Date(startDate)) {
-                setError("End date must be after start date.");
+                addToast({
+                    type: "error",
+                    message: "End date must be after start date.",
+                })
                 setLoadingSubmit(false);
                 return;
             }
@@ -108,7 +104,10 @@ const EmployeeSchedule = () => {
             if (requestType === "custom") {
 
                 if (!startDate || !endDate || !startTime || !endTime) {
-                    setError("All date and time fields are required for custom requests.");
+                    addToast({
+                        type: "error",
+                        message: "All date and time fields are required for custom requests.",
+                    })
                     setLoadingSubmit(false);
                     return;
                 }
@@ -117,7 +116,10 @@ const EmployeeSchedule = () => {
                 const end = new Date(`${endDate}T${endTime}`);
 
                 if (end <= start) {
-                    setError("End time must be after start time.");
+                    addToast({
+                        type: "error",
+                        message: "End time must be after start date/time.",
+                    })
                     setLoadingSubmit(false);
                     return;
                 }
@@ -147,13 +149,18 @@ const EmployeeSchedule = () => {
 
             // Now add the request to Firestore
             await addDoc(collection(db, "requests"), payload);
-
-            setSuccess(true);
             resetForm();
+            addToast({
+                type: "success",
+                message: "Your request has been submitted successfully! Please wait for management decision.",
+            })
             setCurrentPage(1);
         } catch (err) {
             console.error("Error submitting request:", err);
-            setError("Something went wrong. Please try again.");
+            addToast({
+                type: "error",
+                message: "Could not submit request. Please try again.",
+            });
         } finally {
             setLoadingSubmit(false);
         }
@@ -163,9 +170,16 @@ const EmployeeSchedule = () => {
     const deleteRequest = async (id) => {
         try {
             await deleteDoc(doc(db, "requests", id));
+            addToast({
+                type: "success",
+                message: "Request deleted successfully.",
+            });
         } catch (err) {
             console.error("Error deleting request:", err);
-            alert("Could not delete request. Please try again.");
+            addToast({
+                type: "error",
+                message: "Could not delete request. Please try again.",
+            });
         }
     };
 
@@ -183,7 +197,7 @@ const EmployeeSchedule = () => {
     return (
         <>
             <div className={"max-w-xl pb-4 mb-8"}>
-                <h2 className={`text-xl font-bold mb-2`}>Work Schedule Information</h2>
+                <h2 className={`text-xl font-bold mb-2`}>Work Schedule Information <InfoLink anchor="work-schedule-information" /></h2>
                 <p className={"text-subtle-text"}>View, manage, or submit requests to be excluded from the work
                     schedule.</p>
             </div>
@@ -195,7 +209,7 @@ const EmployeeSchedule = () => {
                     <div
                         className={"divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
                         <div className="px-4 py-5 sm:px-6">
-                            <h2 className="text-base/7 font-semibold">Create New Time-Off Request</h2>
+                            <h2 className="text-base/7 font-semibold">Create New Time-Off Request <InfoLink anchor="time-off-requests" /></h2>
                             <p className="mt-1 text-sm/6 text-subtle-text">
                                 Request off a single day, multiple days, or specific date/time range. All requests are subject to
                                 management approval.
@@ -312,10 +326,6 @@ const EmployeeSchedule = () => {
                             </form>
                         </div>
                     </div>
-                    <div className="h-5 mt-2">
-                        {success && <p className="text-sm text-green-600">Request submitted successfully!</p>}
-                        {error && <p className="text-sm text-red-600">{error}</p>}
-                    </div>
                 </div>
                 <div>
                     <ViewSchedule />
@@ -324,7 +334,7 @@ const EmployeeSchedule = () => {
 
             {/* Existing Requests table */}
             <div className="mt-10">
-                <h2 className="text-xl font-bold mb-2">Your Requests</h2>
+                <h2 className="text-xl font-bold mb-2">Your Requests <InfoLink anchor="time-off-requests" /></h2>
                 <p className={"text-subtle-text"}>
                     You may delete <span className={"font-semibold"}>pending</span> requests at any time.
                 </p>
@@ -369,7 +379,7 @@ const EmployeeSchedule = () => {
                                         <td className="px-4 py-3 max-w-xs truncate">{r.details || "—"}</td>
                                         <td className="px-4 py-3 capitalize">
                                             <span className={`font-bold
-                                                ${r.status === "pending" ? "text-yellow-600" :
+                                                ${r.status === "pending" ? "text-amber-600" :
                                                     r.status === "approved" ? "text-green-600" :
                                                     r.status === "denied" ? "text-red-600" : ""
                                                 }`}
@@ -406,14 +416,14 @@ const EmployeeSchedule = () => {
                                     <button
                                         onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
                                         disabled={currentPage === 1}
-                                        className="px-3 py-1 mr-3 text-sm font-semibold cursor-pointer bg-light-gray rounded disabled:opacity-50"
+                                        className="px-3 py-1 mr-3 text-sm font-semibold cursor-pointer bg-light-gray rounded-md disabled:opacity-50"
                                     >
                                         Prev
                                     </button>
                                     <button
                                         onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
                                         disabled={currentPage === totalPages}
-                                        className="px-3 py-1 text-sm font-semibold cursor-pointer bg-light-gray rounded disabled:opacity-50"
+                                        className="px-3 py-1 text-sm font-semibold cursor-pointer bg-light-gray rounded-md disabled:opacity-50"
                                     >
                                         Next
                                     </button>

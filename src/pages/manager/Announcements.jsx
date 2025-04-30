@@ -14,8 +14,11 @@ import {
 import useCurrentUser from "@/hooks/useCurrentUser";
 import {formatDisplayDate} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/react';
+import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useToast} from "@/context/ToastContext";
 
 export default function ManagerAnnouncements() {
+    const {addToast} = useToast();
     const [announcements, setAnnouncements] = useState([]);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
     const [open, setOpen] = useState(false);
@@ -30,8 +33,6 @@ export default function ManagerAnnouncements() {
     const [body, setBody] = useState("");
     const [expiresAt, setExpiresAt] = useState("");
     const [submitting, setSubmitting] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const q = query(
@@ -72,7 +73,6 @@ export default function ManagerAnnouncements() {
         }
     };
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitting(true);
@@ -86,7 +86,10 @@ export default function ManagerAnnouncements() {
                 today.setHours(0, 0, 0, 0);
 
                 if (expDate <= today) {
-                    setError("Expiration must be at least one full day in the future.");
+                    addToast({
+                        type: "error",
+                        message: "Expiration date must be in the future.",
+                    })
                     setSubmitting(false);
                     return;
                 }
@@ -111,11 +114,17 @@ export default function ManagerAnnouncements() {
             setBody("");
             setVisibleTo("all");
             setExpiresAt("");
-            setSuccess(true);
-            setTimeout(() => setSuccess(false), 4000);
+
+            addToast({
+                type: "success",
+                message: "Announcement posted successfully!",
+            })
         } catch (err) {
             console.error("Failed to create announcement:", err);
-            setError("Could not post announcement. Please try again.");
+            addToast({
+                type: "error",
+                message: "Failed to post announcement. Please try again.",
+            });
         } finally {
             setSubmitting(false);
         }
@@ -123,8 +132,20 @@ export default function ManagerAnnouncements() {
 
     // Delete an announcement
     const deleteAnnouncement = async (id) => {
-        const docRef = doc(db, "announcements", id);
-        await deleteDoc(docRef);
+        try {
+            const docRef = doc(db, "announcements", id);
+            await deleteDoc(docRef);
+            addToast({
+                type: "success",
+                message: "Announcement deleted successfully."
+            });
+        } catch (err) {
+            console.error("Failed to delete announcement:", err);
+            addToast({
+                type: "error",
+                message: "Failed to delete announcement. Please try again.",
+            });
+        }
     };
 
     // Announcements & Pagination state
@@ -158,7 +179,7 @@ export default function ManagerAnnouncements() {
     return (
         <>
             <div className={"max-w-xl mb-8"}>
-                <h2 className={`text-xl font-bold mb-2`}>System Announcements</h2>
+                <h2 className={`text-xl font-bold mb-2`}>System Announcements <InfoLink anchor="announcements" /></h2>
                 <p className={"text-subtle-text"}>
                     Use this page to create announcements that will be visible to all employees. You can post updates,
                     important notices, or general information that needs to be communicated across the organization.
@@ -174,7 +195,7 @@ export default function ManagerAnnouncements() {
                     <div
                         className={"max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
                         <div className="px-4 py-5 sm:px-6">
-                            <h2 className="text-base/7 font-semibold">Create New Announcement</h2>
+                            <h2 className="text-base/7 font-semibold">Create New Announcement <InfoLink anchor="announcements" /></h2>
                             <p className="mt-1 text-sm/6 text-subtle-text">
                                 Fill out the form below to post a new announcement.
                             </p>
@@ -243,18 +264,10 @@ export default function ManagerAnnouncements() {
                             </form>
                         </div>
                     </div>
-                    <div className="h-5 mt-2">
-                        {success && (
-                            <div className="text-green-600 text-sm">Announcement posted successfully.</div>
-                        )}
-                        {error && (
-                            <div className="text-red-600 text-sm">{error}</div>
-                        )}
-                    </div>
 
                     {/* Announcement List */}
                     <div className="mt-10">
-                        <h2 className="text-xl font-semibold mb-0">Past Announcements</h2>
+                        <h2 className="text-xl font-semibold mb-0">Past Announcements <InfoLink anchor="announcements" /></h2>
                         <div className="flex justify-between items-center mb-4">
                             <button
                                 onClick={() => setShowMineOnly(prev => !prev)}
@@ -353,14 +366,14 @@ export default function ManagerAnnouncements() {
                                             <button
                                                 onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
                                                 disabled={currentPage === 1}
-                                                className="px-3 py-1 mr-3 text-sm font-semibold cursor-pointer bg-light-gray rounded disabled:opacity-50"
+                                                className="px-3 py-1 mr-3 text-sm font-semibold cursor-pointer bg-light-gray rounded-md disabled:opacity-50"
                                             >
                                                 Prev
                                             </button>
                                             <button
                                                 onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
                                                 disabled={currentPage === totalPages}
-                                                className="px-3 py-1 text-sm font-semibold cursor-pointer bg-light-gray rounded disabled:opacity-50"
+                                                className="px-3 py-1 text-sm font-semibold cursor-pointer bg-light-gray rounded-md disabled:opacity-50"
                                             >
                                                 Next
                                             </button>

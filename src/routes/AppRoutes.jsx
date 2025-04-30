@@ -1,11 +1,12 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import RoleProtectedRoute from '@/components/auth/RoleProtectedRoute';
+import RoleProtectedRoute from '@/routes/RoleProtectedRoute.jsx';
 
 {/* Auth Pages */}
 import Login from '@/pages/auth/Login';
 import Register from '@/pages/auth/Register';
-import ResetPassword from '@/pages/auth/ResetPassword.jsx';
+import ResetPassword from '@/pages/auth/ResetPassword';
+import PendingApproval from "@/pages/auth/PendingApproval.jsx";
 
 {/* Employee Pages */}
 import EmployeeDashboard from '@/pages/employee/Dashboard';
@@ -21,9 +22,11 @@ import ManagerUserView from "@/pages/manager/User";
 import TimeOffSummary from "@/pages/manager/TimeOffSummary";
 import ManagerMessages from "@/pages/manager/Messages";
 import Users from "@/pages/manager/Users";
+import SystemTools from "@/pages/manager/Tools";
 
 {/* Shared Pages */}
 import UserProfile from "@/pages/shared/UserProfile";
+import Help from "@/pages/shared/Help.jsx";
 
 const AppRoutes = () => {
     return (
@@ -33,6 +36,7 @@ const AppRoutes = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/pending-approval" element={<PendingApproval />} />
 
             {/* Protected Employee Routes */}
             <Route
@@ -69,8 +73,11 @@ const AppRoutes = () => {
                 <Route path="schedule/time-off-summary" element={<TimeOffSummary />} />
                 <Route path="messages/:threadId?" element={<ManagerMessages />} />
                 <Route path="announcements" element={<ManagerAnnouncements />} />
-                <Route path="tools" element={<div>Manager System Tools Page</div>} />
+                <Route path="tools" element={<SystemTools />} />
             </Route>
+
+            {/* Shared Routes */}
+            <Route path="/help" element={<Help />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/login" />} />

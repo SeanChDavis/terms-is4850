@@ -9,9 +9,10 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null); // Firebase user object
-    const [role, setRole] = useState(null); // Role from Firestore
-    const [loading, setLoading] = useState(true); // Prevents premature rendering
+    const [user, setUser] = useState(null);
+    const [role, setRole] = useState(null);
+    const [managerApproved, setManagerApproved] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const unsubscribe = onAuthChange(async (firebaseUser) => {
@@ -19,9 +20,11 @@ export const AuthProvider = ({ children }) => {
 
             if (firebaseUser) {
                 const userDoc = await getUserDocument(firebaseUser.uid);
-                setRole(userDoc?.role || 'employee'); // Fallback if somehow missing from user
+                setRole(userDoc?.role || 'employee');
+                setManagerApproved(userDoc?.managerApproved ?? true);
             } else {
                 setRole(null);
+                setManagerApproved(null);
             }
 
             setLoading(false);
@@ -38,7 +41,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         // Provide the auth state and methods to the rest of the app!
-        <AuthContext.Provider value={{ user, role, logout }}>
+        <AuthContext.Provider value={{ user, role, managerApproved, logout }}>
             {!loading && children}
         </AuthContext.Provider>
     );

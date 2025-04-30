@@ -7,6 +7,7 @@ import {
     orderBy,
     onSnapshot,
     updateDoc,
+    deleteDoc,
     doc,
     getDoc,
     setDoc,
@@ -19,9 +20,12 @@ import {MdInfoOutline} from "react-icons/md";
 import {formatDisplayDate, formatTime} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 import UserNotes from "@/components/manager/UserNotes";
+import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useToast} from "@/context/ToastContext";
 
 export default function ManagerUserView() {
     const {userData: currentUser} = useCurrentUser();
+    const {addToast} = useToast();
     const {id} = useParams();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -96,12 +100,15 @@ export default function ManagerUserView() {
         return () => unsubscribe();
     }, [id]);
 
-
     const toggleRole = async () => {
         if (!user) return;
         const newRole = user.role === "manager" ? "employee" : "manager";
         await updateUserRole(user.uid, newRole, currentUser?.uid);
         setUser(prev => ({...prev, role: newRole}));
+        addToast({
+            type: "success",
+            message: `User role updated to ${newRole}.`
+        });
     };
 
     const handleStatusUpdate = async (id, newStatus) => {
@@ -109,17 +116,24 @@ export default function ManagerUserView() {
             await updateDoc(doc(db, "requests", id), {
                 status: newStatus,
             });
+            addToast({
+                type: "success",
+                message: `Request ${newStatus} successfully.`
+            });
             setSelectedRequest(null);
         } catch (err) {
             console.error("Error updating status:", err);
-            alert("Could not update request. Please try again.");
+            addToast({
+                type: "error",
+                message: `Failed to update request status: ${err.message}`
+            });
         }
     };
 
     return (
         <>
             <div className={"max-w-xl mb-8"}>
-                <h2 className="text-xl font-bold mb-2">System User Details</h2>
+                <h2 className="text-xl font-bold mb-2">System User Details <InfoLink anchor="user-details" /></h2>
                 <p className={"text-subtle-text"}>
                     View information about the user and manage their role.
                 </p>
@@ -129,6 +143,48 @@ export default function ManagerUserView() {
                 <div className="text-sm text-subtle-text">Loading...</div>
             ) : (
                 <>
+                    {user.role === 'employee' && !user.managerApproved && (
+                        <div className="bg-amber-100 text-amber-900 px-6 py-4 rounded-md flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-6">
+                            <div>
+                                <p className="font-semibold text-sm mb-1">This user is awaiting manager approval.</p>
+                                <p className="text-sm text-amber-800">
+                                    Approve the user to grant access, or deny and delete the account entirely.
+                                </p>
+                            </div>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <button
+                                    onClick={async () => {
+                                        await updateDoc(doc(db, "users", user.uid), {
+                                            managerApproved: true
+                                        });
+                                        setUser(prev => ({ ...prev, managerApproved: true }));
+                                        addToast({
+                                            type: "success",
+                                            message: "User approved successfully. You may now perform actions on this user."
+                                        });
+                                    }}
+                                    className="text-sm px-4 py-2 bg-amber-600 text-white font-semibold rounded-md cursor-pointer hover:bg-amber-700"
+                                >
+                                    Approve User
+                                </button>
+                                <button
+                                    onClick={async () => {
+                                        if (!confirm("Are you sure you want to deny and delete this user?")) return;
+                                        await deleteDoc(doc(db, "users", user.uid));
+                                        navigate("/manager/users");
+                                        addToast({
+                                            type: "success",
+                                            message: "User denied and deleted successfully."
+                                        });
+                                    }}
+                                    className="w-full sm:w-auto rounded-md bg-red-800 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-red-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-900"
+                                >
+                                    Deny & Delete
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     <div
                         className="mt-6 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x">
                         <div className="p-6 flex-1">
@@ -148,19 +204,26 @@ export default function ManagerUserView() {
                                           className="text-subtle-text cursor-pointer underline hover:no-underline">Edit your
                                         details.</Link>
                                 </p>
+                            ) : user.role === "employee" && !user.managerApproved ? (
+                                <>
+                                    <p className="font-semibold mb-2">Actions:</p>
+                                    <p className="flex flex-wrap items-center gap-1 text-sm text-subtle-text">
+                                        <MdInfoOutline/> This user is awaiting manager approval. Actions are not allowed.
+                                    </p>
+                                </>
                             ) : (
                                 <>
                                     <p className="font-semibold mb-2">Actions:</p>
                                     <div className="flex flex-col sm:flex-row gap-2">
                                         <button
                                             onClick={toggleRole}
-                                            className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark"
+                                            className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded-md cursor-pointer hover:bg-primary-dark"
                                         >
                                             {user.role === "manager" ? "Demote to Employee" : "Promote to Manager"}
                                         </button>
                                         <button
                                             onClick={handleMessageUser}
-                                            className="text-sm px-4 py-2 bg-emerald-700 text-white font-semibold rounded cursor-pointer hover:bg-emerald-900"
+                                            className="text-sm px-4 py-2 bg-emerald-700 text-white font-semibold rounded-md cursor-pointer hover:bg-emerald-900"
                                         >
                                             Message User
                                         </button>
@@ -171,7 +234,7 @@ export default function ManagerUserView() {
                     </div>
 
                     <div className="mt-10">
-                        <h3 className="text-xl font-bold mb-2">User Time-Off Requests History</h3>
+                        <h3 className="text-xl font-bold mb-2">User Time-Off Requests History <InfoLink anchor="manage-time-off-requests" /></h3>
                         {requests.length === 0 ? (
                             <p className="mt-3 text-sm italic text-subtle-text">No requests submitted by this user.</p>
                         ) : (
@@ -199,12 +262,12 @@ export default function ManagerUserView() {
                                                     {formatDisplayDate(r.submittedAt)}
                                                 </td>
                                                 <td className="px-4 py-3 capitalize">
-                                            <span className={`font-bold
-                                                ${r.status === "pending" ? "text-yellow-600" :
-                                                r.status === "approved" ? "text-green-600" :
-                                                    r.status === "denied" ? "text-red-600" : ""
-                                            }`}
-                                            >
+                                                <span className={`font-bold
+                                                    ${r.status === "pending" ? "text-amber-600" :
+                                                        r.status === "approved" ? "text-green-600" :
+                                                            r.status === "denied" ? "text-red-600" : ""
+                                                    }`}
+                                                >
                                                 {r.status}
                                             </span>
                                                 </td>
@@ -257,14 +320,14 @@ export default function ManagerUserView() {
                                             <button
                                                 onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
                                                 disabled={currentPage === 1}
-                                                className="px-3 py-1 mr-3 text-sm font-semibold cursor-pointer bg-light-gray rounded disabled:opacity-50"
+                                                className="px-3 py-1 mr-3 text-sm font-semibold cursor-pointer bg-light-gray rounded-md disabled:opacity-50"
                                             >
                                                 Prev
                                             </button>
                                             <button
                                                 onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
                                                 disabled={currentPage === totalPages}
-                                                className="px-3 py-1 text-sm font-semibold cursor-pointer bg-light-gray rounded disabled:opacity-50"
+                                                className="px-3 py-1 text-sm font-semibold cursor-pointer bg-light-gray rounded-md disabled:opacity-50"
                                             >
                                                 Next
                                             </button>

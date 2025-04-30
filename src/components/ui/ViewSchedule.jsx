@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import {
     collection,
     query,
@@ -9,9 +9,11 @@ import {
     updateDoc,
     getDocs
 } from "firebase/firestore";
-import { ref, deleteObject } from "firebase/storage";
-import { db, storage } from "@/firebase/firebase-config";
-import { formatDisplayDate } from "@/utils/formatters";
+import {ref, deleteObject} from "firebase/storage";
+import {db, storage} from "@/firebase/firebase-config";
+import {formatDisplayDate} from "@/utils/formatters";
+import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useToast} from "@/context/ToastContext";
 
 const getStoragePathFromUrl = (url) => {
     const start = url.indexOf("/o/") + 3;
@@ -19,12 +21,11 @@ const getStoragePathFromUrl = (url) => {
     return decodeURIComponent(url.slice(start, end));
 };
 
-const ViewSchedule = ({ canDelete = false }) => {
+const ViewSchedule = ({canDelete = false}) => {
+    const {addToast} = useToast();
     const [latestSchedule, setLatestSchedule] = useState(null);
     const [loading, setLoading] = useState(true);
     const [deleting, setDeleting] = useState(false);
-    const [message, setMessage] = useState("");
-    const [messageType, setMessageType] = useState("success");
 
     useEffect(() => {
         const q = query(
@@ -36,7 +37,7 @@ const ViewSchedule = ({ canDelete = false }) => {
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             if (!snapshot.empty) {
-                setLatestSchedule({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() });
+                setLatestSchedule({id: snapshot.docs[0].id, ...snapshot.docs[0].data()});
             } else {
                 setLatestSchedule(null);
             }
@@ -45,13 +46,6 @@ const ViewSchedule = ({ canDelete = false }) => {
 
         return () => unsubscribe();
     }, []);
-
-    useEffect(() => {
-        if (message) {
-            const timer = setTimeout(() => setMessage(""), 4000);
-            return () => clearTimeout(timer);
-        }
-    }, [message]);
 
     const handleDelete = async () => {
         if (!latestSchedule) return;
@@ -73,15 +67,18 @@ const ViewSchedule = ({ canDelete = false }) => {
             );
             const snapshot = await getDocs(scheduleQuery);
             if (!snapshot.empty) {
-                await updateDoc(snapshot.docs[0].ref, { status: "inactive" });
+                await updateDoc(snapshot.docs[0].ref, {status: "inactive"});
             }
-
-            setMessage("Schedule deleted.");
-            setMessageType("success");
+            addToast({
+                type: "success",
+                message: "Schedule deleted successfully."
+            })
         } catch (err) {
             console.error("Error deleting schedule:", err);
-            setMessage("Failed to delete schedule.");
-            setMessageType("error");
+            addToast({
+                type: "error",
+                message: "Failed to delete schedule. Please try again."
+            });
         } finally {
             setDeleting(false);
         }
@@ -91,7 +88,8 @@ const ViewSchedule = ({ canDelete = false }) => {
 
     return (
         <div id="view-schedule-box" className="lg:pt-5 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">Latest Uploaded Schedule</h2>
+            <h2 className="text-lg font-semibold mb-2">Latest Uploaded Schedule <InfoLink anchor="schedule-visibility"/>
+            </h2>
 
             {latestSchedule ? (
                 <div>
@@ -123,12 +121,6 @@ const ViewSchedule = ({ canDelete = false }) => {
                 </div>
             ) : (
                 <p className="text-sm text-subtle-text mt-2">No schedule has been uploaded yet.</p>
-            )}
-
-            {message && (
-                <p className={`text-sm ${messageType === "success" ? "text-green-600" : "text-red-600"}`}>
-                    {message}
-                </p>
             )}
         </div>
     );

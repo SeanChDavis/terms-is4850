@@ -3,6 +3,7 @@ import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/firebase/firebase-config";
 import { formatDisplayDate, formatTime } from "@/utils/formatters";
 import { Link } from "react-router-dom";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 // Expand multi-day or custom requests into individual days
 const expandRequestToDates = (request, user = {}) => {
@@ -117,7 +118,7 @@ const TimeOffSummary = () => {
     return (
         <div>
             <div className="max-w-xl mb-6">
-                <h2 className="text-xl font-bold mb-2">Time-Off Summary</h2>
+                <h2 className="text-xl font-bold mb-2">Time-Off Summary <InfoLink anchor="time-off-summary" /></h2>
                 <p className="text-subtle-text mb-4">
                     View a breakdown of time-off requests by date to assist with scheduling.
                 </p>
@@ -201,7 +202,7 @@ const TimeOffSummary = () => {
                                                 )}
                                             </p>
                                             {entry.status === "pending" && (
-                                                <p className="text-yellow-600 font-medium">Pending</p>
+                                                <p className="text-amber-600 font-medium">Pending</p>
                                             )}
                                         </div>
                                     ))}

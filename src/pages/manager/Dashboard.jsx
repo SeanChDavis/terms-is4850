@@ -5,14 +5,16 @@ import {collection, query, where, getDocs, onSnapshot} from "firebase/firestore"
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { useFilteredAnnouncements } from "@/hooks/useFilteredAnnouncements";
 import { formatDisplayDate } from "@/utils/formatters";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 export default function ManagerDashboard() {
     const { userData, loading } = useCurrentUser();
-    const announcements = useFilteredAnnouncements("employee", 10).filter(a => a.expiresAt);
+    const announcements = useFilteredAnnouncements(["manager", "all"], 20).filter(a => a.expiresAt);
     const [statsLoading, setStatsLoading] = useState(true);
     const [pendingCount, setPendingCount] = useState(0);
     const [teamMembersCount, setTeamMembersCount] = useState(0);
     const [ongoingThreadsCount, setOngoingThreadsCount] = useState(0);
+    const [unapprovedUsersCount, setUnapprovedUsersCount] = useState(0);
 
     useEffect(() => {
         if (!userData?.uid) return;
@@ -42,6 +44,11 @@ export default function ManagerDashboard() {
                 const usersQ = query(collection(db, "users"));
                 const usersSnap = await getDocs(usersQ);
                 setTeamMembersCount(usersSnap.size);
+
+                const unapprovedQ = query(collection(db, "users"), where("managerApproved", "==", false));
+                const unapprovedSnap = await getDocs(unapprovedQ);
+                setUnapprovedUsersCount(unapprovedSnap.size);
+
                 setStatsLoading(false);
             } catch (err) {
                 console.error("Failed to fetch dashboard data:", err);
@@ -55,7 +62,7 @@ export default function ManagerDashboard() {
     return (
         <>
             <div className="max-w-xl mb-4">
-                <h2 className="text-xl font-bold mb-2">Manager Dashboard</h2>
+                <h2 className="text-xl font-bold mb-2">Manager Dashboard <InfoLink anchor="user-dashboard" /></h2>
                 <p className="text-subtle-text">
                     View your account details, key system updates, and access to system tools.
                 </p>
@@ -63,7 +70,7 @@ export default function ManagerDashboard() {
 
             {/* Body: Loading Guard */}
             {loading ? (
-                <div className="text-sm text-subtle-text italic p-6">Loading dashboard information...</div>
+                <div className="text-sm text-subtle-text italic">Loading...</div>
             ) : (
                 <>
                     {/* User Info */}
@@ -90,7 +97,7 @@ export default function ManagerDashboard() {
                             <div className="flex flex-col sm:flex-row gap-2">
                                 <NavLink
                                     to="/manager/profile"
-                                    className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark text-center"
+                                    className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded-md cursor-pointer hover:bg-primary-dark text-center"
                                 >
                                     Edit My Profile
                                 </NavLink>
@@ -98,10 +105,10 @@ export default function ManagerDashboard() {
                         </div>
                     </div>
 
-                    {/* Quick Stats */}
+                    {/* Quick Links */}
                     <div className={"my-12"}>
                         <div className="max-w-xl mb-4">
-                            <h2 className={"text-xl font-bold mb-2"}>Quick Links</h2>
+                            <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="quick-links" /></h2>
                             <p className="text-subtle-text">
                                 Quickly access important sections of the system, such as managing requests and viewing team members.
                             </p>
@@ -110,6 +117,18 @@ export default function ManagerDashboard() {
                             <div className="text-sm text-subtle-text italic py-6">Loading...</div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {unapprovedUsersCount > 0 && (
+                                    <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center bg-amber-50">
+                                        <h4 className="text-amber-800 font-bold text-sm mb-1">Users Pending Approval</h4>
+                                        <p className="text-2xl font-bold text-amber-900">{unapprovedUsersCount}</p>
+                                        <NavLink
+                                            to="/manager/users"
+                                            className="block max-w-48 mx-auto mt-3 rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-amber-700"
+                                        >
+                                            Review Users
+                                        </NavLink>
+                                    </div>
+                                )}
                                 <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center">
                                     <h4 className="text-subtle-text font-bold text-sm mb-1">Pending Time-Off Requests</h4>
                                     <p className="text-2xl font-bold">{pendingCount}</p>
@@ -145,7 +164,7 @@ export default function ManagerDashboard() {
                     </div>
 
                     {/* Time-Sensitive Announcements */}
-                    <h2 className="text-xl font-bold mb-2">Time-Sensitive Announcements</h2>
+                    <h2 className="text-xl font-bold mb-2">Time-Sensitive Announcements <InfoLink anchor="time-sensitive-announcements" /></h2>
                     {announcements.length === 0 ? (
                         <p className="text-subtle-text">There are no current announcements.</p>
                     ) : (

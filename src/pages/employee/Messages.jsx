@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Inbox from "@/components/messages/Inbox";
 import ThreadView from "@/components/messages/ThreadView";
+import InfoLink from "@/components/ui/InfoLink.jsx";
 
 export default function EmployeeMessages() {
     const [selectedThread, setSelectedThread] = useState(null);
@@ -9,7 +10,7 @@ export default function EmployeeMessages() {
         <>
             <div className="max-w-xl pb-4 mb-8">
                 <h2 className="text-xl font-bold mb-2">
-                    Messages
+                    Messages <InfoLink anchor="messages" />
                 </h2>
                 <p className={"text-subtle-text"}>
                     View and respond to messages from management. Messages can only be initiated by management, but you can reply to any existing conversation.

@@ -6,8 +6,11 @@ import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/reac
 import ManagerUploadSchedule from "@/components/manager/UploadSchedule";
 import ViewSchedule from "@/components/ui/ViewSchedule";
 import {Link} from "react-router-dom";
+import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useToast} from "@/context/ToastContext";
 
 const ManagerSchedule = () => {
+    const {addToast} = useToast();
     const [userMap, setUserMap] = useState({});
     const [requests, setRequests] = useState([]);
     const [selectedRequest, setSelectedRequest] = useState(null);
@@ -74,10 +77,17 @@ const ManagerSchedule = () => {
 
             // Make sure to fetch the updated requests after updating the status
             await fetchRequests();
+            addToast({
+                type: "success",
+                message: `Request ${newStatus} successfully!`
+            });
             setSelectedRequest(null);
         } catch (err) {
             console.error("Error updating status:", err);
-            alert("Could not update request. Please try again.");
+            addToast({
+                type: "error",
+                message: `Failed to update request status: ${err.message}`
+            });
         }
     };
 
@@ -99,7 +109,7 @@ const ManagerSchedule = () => {
     return (
         <>
             <div className={"max-w-xl pb-4 mb-8"}>
-                <h2 className={`text-xl font-bold mb-2`}>Work Schedule Information</h2>
+                <h2 className={`text-xl font-bold mb-2`}>Work Schedule Information <InfoLink anchor="work-schedule-information" /></h2>
                 <p className={"text-subtle-text"}>
                     As a manager, you can view all time-off requests submitted by employees. You can approve or deny
                     requests based on your discretion.
@@ -111,7 +121,7 @@ const ManagerSchedule = () => {
             ) : (
                 <>
                     <div className="mt-6">
-                        <h1 className="text-xl font-semibold mb-0">Manage Time-Off Requests</h1>
+                        <h1 className="text-xl font-semibold mb-0">Manage Time-Off Requests <InfoLink anchor="manage-time-off-requests" /></h1>
                         {requests.length > 0 && (
                             <div className="flex justify-between items-center mb-4">
                                 <button
@@ -171,7 +181,7 @@ const ManagerSchedule = () => {
                                             </td>
                                             <td className="px-4 py-3 capitalize">
                                         <span className={`font-bold
-                                            ${r.status === "pending" ? "text-yellow-600" :
+                                            ${r.status === "pending" ? "text-amber-600" :
                                             r.status === "approved" ? "text-green-600" :
                                                 r.status === "denied" ? "text-red-600" : ""
                                         }`}
@@ -215,14 +225,14 @@ const ManagerSchedule = () => {
                                     <button
                                         onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
                                         disabled={currentPage === 1}
-                                        className="px-3 py-1 mr-3 text-sm font-semibold cursor-pointer bg-light-gray rounded disabled:opacity-50"
+                                        className="px-3 py-1 mr-3 text-sm font-semibold cursor-pointer bg-light-gray rounded-md disabled:opacity-50"
                                     >
                                         Prev
                                     </button>
                                     <button
                                         onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
                                         disabled={currentPage === totalPages}
-                                        className="px-3 py-1 text-sm font-semibold cursor-pointer bg-light-gray rounded disabled:opacity-50"
+                                        className="px-3 py-1 text-sm font-semibold cursor-pointer bg-light-gray rounded-md disabled:opacity-50"
                                     >
                                         Next
                                     </button>
@@ -313,7 +323,7 @@ const ManagerSchedule = () => {
 
                     {requests.length > 0 && (
                         <div className={"space-y-2 mb-12 lg:mb-20"}>
-                            <h2 className="text-xl font-semibold mt-10">Time Off Summary</h2>
+                            <h2 className="text-xl font-semibold mt-10">Time Off Summary <InfoLink anchor="time-off-summary" /></h2>
                             <p className="max-w-2xl text-subtle-text mb-6">
                                 The Time Off Summary provides a breakdown of all time-off requests by date, helping you build the schedule effectively.
                             </p>
