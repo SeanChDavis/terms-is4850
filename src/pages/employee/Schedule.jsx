@@ -16,8 +16,10 @@ import {formatDisplayDate, formatTime} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 import ViewSchedule from "@/components/ui/ViewSchedule";
 import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useToast} from "@/context/ToastContext";
 
 const EmployeeSchedule = () => {
+    const {addToast} = useToast();
     const [requests, setRequests] = useState([]);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [open, setOpen] = useState(false);
@@ -32,9 +34,6 @@ const EmployeeSchedule = () => {
 
     const [loading, setLoading] = useState(true);
     const [loadingSubmit, setLoadingSubmit] = useState(false);
-
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState("");
 
     // Get requests from Firestore
     useEffect(() => {
@@ -59,14 +58,6 @@ const EmployeeSchedule = () => {
         return () => unsubscribe();
     }, [user]);
 
-    // Clear success message after submission
-    useEffect(() => {
-        if (success) {
-            const timer = setTimeout(() => setSuccess(false), 10000);
-            return () => clearTimeout(timer);
-        }
-    }, [success]);
-
     // Reset form fields when component mounts
     const resetForm = () => {
         setRequestType("");
@@ -81,8 +72,6 @@ const EmployeeSchedule = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoadingSubmit(true);
-        setError("");
-        setSuccess(false);
 
         try {
 
@@ -95,13 +84,19 @@ const EmployeeSchedule = () => {
             const selectedDay = new Date(year, month - 1, day);
 
             if (selectedDay < tomorrow) {
-                setError("Requests must begin on a future date.");
+                addToast({
+                    type: "error",
+                    message: "Requests must begin on a future date.",
+                })
                 setLoadingSubmit(false);
                 return;
             }
 
             if (requestType === "multi" && new Date(endDate) < new Date(startDate)) {
-                setError("End date must be after start date.");
+                addToast({
+                    type: "error",
+                    message: "End date must be after start date.",
+                })
                 setLoadingSubmit(false);
                 return;
             }
@@ -109,7 +104,10 @@ const EmployeeSchedule = () => {
             if (requestType === "custom") {
 
                 if (!startDate || !endDate || !startTime || !endTime) {
-                    setError("All date and time fields are required for custom requests.");
+                    addToast({
+                        type: "error",
+                        message: "All date and time fields are required for custom requests.",
+                    })
                     setLoadingSubmit(false);
                     return;
                 }
@@ -118,7 +116,10 @@ const EmployeeSchedule = () => {
                 const end = new Date(`${endDate}T${endTime}`);
 
                 if (end <= start) {
-                    setError("End time must be after start time.");
+                    addToast({
+                        type: "error",
+                        message: "End time must be after start date/time.",
+                    })
                     setLoadingSubmit(false);
                     return;
                 }
@@ -148,13 +149,18 @@ const EmployeeSchedule = () => {
 
             // Now add the request to Firestore
             await addDoc(collection(db, "requests"), payload);
-
-            setSuccess(true);
             resetForm();
+            addToast({
+                type: "success",
+                message: "Your request has been submitted successfully! Please wait for management decision.",
+            })
             setCurrentPage(1);
         } catch (err) {
             console.error("Error submitting request:", err);
-            setError("Something went wrong. Please try again.");
+            addToast({
+                type: "error",
+                message: "Could not submit request. Please try again.",
+            });
         } finally {
             setLoadingSubmit(false);
         }
@@ -164,9 +170,16 @@ const EmployeeSchedule = () => {
     const deleteRequest = async (id) => {
         try {
             await deleteDoc(doc(db, "requests", id));
+            addToast({
+                type: "success",
+                message: "Request deleted successfully.",
+            });
         } catch (err) {
             console.error("Error deleting request:", err);
-            alert("Could not delete request. Please try again.");
+            addToast({
+                type: "error",
+                message: "Could not delete request. Please try again.",
+            });
         }
     };
 
@@ -312,10 +325,6 @@ const EmployeeSchedule = () => {
                                 </div>
                             </form>
                         </div>
-                    </div>
-                    <div className="h-5 mt-2">
-                        {success && <p className="text-sm text-green-600">Request submitted successfully!</p>}
-                        {error && <p className="text-sm text-red-600">{error}</p>}
                     </div>
                 </div>
                 <div>

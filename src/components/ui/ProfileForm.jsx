@@ -1,22 +1,20 @@
-import { useState, useEffect } from "react";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { useAuth } from "@/context/AuthContext";
-import { db } from "@/firebase/firebase-config";
+import {useState, useEffect} from "react";
+import {doc, getDoc, setDoc} from "firebase/firestore";
+import {useAuth} from "@/context/AuthContext";
+import {db} from "@/firebase/firebase-config";
+import {useToast} from "@/context/ToastContext";
 
 const Profile = () => {
-    const { user } = useAuth();
+    const {user} = useAuth();
+    const {addToast} = useToast();
 
     const [form, setForm] = useState({
         first_name: "",
         last_name: "",
         display_name: ""
     });
-    const [loading, setLoading] = useState(true);
     const [loadingUserData, setLoadingUserData] = useState(true);
     const [savingProfile, setSavingProfile] = useState(false);
-
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState("");
 
     useEffect(() => {
         const loadUserData = async () => {
@@ -41,32 +39,28 @@ const Profile = () => {
         loadUserData().catch(console.error);
     }, [user.uid]);
 
-
-    // Clear success message after submission
-    useEffect(() => {
-        if (success) {
-            const timer = setTimeout(() => setSuccess(false), 10000);
-            return () => clearTimeout(timer);
-        }
-    }, [success]);
-
     const handleChange = (e) => {
-        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+        setForm((prev) => ({...prev, [e.target.name]: e.target.value}));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSavingProfile(true);
-        setError("");
-        setSuccess(false);
 
         try {
             const docRef = doc(db, "users", user.uid);
-            await setDoc(docRef, form, { merge: true });
-            setSuccess(true);
+            await setDoc(docRef, form, {merge: true});
+            addToast({
+                type: "success",
+                message: "Profile updated successfully!",
+                duration: 5000
+            });
         } catch (err) {
-            console.error("Error submitting:", err);
-            setError("Something went wrong. Please try again.");
+            addToast({
+                type: "error",
+                message: "Failed to update profile. Please try again.",
+                duration: 5000
+            });
         } finally {
             setSavingProfile(false);
         }
@@ -76,7 +70,8 @@ const Profile = () => {
 
     return (
         <>
-            <div className={"max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
+            <div
+                className={"max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
                 <div className="px-4 py-5 sm:px-6">
                     <h2 className="text-base/7 font-semibold">Edit Your Profile</h2>
                     <p className="mt-1 text-sm/6 text-subtle-text">
@@ -133,10 +128,6 @@ const Profile = () => {
                         </button>
                     </form>
                 </div>
-            </div>
-            <div className="h-5 mt-2">
-                {success && <p className="text-sm text-green-600">Profile updated successfully!</p>}
-                {error && <p className="text-sm text-red-600">{error}</p>}
             </div>
         </>
     );

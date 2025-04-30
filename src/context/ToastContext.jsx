@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
-import { Transition } from '@headlessui/react';
-import { CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import {createContext, useContext, useState, useCallback, useRef, useEffect} from 'react';
+import {Transition} from '@headlessui/react';
+import {CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon, XMarkIcon} from '@heroicons/react/24/outline';
 
 const ToastContext = createContext();
 
@@ -11,7 +11,7 @@ const iconMap = {
     warning: ExclamationCircleIcon,
 };
 
-export function ToastProvider({ children }) {
+export function ToastProvider({children}) {
     const [toasts, setToasts] = useState([]);
     const timersRef = useRef({});
 
@@ -24,9 +24,9 @@ export function ToastProvider({ children }) {
     }, []);
 
     const addToast = useCallback(
-        ({ type = 'info', message, duration = 5000 }) => {
+        ({type = 'info', message, duration = 7500, position = 'top-right'}) => {
             const id = Date.now().toString();
-            const newToast = { id, type, message };
+            const newToast = {id, type, message, position};
 
             setToasts((prev) => [...prev, newToast]);
 
@@ -53,67 +53,75 @@ export function ToastProvider({ children }) {
     }, []);
 
     return (
-        <ToastContext.Provider value={{ addToast, dismissToast }}>
+        <ToastContext.Provider value={{addToast, dismissToast}}>
             {children}
-            {/* Toast container */}
-            <div
-                aria-live="assertive"
-                className="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6 z-50"
-            >
-                <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
-                    {toasts.map((toast) => {
-                        const Icon = iconMap[toast.type];
-                        const bgColor = {
-                            success: 'bg-green-50',
-                            error: 'bg-red-50',
-                            info: 'bg-blue-50',
-                            warning: 'bg-yellow-50',
-                        }[toast.type];
-                        const textColor = {
-                            success: 'text-green-400',
-                            error: 'text-red-400',
-                            info: 'text-blue-400',
-                            warning: 'text-yellow-400',
-                        }[toast.type];
+            {/* Toast containers by position */}
+            <div className="fixed inset-0 z-50 pointer-events-none pl-8">
+                {['top-right', 'bottom-right'].map((pos) => (
+                    <div
+                        key={pos}
+                        className={`md:w-full absolute ${
+                            pos === 'top-right' ? 'top-14 right-8' : 'bottom-8 right-8'
+                        } flex flex-col items-end space-y-4`}
+                    >
+                        {toasts
+                            .filter((t) => t.position === pos)
+                            .map((toast) => {
+                                const Icon = iconMap[toast.type];
+                                const bgColor = {
+                                    success: 'bg-emerald-50',
+                                    error: 'bg-red-50',
+                                    info: 'bg-gray-50',
+                                    warning: 'bg-amber-50',
+                                }[toast.type];
+                                const textColor = {
+                                    success: 'text-emerald-800',
+                                    error: 'text-red-700',
+                                    info: 'text-gray-800',
+                                    warning: 'text-amber-800',
+                                }[toast.type];
+                                const borderColor = {
+                                    success: 'border-emerald-300',
+                                    error: 'border-red-300',
+                                    info: 'border-gray-300',
+                                    warning: 'border-amber-300',
+                                }[toast.type];
 
-                        return (
-                            <Transition
-                                key={toast.id}
-                                show={true}
-                                enter="transform ease-out duration-300 transition"
-                                enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-                                enterTo="translate-y-0 opacity-100 sm:translate-x-0"
-                                leave="transition ease-in duration-100"
-                                leaveFrom="opacity-100"
-                                leaveTo="opacity-0"
-                                className="w-full max-w-sm"
-                            >
-                                <div className={`pointer-events-auto w-full overflow-hidden rounded-lg shadow-lg ring-1 ring-black/5 ${bgColor}`}>
-                                    <div className="p-4">
-                                        <div className="flex items-start">
-                                            <div className="shrink-0">
-                                                <Icon className={`h-6 w-6 ${textColor}`} aria-hidden="true" />
-                                            </div>
-                                            <div className="ml-3 w-0 flex-1 pt-0.5">
-                                                <p className="text-sm font-medium text-gray-900">{toast.message}</p>
-                                            </div>
-                                            <div className="ml-4 flex shrink-0">
+                                return (
+                                    <Transition
+                                        key={toast.id}
+                                        show={true}
+                                        appear
+                                        enter="delay-100 transform ease-out duration-100"
+                                        enterFrom="opacity-0 translate-y-1 sm:translate-y-0 sm:translate-x-1"
+                                        enterTo="opacity-100 translate-y-0 sm:translate-x-0"
+                                        leave="transition ease-in duration-500"
+                                        leaveFrom="opacity-100 translate-y-0"
+                                        leaveTo="opacity-0 translate-y-1 sm:translate-y-0 sm:translate-x-1"
+                                        className="w-full max-w-sm"
+                                    >
+                                        <div
+                                            className={`pointer-events-auto w-full overflow-hidden rounded-md shadow-md border-1 ${borderColor} ${bgColor}`}
+                                        >
+                                            <div className="p-4 flex items-center">
+                                                <Icon className={`h-5 w-5 ${textColor}`} aria-hidden="true" />
+                                                <div className="ml-3 flex-1">
+                                                    <p className={`text-sm font-medium ${textColor}`}>{toast.message}</p>
+                                                </div>
                                                 <button
                                                     type="button"
-                                                    className="inline-flex rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                                     onClick={() => dismissToast(toast.id)}
+                                                    className="ml-4 focus:outline-none cursor-pointer"
                                                 >
-                                                    <span className="sr-only">Close</span>
-                                                    <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                                                    <XMarkIcon className={`h-4 w-4 ${textColor}`} aria-hidden="true" />
                                                 </button>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </Transition>
-                        );
-                    })}
-                </div>
+                                    </Transition>
+                                );
+                            })}
+                    </div>
+                ))}
             </div>
         </ToastContext.Provider>
     );

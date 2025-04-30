@@ -1,11 +1,11 @@
 import {useState, useEffect} from "react";
 import {login, signInWithGoogle} from "@/firebase/auth";
-import {useToast} from '@/context/ToastContext.jsx';
+import {useToast} from '@/context/ToastContext';
 import {createUserDocument, getUserDocument} from '@/firebase/firestore';
 import {useLocation, useNavigate} from "react-router-dom";
 import SiteLogo from "@/components/ui/SiteLogo";
 import {auth} from "@/firebase/firebase-config";
-import GoogleAuthButton from "@/components/ui/GoogleAuthButton.jsx";
+import GoogleAuthButton from "@/components/ui/GoogleAuthButton";
 import {useAuth} from "@/context/AuthContext";
 
 const Login = () => {
@@ -55,10 +55,10 @@ const Login = () => {
                 userDoc.role = 'employee';
                 await createUserDocument(uid, userDoc); // Overwrites safely
             }
-            addToast({  // Add this toast
+
+            addToast({
                 type: 'success',
-                message: 'Logged in successfully!',
-                duration: 3000
+                message: 'Logged in successfully!'
             });
 
             // Redirect based on role
@@ -69,10 +69,9 @@ const Login = () => {
             }
 
         } catch (err) {
-            addToast({  // Add this toast
+            addToast({
                 type: 'error',
-                message: err.message,
-                duration: 5000
+                message: err.message
             });
             setError(err.message);
         }
@@ -91,10 +90,9 @@ const Login = () => {
                 setError('Account not found. Please register first.');
                 return;
             }
-            addToast({  // Add this toast
+            addToast({
                 type: 'success',
-                message: 'Logged in with Google successfully!',
-                duration: 3000
+                message: 'Logged in with Google successfully!'
             });
 
             // Redirect based on role

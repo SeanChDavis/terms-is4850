@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { db } from "@/firebase/firebase-config";
+import {useEffect, useState} from "react";
+import {db} from "@/firebase/firebase-config";
 import {
     collection,
     query,
@@ -11,14 +11,16 @@ import {
     onSnapshot,
     serverTimestamp
 } from "firebase/firestore";
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
-import { useAuth } from "@/context/AuthContext";
-import { formatDisplayDate } from "@/utils/formatters";
-import { getDocs } from "firebase/firestore";
+import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
+import {useAuth} from "@/context/AuthContext";
+import {formatDisplayDate} from "@/utils/formatters";
+import {getDocs} from "firebase/firestore";
 import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useToast} from "@/context/ToastContext.jsx";
 
-export default function UserNotes({ userId }) {
-    const { user } = useAuth();
+export default function UserNotes({userId}) {
+    const {user} = useAuth();
+    const {addToast} = useToast();
     const [userMap, setUserMap] = useState({});
 
     const [notes, setNotes] = useState([]);
@@ -73,14 +75,25 @@ export default function UserNotes({ userId }) {
         e.preventDefault();
         if (!content.trim() || !user) return;
 
-        await addDoc(collection(db, "notes"), {
-            userId,
-            managerId: user.uid,
-            content: content.trim(),
-            createdAt: serverTimestamp(),
-        });
-
-        setContent("");
+        try {
+            await addDoc(collection(db, "notes"), {
+                userId,
+                managerId: user.uid,
+                content: content.trim(),
+                createdAt: serverTimestamp(),
+            });
+            setContent("");
+            addToast({
+                type: "success",
+                message: "Note added successfully!"
+            })
+        } catch (error) {
+            console.error("Error adding note:", error);
+            addToast({
+                type: "error",
+                message: "Failed to add note. Please try again."
+            });
+        }
     };
 
     const handleDelete = async (id) => {
@@ -88,8 +101,16 @@ export default function UserNotes({ userId }) {
             await deleteDoc(doc(db, "notes", id));
             setSelectedNote(null);
             setOpen(false);
+            addToast({
+                type: "success",
+                message: "Note deleted successfully."
+            });
         } catch (error) {
             console.error("Error deleting note:", error);
+            addToast({
+                type: "error",
+                message: "Failed to delete note. Please try again."
+            });
         }
     };
 
@@ -114,16 +135,17 @@ export default function UserNotes({ userId }) {
     return (
         <div className={"mt-12 mb-10"}>
             <div className="max-w-lg mb-4">
-                <h2 className="text-xl font-bold mb-2">Add User Note <InfoLink anchor="notes" /></h2>
+                <h2 className="text-xl font-bold mb-2">Add User Note <InfoLink anchor="notes"/></h2>
                 <p className="text-subtle-text">
                     Document important information related to this user. Notes are only visible to managers.
                 </p>
             </div>
 
             {/* Add Note Form */}
-            <div className="max-w-md divide-y divide-border-gray overflow-hidden border border-border-gray rounded-md bg-white">
+            <div
+                className="max-w-md divide-y divide-border-gray overflow-hidden border border-border-gray rounded-md bg-white">
                 <div className="px-4 py-5 sm:px-6">
-                    <h2 className="text-base font-semibold">Create New Note <InfoLink anchor="notes" /></h2>
+                    <h2 className="text-base font-semibold">Create New Note <InfoLink anchor="notes"/></h2>
                     <p className="mt-1 text-sm text-subtle-text">
                         Add a new internal note regarding this user.
                     </p>
@@ -157,7 +179,7 @@ export default function UserNotes({ userId }) {
 
             {/* Notes List */}
             <div className="mt-10">
-                <h2 className="text-xl font-semibold mb-0">Past Notes <InfoLink anchor="notes" /></h2>
+                <h2 className="text-xl font-semibold mb-0">Past Notes <InfoLink anchor="notes"/></h2>
                 {filteredNotes.length === 0 ? (
                     <p className="mt-3 text-sm italic text-subtle-text">
                         {showMineOnly
@@ -178,7 +200,7 @@ export default function UserNotes({ userId }) {
                             <table className="min-w-full text-sm text-left text-gray-700">
                                 <thead className="bg-gray-50 border-b border-border-gray">
                                 <tr>
-                                    <th className="px-4 py-3 font-semibold" style={{ width: "160px" }}>Posted</th>
+                                    <th className="px-4 py-3 font-semibold" style={{width: "160px"}}>Posted</th>
                                     <th className="px-4 py-3 font-semibold" style={{width: "150px"}}>Created By</th>
                                     <th className="px-4 py-3 font-semibold">Note Preview</th>
                                     <th className="px-4 py-3 font-semibold text-right">Action</th>
@@ -193,8 +215,8 @@ export default function UserNotes({ userId }) {
                                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                                             {userMap[note.managerId]?.display_name ||
                                                 (userMap[note.managerId]?.first_name && userMap[note.managerId]?.last_name
-                                                    ? `${userMap[note.managerId].first_name} ${userMap[note.managerId].last_name}`
-                                                    : userMap[note.managerId]?.email?.slice(0, 17) + "..."
+                                                        ? `${userMap[note.managerId].first_name} ${userMap[note.managerId].last_name}`
+                                                        : userMap[note.managerId]?.email?.slice(0, 17) + "..."
                                                 ) || "Unknown"}
                                         </td>
                                         <td className="px-4 py-3 truncate max-w-[300px]">
@@ -286,10 +308,10 @@ export default function UserNotes({ userId }) {
                                     </p>
                                     <p className="mb-0">
                                         <strong>Created By:</strong> {userMap[selectedNote.managerId]?.display_name ||
-                                            (userMap[selectedNote.managerId]?.first_name && userMap[selectedNote.managerId]?.last_name
+                                        (userMap[selectedNote.managerId]?.first_name && userMap[selectedNote.managerId]?.last_name
                                                 ? `${userMap[selectedNote.managerId].first_name} ${userMap[selectedNote.managerId].last_name}`
                                                 : userMap[selectedNote.managerId]?.email
-                                            ) || "Unknown"}
+                                        ) || "Unknown"}
                                     </p>
                                     <div className="text-gray-800 whitespace-pre-line my-4">
                                         <strong className={"block"}>Details:</strong> {selectedNote.content}

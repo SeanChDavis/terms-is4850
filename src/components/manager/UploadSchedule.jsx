@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {useState, useRef} from "react";
+import {ref, uploadBytes, getDownloadURL} from "firebase/storage";
 import {
     collection,
     addDoc,
@@ -9,21 +9,21 @@ import {
     where,
     writeBatch
 } from "firebase/firestore";
-import { storage, db } from "@/firebase/firebase-config";
-import { useAuth } from "@/context/AuthContext";
+import {storage, db} from "@/firebase/firebase-config";
+import {useAuth} from "@/context/AuthContext";
 import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useToast} from "@/context/ToastContext";
 
 const ManagerUploadSchedule = () => {
-    const { user } = useAuth();
+    const {user} = useAuth();
+    const {addToast} = useToast();
     const [file, setFile] = useState(null);
     const [label, setLabel] = useState("");
     const [uploading, setUploading] = useState(false);
-    const [error, setError] = useState("");
     const fileInputRef = useRef(null);
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
-        setError("");
     };
 
     const handleSubmit = async (e) => {
@@ -31,7 +31,6 @@ const ManagerUploadSchedule = () => {
         if (!file || !user) return;
 
         setUploading(true);
-        setError("");
 
         try {
             // Deactivate any previously active schedules
@@ -39,7 +38,7 @@ const ManagerUploadSchedule = () => {
             const snapshot = await getDocs(activeQuery);
             const batch = writeBatch(db);
             snapshot.forEach((doc) => {
-                batch.update(doc.ref, { status: "inactive" });
+                batch.update(doc.ref, {status: "inactive"});
             });
             await batch.commit();
 
@@ -60,15 +59,22 @@ const ManagerUploadSchedule = () => {
             });
 
             // Reset form
-            document.getElementById("view-schedule-box")?.scrollIntoView({ behavior: "smooth" });
+            document.getElementById("view-schedule-box")?.scrollIntoView({behavior: "smooth"});
             setLabel("");
             if (fileInputRef.current) {
                 fileInputRef.current.value = "";
             }
             setFile(null);
+            addToast({
+                type: "success",
+                message: "Schedule uploaded successfully!"
+            });
         } catch (err) {
             console.error("Upload failed:", err);
-            setError("Something went wrong. Please try again.");
+            addToast({
+                type: "error",
+                message: "Failed to upload schedule. Please try again."
+            });
         } finally {
             setUploading(false);
         }
@@ -78,7 +84,8 @@ const ManagerUploadSchedule = () => {
         <>
             <div className="divide-y divide-border-gray border border-border-gray rounded-md bg-white">
                 <div className="px-4 py-5 sm:px-6">
-                    <h2 className="text-lg font-semibold mb-2">Upload Schedule <InfoLink anchor="schedule-visibility" /></h2>
+                    <h2 className="text-lg font-semibold mb-2">Upload Schedule <InfoLink anchor="schedule-visibility"/>
+                    </h2>
                     <p className="text-sm text-subtle-text">
                         Upload a PDF or image of the most recent work schedule for employees to view and download.
                     </p>
@@ -117,9 +124,6 @@ const ManagerUploadSchedule = () => {
                         </button>
                     </form>
                 </div>
-            </div>
-            <div className="h-5 mt-2">
-                {error && <p className="text-sm text-red-600">{error}</p>}
             </div>
         </>
     );

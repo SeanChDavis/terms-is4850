@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/firebase/firebase-config";
 
-export function useFilteredAnnouncements(role = "employee", limit = null) {
+export function useFilteredAnnouncements(role = ["employee"], limit = null) {
     const [announcements, setAnnouncements] = useState([]);
 
     useEffect(() => {
@@ -26,7 +26,7 @@ export function useFilteredAnnouncements(role = "employee", limit = null) {
                     };
                 })
                 .filter(a => {
-                    const visibleToUser = a.visibleTo === "all" || a.visibleTo === role;
+                    const visibleToUser = a.visibleTo === "all" || (Array.isArray(role) ? role.includes(a.visibleTo) : a.visibleTo === role);
                     const stillActive = !a.expiresAt || a.expiresAt > now;
                     return visibleToUser && stillActive;
                 });
