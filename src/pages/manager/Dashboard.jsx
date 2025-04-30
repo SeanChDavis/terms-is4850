@@ -97,7 +97,7 @@ export default function ManagerDashboard() {
                             <div className="flex flex-col sm:flex-row gap-2">
                                 <NavLink
                                     to="/manager/profile"
-                                    className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark text-center"
+                                    className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded-md cursor-pointer hover:bg-primary-dark text-center"
                                 >
                                     Edit My Profile
                                 </NavLink>
@@ -118,12 +118,12 @@ export default function ManagerDashboard() {
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {unapprovedUsersCount > 0 && (
-                                    <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center bg-yellow-50">
-                                        <h4 className="text-yellow-800 font-bold text-sm mb-1">Users Pending Approval</h4>
-                                        <p className="text-2xl font-bold text-yellow-900">{unapprovedUsersCount}</p>
+                                    <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center bg-amber-50">
+                                        <h4 className="text-amber-800 font-bold text-sm mb-1">Users Pending Approval</h4>
+                                        <p className="text-2xl font-bold text-amber-900">{unapprovedUsersCount}</p>
                                         <NavLink
                                             to="/manager/users"
-                                            className="block max-w-48 mx-auto mt-3 rounded-md bg-yellow-600 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-yellow-700"
+                                            className="block max-w-48 mx-auto mt-3 rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-amber-700"
                                         >
                                             Review Users
                                         </NavLink>
