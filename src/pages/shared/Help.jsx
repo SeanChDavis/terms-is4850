@@ -1,11 +1,15 @@
-import { useEffect, useRef } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import {useEffect, useRef} from 'react';
+import {useAuth} from '@/context/AuthContext';
 import {FaLink} from "react-icons/fa";
 import Header from "@/components/layout/Header.jsx";
 import {copyCurrentUrlWithHash} from "@/utils/copyCurrentUrlWithHash";
+import {Navigate} from "react-router-dom";
 
 export default function Help() {
-    const { user, role } = useAuth();
+    const {user, role} = useAuth();
+
+    if (!user) return <Navigate to="/login" replace />;
+
     const highlightRef = useRef(null);
 
     useEffect(() => {

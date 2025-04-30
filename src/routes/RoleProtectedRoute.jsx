@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/AuthContext.jsx';
 
 // This component protects routes by checking if the user has the required role.
 const RoleProtectedRoute = ({ children, requiredRole }) => {
