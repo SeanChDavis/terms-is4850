@@ -18,7 +18,11 @@ export default function PendingApproval() {
     const handleLogout = async () => {
         await logout();
         navigate("/login");
-        addToast({type: 'success', message: 'Logged out successfully.'});
+        addToast({
+            type: 'success',
+            message: 'Logged out successfully.',
+            duration: 3000,
+        });
     };
 
     return (
