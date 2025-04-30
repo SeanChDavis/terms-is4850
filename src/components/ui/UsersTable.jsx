@@ -9,7 +9,8 @@ export default function UsersTable() {
     const { userData: currentUser } = useCurrentUser();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const [filter, setFilter] = useState('all');
+    const [showOnlyUnapproved, setShowOnlyUnapproved] = useState(false);
     const navigate = useNavigate();
 
     const handleMessageUser = async (targetUserId) => {
@@ -39,25 +40,65 @@ export default function UsersTable() {
     useEffect(() => {
         async function fetchUsers() {
             const data = await getAllUsers();
-            setUsers(data);
+
+            // Prioritize pending employees first
+            const sorted = [...data].sort((a, b) => {
+                const aPending = a.role === 'employee' && a.managerApproved === false;
+                const bPending = b.role === 'employee' && b.managerApproved === false;
+
+                if (aPending && !bPending) return -1;
+                if (!aPending && bPending) return 1;
+                return 0;
+            });
+
+            setUsers(sorted);
             setLoading(false);
         }
         fetchUsers().catch(console.error);
     }, []);
+
+    const filteredUsers = users.filter(user => {
+        switch (filter) {
+            case 'employee':
+                return user.role === 'employee';
+            case 'manager':
+                return user.role === 'manager';
+            case 'pending':
+                return user.role === 'employee' && user.managerApproved === false;
+            default:
+                return true;
+        }
+    });
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
 
     // Pagination math
-    const totalPages = Math.ceil(users.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentUsers = users.slice(startIndex, startIndex + itemsPerPage);
+    const currentUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage);
 
     if (loading) return <div>Loading users...</div>;
 
     return (
         <>
+            <div className="sm:flex flex-wrap justify-between items-center gap-4 mb-4">
+                <div className="flex items-center gap-2">
+                    <span className={"text-sm"}>Displaying:</span>
+                    <select
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                        className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6 cursor-pointer"
+                    >
+                        <option value="all">All Users</option>
+                        <option value="employee">Employees Only</option>
+                        <option value="manager">Managers Only</option>
+                        <option value="pending">Pending Approval Only</option>
+                    </select>
+                </div>
+            </div>
+
             <div className="overflow-auto rounded-md border border-border-gray bg-white">
                 <table className="min-w-full text-sm text-left text-gray-700">
                     <thead className="bg-gray-50 border-b border-border-gray">
@@ -70,7 +111,14 @@ export default function UsersTable() {
                     </thead>
                     <tbody>
                     {currentUsers.map((user) => (
-                        <tr key={user.uid} className="border-t border-border-gray">
+                        <tr
+                            key={user.uid}
+                            className={`border-t border-border-gray ${
+                                user.role === 'employee' && user.managerApproved === false
+                                    ? 'bg-amber-50'
+                                    : ''
+                            }`}
+                        >
                             <td className="px-4 py-3 whitespace-nowrap">
                                 {user?.display_name ||
                                  `${user?.first_name || ''} ${user?.last_name || ''}`.trim() ||
@@ -87,7 +135,7 @@ export default function UsersTable() {
                                       {user.role}
                                     </span>
                                     {!user.managerApproved && user.role === "employee" && (
-                                        <span className="inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        <span className="inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium bg-amber-100 text-amber-800">
                                             Pending Approval
                                         </span>
                                     )}
@@ -120,6 +168,13 @@ export default function UsersTable() {
                         </tr>
                     ))}
                     </tbody>
+                    {currentUsers.length === 0 && (
+                        <tr>
+                            <td colSpan={4} className="text-center py-6 text-subtle-text italic">
+                                No users match this filter.
+                            </td>
+                        </tr>
+                    )}
                 </table>
             </div>
 

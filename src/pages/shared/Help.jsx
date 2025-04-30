@@ -463,6 +463,9 @@ export default function Help() {
                                 <p className={"mb-3"}>
                                     Displayed in a table format, the Users page provides an overview of all users, including their name, email address, and role.
                                 </p>
+                                <p className={"mb-3"}>
+                                    If a user is an employee and has not yet been approved by a manager, they will be highlighted in yellow to indicate that they are pending approval. Managers can click on the "View" link for a pending user to view their details and approve or deny their access to the system.
+                                </p>
                                 <h3 className={"font-bold mb-2"}>Actions:</h3>
                                 <ul className={"list-disc pl-4 mb-3 pt-1"}>
                                     <li className={"mb-1"}>
@@ -502,6 +505,9 @@ export default function Help() {
                                 </p>
                                 <p className={"mb-3"}>
                                     Managers can take specific actions from the User Details page, such as promoting or demoting their user role in the system, or sending a message directly to the user.
+                                </p>
+                                <p className={"mb-3"}>
+                                    If the user is an employee and has not yet been approved by a manager, the page will display a prominent alert to approve or deny their access to the system.
                                 </p>
                                 <h3 className={"font-bold mb-2"}>Important Detail:</h3>
                                 <p className={"mb-0"}>

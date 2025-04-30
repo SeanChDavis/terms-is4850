@@ -7,6 +7,7 @@ import {
     orderBy,
     onSnapshot,
     updateDoc,
+    deleteDoc,
     doc,
     getDoc,
     setDoc,
@@ -130,6 +131,40 @@ export default function ManagerUserView() {
                 <div className="text-sm text-subtle-text">Loading...</div>
             ) : (
                 <>
+                    {user.role === 'employee' && !user.managerApproved && (
+                        <div className="bg-amber-100 text-amber-900 px-6 py-4 rounded-md flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-6">
+                            <div>
+                                <p className="font-semibold text-sm mb-1">This user is awaiting manager approval.</p>
+                                <p className="text-sm text-amber-800">
+                                    Approve the user to grant access, or deny and delete the account entirely.
+                                </p>
+                            </div>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <button
+                                    onClick={async () => {
+                                        await updateDoc(doc(db, "users", user.uid), {
+                                            managerApproved: true
+                                        });
+                                        setUser(prev => ({ ...prev, managerApproved: true }));
+                                    }}
+                                    className="text-sm px-4 py-2 bg-amber-600 text-white font-semibold rounded-md cursor-pointer hover:bg-amber-700"
+                                >
+                                    Approve User
+                                </button>
+                                <button
+                                    onClick={async () => {
+                                        if (!confirm("Are you sure you want to deny and delete this user?")) return;
+                                        await deleteDoc(doc(db, "users", user.uid));
+                                        navigate("/manager/users");
+                                    }}
+                                    className="w-full sm:w-auto rounded-md bg-red-800 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-red-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-900"
+                                >
+                                    Deny & Delete
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     <div
                         className="mt-6 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x">
                         <div className="p-6 flex-1">
@@ -153,28 +188,15 @@ export default function ManagerUserView() {
                                 <>
                                     <p className="font-semibold mb-2">Actions:</p>
                                     <div className="flex flex-col sm:flex-row gap-2">
-                                        {user.role === 'employee' && !user.managerApproved && (
-                                            <button
-                                                onClick={async () => {
-                                                    await updateDoc(doc(db, "users", user.uid), {
-                                                        managerApproved: true
-                                                    });
-                                                    setUser(prev => ({ ...prev, managerApproved: true }));
-                                                }}
-                                                className="text-sm px-4 py-2 bg-amber-600 text-white font-semibold rounded cursor-pointer hover:bg-amber-700"
-                                            >
-                                                Approve User
-                                            </button>
-                                        )}
                                         <button
                                             onClick={toggleRole}
-                                            className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark"
+                                            className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded-md cursor-pointer hover:bg-primary-dark"
                                         >
                                             {user.role === "manager" ? "Demote to Employee" : "Promote to Manager"}
                                         </button>
                                         <button
                                             onClick={handleMessageUser}
-                                            className="text-sm px-4 py-2 bg-emerald-700 text-white font-semibold rounded cursor-pointer hover:bg-emerald-900"
+                                            className="text-sm px-4 py-2 bg-emerald-700 text-white font-semibold rounded-md cursor-pointer hover:bg-emerald-900"
                                         >
                                             Message User
                                         </button>
@@ -213,12 +235,12 @@ export default function ManagerUserView() {
                                                     {formatDisplayDate(r.submittedAt)}
                                                 </td>
                                                 <td className="px-4 py-3 capitalize">
-                                            <span className={`font-bold
-                                                ${r.status === "pending" ? "text-yellow-600" :
-                                                r.status === "approved" ? "text-green-600" :
-                                                    r.status === "denied" ? "text-red-600" : ""
-                                            }`}
-                                            >
+                                                <span className={`font-bold
+                                                    ${r.status === "pending" ? "text-amber-600" :
+                                                        r.status === "approved" ? "text-green-600" :
+                                                            r.status === "denied" ? "text-red-600" : ""
+                                                    }`}
+                                                >
                                                 {r.status}
                                             </span>
                                                 </td>
@@ -271,14 +293,14 @@ export default function ManagerUserView() {
                                             <button
                                                 onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
                                                 disabled={currentPage === 1}
-                                                className="px-3 py-1 mr-3 text-sm font-semibold cursor-pointer bg-light-gray rounded disabled:opacity-50"
+                                                className="px-3 py-1 mr-3 text-sm font-semibold cursor-pointer bg-light-gray rounded-md disabled:opacity-50"
                                             >
                                                 Prev
                                             </button>
                                             <button
                                                 onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
                                                 disabled={currentPage === totalPages}
-                                                className="px-3 py-1 text-sm font-semibold cursor-pointer bg-light-gray rounded disabled:opacity-50"
+                                                className="px-3 py-1 text-sm font-semibold cursor-pointer bg-light-gray rounded-md disabled:opacity-50"
                                             >
                                                 Next
                                             </button>
