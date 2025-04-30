@@ -229,14 +229,14 @@ export default function UserNotes({ userId }) {
                                     <button
                                         onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
                                         disabled={currentPage === 1}
-                                        className="px-3 py-1 mr-3 text-sm font-semibold cursor-pointer bg-light-gray rounded disabled:opacity-50"
+                                        className="px-3 py-1 mr-3 text-sm font-semibold cursor-pointer bg-light-gray rounded-md disabled:opacity-50"
                                     >
                                         Prev
                                     </button>
                                     <button
                                         onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
                                         disabled={currentPage === totalPages}
-                                        className="px-3 py-1 text-sm font-semibold cursor-pointer bg-light-gray rounded disabled:opacity-50"
+                                        className="px-3 py-1 text-sm font-semibold cursor-pointer bg-light-gray rounded-md disabled:opacity-50"
                                     >
                                         Next
                                     </button>

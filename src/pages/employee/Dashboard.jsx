@@ -104,7 +104,7 @@ export default function EmployeeDashboard() {
                             <div className="flex flex-col sm:flex-row gap-2">
                                 <NavLink
                                     to="/employee/profile"
-                                    className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded cursor-pointer hover:bg-primary-dark text-center"
+                                    className="text-sm px-4 py-2 bg-primary text-white font-semibold rounded-md cursor-pointer hover:bg-primary-dark text-center"
                                 >
                                     Edit My Profile
                                 </NavLink>
