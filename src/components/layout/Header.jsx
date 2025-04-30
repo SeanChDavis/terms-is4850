@@ -21,7 +21,11 @@ const Header = ({ toggleSidebar, light = false, logoText = '' }) => {
             {light ? (
                 <header className="text-center sm:text-left bg-primary text-white ps-4 pe-6 md:pe-8 py-4 flex flex-col gap-3 sm:flex sm:flex-row sm:justify-between sm:items-center">
                     <div className={"flex flex-col gap-2 sm:gap-4 sm:flex-row sm:items-center"}>
-                        <SiteLogo variant="white" className="sm:ml-1" />
+                        <SiteLogo
+                            toDashboard={true}
+                            variant="white"
+                            className="sm:ml-1"
+                        />
                         {logoText && <span className="text-sm font-medium text-primary-subtle-text">{logoText}</span>}
                     </div>
                     <a
@@ -40,7 +44,11 @@ const Header = ({ toggleSidebar, light = false, logoText = '' }) => {
                     >
                         <HiOutlineMenuAlt2 />
                     </button>
-                    <SiteLogo variant="white" className="ml-1" />
+                    <SiteLogo
+                        toDashboard={true}
+                        variant="white"
+                        className="ml-1"
+                    />
                     <button
                         onClick={handleLogout}
                         className="text-white font-medium hover:underline cursor-pointer"
