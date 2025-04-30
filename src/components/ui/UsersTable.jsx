@@ -42,7 +42,7 @@ export default function UsersTable() {
             const data = await getAllUsers();
 
             // Prioritize pending employees first
-            const sorted = data.sort((a, b) => {
+            const sorted = [...data].sort((a, b) => {
                 const aPending = a.role === 'employee' && a.managerApproved === false;
                 const bPending = b.role === 'employee' && b.managerApproved === false;
 
