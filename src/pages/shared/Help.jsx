@@ -434,10 +434,10 @@ export default function Help() {
                                 <h3 className={"font-bold mb-2"}>Important Details:</h3>
                                 <ul className={"list-disc pl-4 mb-0 pt-1"}>
                                     <li className={"mb-1"}>
-                                        Only one "conversation" can exist between two users
+                                        Only one "conversation" can exist between two users.
                                     </li>
                                     <li className={"mb-1"}>
-                                        Only managers can initiate new conversations with team members
+                                        All team members can initiate new conversations, but employees can only message managers, while managers can message any team member.
                                     </li>
                                     <li className={"mb-1"}>
                                         Massages are privately visible to the participants in the conversation, but all messages are logged in the system for compliance and auditing purposes.

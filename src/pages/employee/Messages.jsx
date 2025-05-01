@@ -2,16 +2,17 @@ import {useEffect, useState} from "react";
 import Inbox from "@/components/messages/Inbox";
 import ThreadView from "@/components/messages/ThreadView";
 import InfoLink from "@/components/ui/InfoLink";
+import NewMessageModal from "@/components/messages/NewMessageModal";
 import {useParams, useNavigate} from "react-router-dom";
 import {useMessageThread} from "@/context/MessageThreadContext";
 
 export default function EmployeeMessages() {
     const [selectedThread, setSelectedThread] = useState(null);
+    const [showModal, setShowModal] = useState(false);
     const {threadId} = useParams();
     const navigate = useNavigate();
     const {setCurrentThreadId} = useMessageThread();
 
-    // Sync thread selection from URL
     useEffect(() => {
         if (threadId && threadId !== selectedThread) {
             setSelectedThread(threadId);
@@ -19,7 +20,6 @@ export default function EmployeeMessages() {
         }
     }, [threadId]);
 
-    // Clear active thread on unmount or no thread
     useEffect(() => {
         if (!threadId) {
             setCurrentThreadId(null);
@@ -32,16 +32,26 @@ export default function EmployeeMessages() {
         navigate(`/employee/messages/${id}`);
     };
 
+    const handleModalClose = () => {
+        setShowModal(false);
+        setCurrentThreadId(null);
+    };
+
     return (
         <>
             <div className="max-w-xl pb-4 mb-8">
                 <h2 className="text-xl font-bold mb-2">
                     Messages <InfoLink anchor="messages"/>
                 </h2>
-                <p className={"text-subtle-text"}>
-                    View and respond to messages from management. Messages can only be initiated by management, but you
-                    can reply to any existing conversation.
+                <p className={"text-subtle-text mb-4"}>
+                    View and respond to messages from management. You can also start a new conversation with a manager.
                 </p>
+                <button
+                    onClick={() => setShowModal(true)}
+                    className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-emerald-900"
+                >
+                    Create New Message
+                </button>
             </div>
             <div
                 className="grid grid-cols-1 lg:divide-x divide-border-gray bg-white rounded-lg border border-border-gray lg:grid-cols-3 gap-y-6 lg:gap-x-6 lg:h-[70vh]">
@@ -60,6 +70,12 @@ export default function EmployeeMessages() {
                         </div>
                     )}
                 </div>
+                <NewMessageModal
+                    isOpen={showModal}
+                    onClose={handleModalClose}
+                    onSelect={handleSelectThread}
+                    recipientRole="manager"
+                />
             </div>
         </>
     );
