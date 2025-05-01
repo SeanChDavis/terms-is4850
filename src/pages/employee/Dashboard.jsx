@@ -10,7 +10,7 @@ import useUnreadMessageThreads from "@/hooks/useUnreadMessageThreads";
 
 export default function EmployeeDashboard() {
     const {userData, loading} = useCurrentUser();
-    const rawAnnouncements = useFilteredAnnouncements(["employee", "all"], 20);
+    const rawAnnouncements = useFilteredAnnouncements(["employee", "all"]);
     const announcements = useMemo(() => {
         return rawAnnouncements.filter(a => a.expiresAt);
     }, [rawAnnouncements]);
@@ -19,7 +19,14 @@ export default function EmployeeDashboard() {
     const [latestScheduleUrl, setLatestScheduleUrl] = useState(null);
     const [latestScheduleDate, setLatestScheduleDate] = useState(null);
     const {unreadThreadIds, totalUnreadThreadCount} = useUnreadMessageThreads();
+    const unreadAnnouncementCount = useMemo(() => {
+        if (!userData?.lastSeenAnnouncementsAt) return 0;
 
+        return rawAnnouncements.filter((a) =>
+            a.createdAt instanceof Date &&
+            a.createdAt.getTime() > userData.lastSeenAnnouncementsAt.toMillis()
+        ).length;
+    }, [rawAnnouncements, userData?.lastSeenAnnouncementsAt]);
 
     useEffect(() => {
         const q = query(
@@ -173,6 +180,36 @@ export default function EmployeeDashboard() {
                                         }`}
                                     >
                                         View Messages
+                                    </NavLink>
+                                </div>
+                                <div
+                                    className={`rounded-md border-1 border-primary-light-border py-5 px-4 text-center ${
+                                        unreadAnnouncementCount > 0 ? "bg-primary-light-bg" : ""
+                                    }`}
+                                >
+                                    <h4
+                                        className={`font-bold text-sm mb-1 ${
+                                            unreadAnnouncementCount > 0 ? "text-primary-darkest" : "text-subtle-text"
+                                        }`}
+                                    >
+                                        Unread Announcements
+                                    </h4>
+                                    <p
+                                        className={`text-2xl font-bold ${
+                                            unreadAnnouncementCount > 0 ? "text-primary-darkest" : ""
+                                        }`}
+                                    >
+                                        {unreadAnnouncementCount}
+                                    </p>
+                                    <NavLink
+                                        to="/employee/announcements"
+                                        className={`block max-w-48 mx-auto mt-3 rounded-md px-4 py-2 text-sm font-semibold text-white cursor-pointer ${
+                                            unreadAnnouncementCount > 0
+                                                ? "bg-primary hover:bg-primary-dark"
+                                                : "bg-gray-700 hover:bg-gray-800"
+                                        }`}
+                                    >
+                                        View Announcements
                                     </NavLink>
                                 </div>
                                 <div className="rounded-md border-1 border-border-gray p-4 text-center">

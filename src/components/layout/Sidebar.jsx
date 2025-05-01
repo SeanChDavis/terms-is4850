@@ -1,12 +1,30 @@
 import {NavLink, useLocation} from 'react-router-dom';
 import {useAuth} from '@/context/AuthContext';
 import useUnreadMessageThreads from "@/hooks/useUnreadMessageThreads";
+import {useFilteredAnnouncements} from "@/hooks/useFilteredAnnouncements";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import {useMemo} from "react";
 
 const Sidebar = ({isOpen, toggleSidebar}) => {
     const {user} = useAuth();
     const location = useLocation();
     const basePath = location.pathname.startsWith('/manager') ? '/manager' : '/employee';
     const {totalUnreadThreadCount} = useUnreadMessageThreads();
+
+    const { userData } = useCurrentUser();
+    const announcements = useFilteredAnnouncements(
+        basePath === "/manager" ? ["manager", "all"] : ["employee", "all"]
+    );
+
+    const unreadAnnouncementCount = useMemo(() => {
+        if (!userData?.lastSeenAnnouncementsAt) return 0;
+
+        return announcements.filter(
+            (a) =>
+                a.createdAt instanceof Date &&
+                a.createdAt.getTime() > userData.lastSeenAnnouncementsAt.toMillis()
+        ).length;
+    }, [announcements, userData?.lastSeenAnnouncementsAt]);
 
     const navItems = [
         {name: 'Dashboard', path: 'dashboard'},
@@ -43,6 +61,7 @@ const Sidebar = ({isOpen, toggleSidebar}) => {
                     </div>
                     {navItems.map(({name, path}) => {
                         const showMessagesBadge = name === "Messages" && totalUnreadThreadCount > 0;
+                        const showAnnouncementsBadge = name === "Announcements" && unreadAnnouncementCount > 0;
 
                         return (
                             <NavLink
@@ -59,8 +78,14 @@ const Sidebar = ({isOpen, toggleSidebar}) => {
                             >
                                 <span>{name}</span>
                                 {showMessagesBadge && (
-                                    <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary text-white">
+                                    <span
+                                        className="ml-2 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary text-white">
                                         <span className={"mr-1"}>{totalUnreadThreadCount}</span> unread
+                                    </span>
+                                )}
+                                {showAnnouncementsBadge && (
+                                    <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary text-white">
+                                        <span className="mr-1">{unreadAnnouncementCount}</span> new
                                     </span>
                                 )}
                             </NavLink>

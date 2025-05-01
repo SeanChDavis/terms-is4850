@@ -1,9 +1,31 @@
-import { useFilteredAnnouncements } from "@/hooks/useFilteredAnnouncements";
-import { formatDisplayDate } from "@/utils/formatters";
+import {doc, updateDoc, serverTimestamp} from "firebase/firestore";
+import {db} from "@/firebase/firebase-config";
+import {useFilteredAnnouncements} from "@/hooks/useFilteredAnnouncements";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import {formatDisplayDate} from "@/utils/formatters";
 import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useEffect} from "react";
 
 export default function EmployeeAnnouncements() {
+    const {userData} = useCurrentUser();
     const announcements = useFilteredAnnouncements(["employee", "all"], 20);
+
+    useEffect(() => {
+        if (!userData?.uid) return;
+
+        const updateLastSeen = async () => {
+            try {
+                const userRef = doc(db, "users", userData.uid);
+                await updateDoc(userRef, {
+                    lastSeenAnnouncementsAt: serverTimestamp()
+                });
+            } catch (err) {
+                console.error("Failed to update lastSeenAnnouncementsAt:", err);
+            }
+        };
+
+        updateLastSeen().catch(console.error);
+    }, [userData?.uid]);
 
     const sortedAnnouncements = [...announcements].sort((a, b) => {
         if (a.expiresAt && !b.expiresAt) return -1;
@@ -14,7 +36,7 @@ export default function EmployeeAnnouncements() {
     return (
         <>
             <div className="max-w-3xl pb-4 mb-8">
-                <h2 className="text-xl font-bold mb-2">System Announcements <InfoLink anchor="announcements" /></h2>
+                <h2 className="text-xl font-bold mb-2">System Announcements <InfoLink anchor="announcements"/></h2>
                 <p className="text-subtle-text">
                     Here you can find important announcements and updates from management.
                     Check back regularly for new information.
@@ -27,7 +49,7 @@ export default function EmployeeAnnouncements() {
                 </div>
             ) : (
                 <div>
-                    <h2 className="text-xl font-bold mb-2">All Announcements <InfoLink anchor="announcements" /></h2>
+                    <h2 className="text-xl font-bold mb-2">All Announcements <InfoLink anchor="announcements"/></h2>
                     {sortedAnnouncements.length === 0 ? (
                         <p className="text-gray-500">There are no current announcements.</p>
                     ) : (
@@ -39,8 +61,10 @@ export default function EmployeeAnnouncements() {
                                 {sortedAnnouncements.map((a) => {
                                     const isExpiring = Boolean(a.expiresAt);
                                     const timeLeft = isExpiring
-                                        ? formatDisplayDate(a.expiresAt, { relative: true })
+                                        ? formatDisplayDate(a.expiresAt, {relative: true})
                                         : null;
+                                    const isNew = userData?.lastSeenAnnouncementsAt &&
+                                        a.createdAt?.getTime() > userData.lastSeenAnnouncementsAt.toMillis();
 
                                     return (
                                         <div
@@ -51,6 +75,9 @@ export default function EmployeeAnnouncements() {
                                                     : "p-4 bg-light-gray"
                                             }`}
                                         >
+                                            {isNew && (
+                                                <span className="text-xs font-bold text-red-500">New</span>
+                                            )}
                                             <h3 className="text-lg font-bold mb-2">{a.title}</h3>
                                             <p className="mb-2.5 whitespace-pre-line">{a.body}</p>
                                             <p
@@ -61,7 +88,7 @@ export default function EmployeeAnnouncements() {
                                                 }`}
                                             >
                                                 This announcement was posted{" "}
-                                                {formatDisplayDate(a.createdAt, { relative: true })}{". "}
+                                                {formatDisplayDate(a.createdAt, {relative: true})}{". "}
                                                 {isExpiring && `It expires ${formatDisplayDate(a.expiresAt)} (${timeLeft}).`}
                                             </p>
                                         </div>

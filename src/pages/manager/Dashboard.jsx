@@ -1,21 +1,28 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useMemo} from "react";
 import {NavLink} from "react-router-dom";
 import {db} from "@/firebase/firebase-config";
 import {collection, query, where, getDocs, onSnapshot} from "firebase/firestore";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import {useFilteredAnnouncements} from "@/hooks/useFilteredAnnouncements";
-import {formatDisplayDate} from "@/utils/formatters";
 import InfoLink from "@/components/ui/InfoLink.jsx";
 import useUnreadMessageThreads from "@/hooks/useUnreadMessageThreads.js";
 
 export default function ManagerDashboard() {
     const {userData, loading} = useCurrentUser();
-    const announcements = useFilteredAnnouncements(["manager", "all"], 20).filter(a => a.expiresAt);
     const [statsLoading, setStatsLoading] = useState(true);
     const [pendingCount, setPendingCount] = useState(0);
     const [teamMembersCount, setTeamMembersCount] = useState(0);
     const [unapprovedUsersCount, setUnapprovedUsersCount] = useState(0);
     const {unreadThreadIds, totalUnreadThreadCount} = useUnreadMessageThreads();
+    const rawAnnouncements = useFilteredAnnouncements(["manager", "all"]);
+    const unreadAnnouncementCount = useMemo(() => {
+        if (!userData?.lastSeenAnnouncementsAt) return 0;
+
+        return rawAnnouncements.filter((a) =>
+            a.createdAt instanceof Date &&
+            a.createdAt.getTime() > userData.lastSeenAnnouncementsAt.toMillis()
+        ).length;
+    }, [rawAnnouncements, userData?.lastSeenAnnouncementsAt]);
 
     useEffect(() => {
         async function loadDashboardCounts() {
@@ -180,6 +187,36 @@ export default function ManagerDashboard() {
                                         View Messages
                                     </NavLink>
                                 </div>
+                                <div
+                                    className={`rounded-md border-1 border-primary-light-border py-5 px-4 text-center ${
+                                        unreadAnnouncementCount > 0 ? "bg-primary-light-bg" : ""
+                                    }`}
+                                >
+                                    <h4
+                                        className={`font-bold text-sm mb-1 ${
+                                            unreadAnnouncementCount > 0 ? "text-primary-darkest" : "text-subtle-text"
+                                        }`}
+                                    >
+                                        Unread Announcements
+                                    </h4>
+                                    <p
+                                        className={`text-2xl font-bold ${
+                                            unreadAnnouncementCount > 0 ? "text-primary-darkest" : ""
+                                        }`}
+                                    >
+                                        {unreadAnnouncementCount}
+                                    </p>
+                                    <NavLink
+                                        to="/manager/announcements"
+                                        className={`block max-w-48 mx-auto mt-3 rounded-md px-4 py-2 text-sm font-semibold text-white cursor-pointer ${
+                                            unreadAnnouncementCount > 0
+                                                ? "bg-primary hover:bg-primary-dark"
+                                                : "bg-gray-700 hover:bg-gray-800"
+                                        }`}
+                                    >
+                                        View Announcements
+                                    </NavLink>
+                                </div>
                                 <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center">
                                     <h4 className="text-subtle-text font-bold text-sm mb-1">Team Members</h4>
                                     <p className="text-2xl font-bold">{teamMembersCount}</p>
@@ -193,45 +230,6 @@ export default function ManagerDashboard() {
                             </div>
                         )}
                     </div>
-
-                    {/* Time-Sensitive Announcements */}
-                    <h2 className="text-xl font-bold mb-2">Time-Sensitive Announcements <InfoLink
-                        anchor="time-sensitive-announcements"/></h2>
-                    {announcements.length === 0 ? (
-                        <p className="text-subtle-text">There are no current announcements.</p>
-                    ) : (
-                        <>
-                            <p className="max-w-xl text-subtle-text mb-4">
-                                These announcements are time-sensitive and may expire soon.
-                                To manage all announcements, visit the{" "}
-                                <NavLink to="/manager/announcements" className="underline hover:no-underline">
-                                    Announcements
-                                </NavLink>{" "}
-                                page.
-                            </p>
-                            <div className="my-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                {announcements.map((a) => {
-                                    const isExpiring = Boolean(a.expiresAt);
-                                    const timeLeft = isExpiring ? formatDisplayDate(a.expiresAt, {relative: true}) : null;
-
-                                    return (
-                                        <div
-                                            key={a.id}
-                                            className="p-4 text-amber-950 rounded-lg bg-amber-50 h-full flex flex-col"
-                                        >
-                                            <h3 className="text-lg font-bold mb-2">{a.title}</h3>
-                                            <div className="mb-2.5 whitespace-pre-line">{a.body}</div>
-                                            <p className="text-sm border-t-1 border-amber-100 pt-2.5 mt-auto">
-                                                This announcement was posted{" "}
-                                                {formatDisplayDate(a.createdAt, {relative: true})}{". "}
-                                                {isExpiring && `It expires ${formatDisplayDate(a.expiresAt)} (${timeLeft}).`}
-                                            </p>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </>
-                    )}
                 </>
             )}
         </>

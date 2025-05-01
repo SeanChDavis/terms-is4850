@@ -4,6 +4,7 @@ import {
     collection,
     getDocs,
     addDoc,
+    updateDoc,
     deleteDoc,
     doc,
     serverTimestamp,
@@ -14,7 +15,7 @@ import {
 import useCurrentUser from "@/hooks/useCurrentUser";
 import {formatDisplayDate} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/react';
-import InfoLink from "@/components/ui/InfoLink.jsx";
+import InfoLink from "@/components/ui/InfoLink";
 import {useToast} from "@/context/ToastContext";
 
 export default function ManagerAnnouncements() {
@@ -33,6 +34,23 @@ export default function ManagerAnnouncements() {
     const [body, setBody] = useState("");
     const [expiresAt, setExpiresAt] = useState("");
     const [submitting, setSubmitting] = useState(false);
+
+    useEffect(() => {
+        if (!userData?.uid) return;
+
+        const updateLastSeen = async () => {
+            try {
+                const userRef = doc(db, "users", userData.uid);
+                await updateDoc(userRef, {
+                    lastSeenAnnouncementsAt: serverTimestamp()
+                });
+            } catch (err) {
+                console.error("Failed to update lastSeenAnnouncementsAt:", err);
+            }
+        };
+
+        updateLastSeen().catch(console.error);
+    }, [userData?.uid]);
 
     useEffect(() => {
         const q = query(
