@@ -571,6 +571,12 @@ export default function Help() {
                                 <p className={"mb-3"}>
                                     The System Tools section provides access to various tools that help manage and maintain the system. These tools are available to managers only.
                                 </p>
+                                <h3 className={"font-bold mb-2"}>Available Tools:</h3>
+                                <ul className={"list-disc pl-4 mb-0 pt-1"}>
+                                    <li className={"mb-1"}>
+                                        <span className={"font-bold"}>Minimum Days Notice for Time-Off Requests</span> - This tool allows managers to set a minimum number of days notice required for team members to submit time-off requests. This helps ensure that managers have enough time to plan for absences. With a number value saved, team members will see a notice when submitting a time-off request that they must provide at least that many days notice before the requested time off. At least 1 day is required.
+                                    </li>
+                                </ul>
                             </div>
                         </section>
 
