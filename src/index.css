@@ -11,6 +11,8 @@
     /* Colors */
     --color-primary: #2129BB;
     --color-primary-light: #4D56D1;
+    --color-primary-light-bg: #EFF6FF;
+    --color-primary-light-border: #ADC3E1;
     --color-primary-dark: #1A2199;
     --color-primary-darker: #0f146a;
     --color-primary-darkest: #070a42;

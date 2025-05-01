@@ -95,7 +95,7 @@ export default function ManagerDashboard() {
 
                     {/* Quick Links */}
                     <div className={"my-12"}>
-                        <div className="max-w-xl mb-4">
+                        <div className="max-w-xl mb-6">
                             <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="quick-links"/></h2>
                             <p className="text-subtle-text">
                                 Quickly access important sections of the system, such as managing requests and viewing
@@ -108,8 +108,8 @@ export default function ManagerDashboard() {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {unapprovedUsersCount > 0 && (
                                     <div
-                                        className="rounded-md border-1 border-border-gray py-5 px-4 text-center bg-amber-50">
-                                        <h4 className="text-amber-800 font-bold text-sm mb-1">Users Pending
+                                        className="rounded-md border-1 border-amber-300 py-5 px-4 text-center bg-amber-50">
+                                        <h4 className="text-amber-900 font-bold text-sm mb-1">Users Pending
                                             Approval</h4>
                                         <p className="text-2xl font-bold text-amber-900">{unapprovedUsersCount}</p>
                                         <NavLink
@@ -121,20 +121,50 @@ export default function ManagerDashboard() {
                                     </div>
                                 )}
                                 <div
-                                    className={`rounded-md border-1 border-border-gray py-5 px-4 text-center ${
-                                        totalUnreadThreadCount > 0 ? "bg-blue-50" : ""
+                                    className={`rounded-md border-1 py-5 px-4 text-center ${
+                                        pendingCount > 0 ? "border-amber-300 bg-amber-50" : "border-border-gray"
                                     }`}
                                 >
                                     <h4
                                         className={`font-bold text-sm mb-1 ${
-                                            totalUnreadThreadCount > 0 ? "text-blue-800" : "text-subtle-text"
+                                            pendingCount > 0 ? "text-amber-900" : "text-subtle-text"
+                                        }`}
+                                    >
+                                        Pending Time-Off Requests
+                                    </h4>
+                                    <p
+                                        className={`text-2xl font-bold ${
+                                            pendingCount > 0 ? "text-amber-900" : ""
+                                        }`}
+                                    >
+                                        {pendingCount}
+                                    </p>
+                                    <NavLink
+                                        to="/manager/schedule"
+                                        className={`block max-w-48 mx-auto mt-3 rounded-md px-4 py-2 text-sm font-semibold text-white cursor-pointer ${
+                                            pendingCount > 0
+                                                ? "bg-amber-600 hover:bg-amber-700"
+                                                : "bg-gray-700 hover:bg-gray-800"
+                                        }`}
+                                    >
+                                        Manage Requests
+                                    </NavLink>
+                                </div>
+                                <div
+                                    className={`rounded-md border-1 border-primary-light-border py-5 px-4 text-center ${
+                                        totalUnreadThreadCount > 0 ? "bg-primary-light-bg" : ""
+                                    }`}
+                                >
+                                    <h4
+                                        className={`font-bold text-sm mb-1 ${
+                                            totalUnreadThreadCount > 0 ? "text-primary-darkest" : "text-subtle-text"
                                         }`}
                                     >
                                         Unread Messages
                                     </h4>
                                     <p
                                         className={`text-2xl font-bold ${
-                                            totalUnreadThreadCount > 0 ? "text-blue-900" : ""
+                                            totalUnreadThreadCount > 0 ? "text-primary-darkest" : ""
                                         }`}
                                     >
                                         {totalUnreadThreadCount}
@@ -143,22 +173,11 @@ export default function ManagerDashboard() {
                                         to="/manager/messages"
                                         className={`block max-w-48 mx-auto mt-3 rounded-md px-4 py-2 text-sm font-semibold text-white cursor-pointer ${
                                             totalUnreadThreadCount > 0
-                                                ? "bg-blue-600 hover:bg-blue-700"
+                                                ? "bg-primary hover:bg-primary-dark"
                                                 : "bg-gray-700 hover:bg-gray-800"
                                         }`}
                                     >
                                         View Messages
-                                    </NavLink>
-                                </div>
-                                <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center">
-                                    <h4 className="text-subtle-text font-bold text-sm mb-1">Pending Time-Off
-                                        Requests</h4>
-                                    <p className="text-2xl font-bold">{pendingCount}</p>
-                                    <NavLink
-                                        to="/manager/schedule"
-                                        className="block max-w-48 mx-auto mt-3 rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-gray-800"
-                                    >
-                                        Manage Requests
                                     </NavLink>
                                 </div>
                                 <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center">

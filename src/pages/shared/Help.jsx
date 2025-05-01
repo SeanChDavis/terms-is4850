@@ -95,22 +95,25 @@ export default function Help() {
                                 <h3 className={"font-bold mb-2"}>Managers:</h3>
                                 <ul className={"list-disc pl-4 mb-3 pt-1"}>
                                     <li className={"mb-1"}>
-                                        Users Pending Approval count with a link to the Users page
+                                        Users Pending Approval count with a link to the Users page (hidden if no pending users)
                                     </li>
                                     <li className={"mb-1"}>
                                         Pending Time-Off Requests count with a link to the Schedule page
                                     </li>
                                     <li className={"mb-1"}>
-                                        Team Members count with a link to the Users page
+                                        Unread Messages count with a link to the Messages page
                                     </li>
                                     <li className={"mb-1"}>
-                                        Ongoing Conversations count with a link to the Messages page
+                                        Team Members count with a link to the Users page
                                     </li>
                                 </ul>
                                 <h3 className={"font-bold mb-2"}>Employees:</h3>
                                 <ul className={"list-disc pl-4 mb-0 pt-1"}>
                                     <li className={"mb-1"}>
-                                        Latest Uploaded Schedule (if it exists) with a link to view or download the schedule
+                                        Latest Uploaded Schedule with a link to view or download the schedule (hidden if no schedule is uploaded)
+                                    </li>
+                                    <li className={"mb-1"}>
+                                        Unread Messages count with a link to the Messages page
                                     </li>
                                     <li className={"mb-1"}>
                                         Pending Time-Off Requests count with a link to the Schedule page

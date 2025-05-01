@@ -120,7 +120,7 @@ export default function EmployeeDashboard() {
 
                     {/* Quick Links */}
                     <div className={"my-12"}>
-                        <div className="max-w-xl mb-4">
+                        <div className="max-w-xl mb-6">
                             <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="quick-links"/></h2>
                             <p className="text-subtle-text">
                                 Quickly access information about your pending time-off requests and more.
@@ -146,20 +146,20 @@ export default function EmployeeDashboard() {
                                     </div>
                                 )}
                                 <div
-                                    className={`rounded-md border-1 border-border-gray p-4 text-center ${
-                                        totalUnreadThreadCount > 0 ? "bg-blue-50" : ""
+                                    className={`rounded-md border-1 border-primary-light-border py-5 px-4 text-center ${
+                                        totalUnreadThreadCount > 0 ? "bg-primary-light-bg" : ""
                                     }`}
                                 >
                                     <h4
                                         className={`font-bold text-sm mb-1 ${
-                                            totalUnreadThreadCount > 0 ? "text-blue-800" : "text-subtle-text"
+                                            totalUnreadThreadCount > 0 ? "text-primary-darkest" : "text-subtle-text"
                                         }`}
                                     >
                                         Unread Messages
                                     </h4>
                                     <p
                                         className={`text-2xl font-bold ${
-                                            totalUnreadThreadCount > 0 ? "text-blue-900" : ""
+                                            totalUnreadThreadCount > 0 ? "text-primary-darkest" : ""
                                         }`}
                                     >
                                         {totalUnreadThreadCount}
@@ -168,7 +168,7 @@ export default function EmployeeDashboard() {
                                         to="/employee/messages"
                                         className={`block max-w-48 mx-auto mt-3 rounded-md px-4 py-2 text-sm font-semibold text-white cursor-pointer ${
                                             totalUnreadThreadCount > 0
-                                                ? "bg-blue-600 hover:bg-blue-700"
+                                                ? "bg-primary hover:bg-primary-dark"
                                                 : "bg-gray-700 hover:bg-gray-800"
                                         }`}
                                     >
