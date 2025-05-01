@@ -325,23 +325,35 @@ export default function ManagerAnnouncements() {
                                     const timeLeft = isExpiring
                                         ? formatDisplayDate(a.expiresAt, { relative: true })
                                         : null;
+                                    const created = a.createdAt instanceof Date
+                                        ? a.createdAt
+                                        : a.createdAt?.toDate?.();
+
                                     const isNew = userData?.lastSeenAnnouncementsAt &&
-                                        a.createdAt instanceof Date &&
-                                        a.createdAt.getTime() > userData.lastSeenAnnouncementsAt.toMillis();
+                                        created instanceof Date &&
+                                        created.getTime() > userData.lastSeenAnnouncementsAt.toMillis();
 
                                     return (
                                         <div
                                             key={a.id}
-                                            className={`rounded-lg h-full flex flex-col ${
+                                            className={`relative rounded-lg h-full flex flex-col ${
                                                 isExpiring
                                                     ? "p-4 text-amber-950 bg-amber-50"
                                                     : "p-4 bg-light-gray"
                                             }`}
                                         >
-                                            {isNew && (
-                                                <span className="text-xs font-bold text-red-500">New</span>
-                                            )}
-                                            <h3 className="text-lg font-bold mb-2">{a.title}</h3>
+                                            <h3 className="text-lg font-bold mb-2 pr-10">
+                                                {isNew && (
+                                                    <span
+                                                      className={`position absolute right-4 top-5 ml-2 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                                                        isExpiring ? "bg-amber-950 text-white" : "bg-primary text-white"
+                                                      }`}
+                                                    >
+                                                      New
+                                                    </span>
+                                                )}{" "}
+                                                {a.title}
+                                            </h3>
                                             <p className="mb-2.5 whitespace-pre-line">{a.body}</p>
                                             <p
                                                 className={`text-sm border-t-1 pt-2.5 mt-auto ${

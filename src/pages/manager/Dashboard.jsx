@@ -18,9 +18,11 @@ export default function ManagerDashboard() {
     const unreadAnnouncementCount = useMemo(() => {
         if (!userData?.lastSeenAnnouncementsAt) return 0;
 
-        return rawAnnouncements.filter((a) =>
-            a.createdAt instanceof Date &&
-            a.createdAt.getTime() > userData.lastSeenAnnouncementsAt.toMillis()
+        return rawAnnouncements.filter(
+            (a) =>
+                a.createdAt instanceof Date &&
+                a.createdAt.getTime() > userData.lastSeenAnnouncementsAt.toMillis() &&
+                a.createdBy !== userData.uid
         ).length;
     }, [rawAnnouncements, userData?.lastSeenAnnouncementsAt]);
 

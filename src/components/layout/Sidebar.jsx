@@ -22,7 +22,8 @@ const Sidebar = ({isOpen, toggleSidebar}) => {
         return announcements.filter(
             (a) =>
                 a.createdAt instanceof Date &&
-                a.createdAt.getTime() > userData.lastSeenAnnouncementsAt.toMillis()
+                a.createdAt.getTime() > userData.lastSeenAnnouncementsAt.toMillis() &&
+                a.createdBy !== userData.uid
         ).length;
     }, [announcements, userData?.lastSeenAnnouncementsAt]);
 
