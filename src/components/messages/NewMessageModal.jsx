@@ -31,6 +31,12 @@ export default function NewMessageModal({isOpen, onClose, onSelect}) {
         };
 
         if (isOpen) fetchRecipients().catch(console.error);
+
+        if (isOpen) {
+            fetchRecipients().catch(console.error);
+            setSelected("");
+            setInitialMessage("");
+        }
     }, [isOpen]);
 
     const startConversation = async () => {
