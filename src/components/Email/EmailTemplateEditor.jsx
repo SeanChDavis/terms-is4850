@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { db } from '../../firebase';
+import {db} from "@/firebase/firebase-config";
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useToast } from '../../context/ToastContext';
+
 
 const EmailTemplateEditor = ({ templateId }) => {
     const { addToast } = useToast();
@@ -69,7 +70,7 @@ const EmailTemplateEditor = ({ templateId }) => {
                     placeholder={`Hi {recipient_first_name},\n\n{sender_first_name} has sent you a message...`}
                 />
                 <div className="text-sm text-gray-500 mt-2">
-                    Available variables: {recipient_first_name}, {sender_first_name}, {messages_link}
+                    Available variables: <code>{'{recipient_first_name}'}</code>, <code>{'{sender_first_name}'}</code>, <code>{'{messages_link}'}</code>
                 </div>
             </div>
 
