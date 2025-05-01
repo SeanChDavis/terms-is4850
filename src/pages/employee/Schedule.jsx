@@ -17,6 +17,7 @@ import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/reac
 import ViewSchedule from "@/components/ui/ViewSchedule";
 import InfoLink from "@/components/ui/InfoLink.jsx";
 import {useToast} from "@/context/ToastContext";
+import {MdInfoOutline} from "react-icons/md";
 
 const EmployeeSchedule = () => {
     const {addToast} = useToast();
@@ -25,6 +26,7 @@ const EmployeeSchedule = () => {
     const [open, setOpen] = useState(false);
     const {user} = useAuth();
 
+    const [minDaysNotice, setMinDaysNotice] = useState(null);
     const [requestType, setRequestType] = useState("");
     const [startDate, setStartDate] = useState("");
     const [startTime, setStartTime] = useState("");
@@ -58,6 +60,18 @@ const EmployeeSchedule = () => {
         return () => unsubscribe();
     }, [user]);
 
+    // Get minimum days notice from settings
+    useEffect(() => {
+        const unsubscribe = onSnapshot(doc(db, "tools", "settings"), (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.data();
+                setMinDaysNotice(data.timeOffRequestMinDays ?? 0);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
     // Reset form fields when component mounts
     const resetForm = () => {
         setRequestType("");
@@ -77,17 +91,23 @@ const EmployeeSchedule = () => {
 
             // ======= Start validation
             // ========================
+            if (!minDaysNotice && minDaysNotice !== 0) {
+                addToast({ type: "error", message: "System rules could not be loaded." });
+                setLoadingSubmit(false);
+                return;
+            }
+
             const now = new Date();
-            const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+            const noticeCutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() + minDaysNotice);
 
             const [year, month, day] = startDate.split("-").map(Number);
             const selectedDay = new Date(year, month - 1, day);
 
-            if (selectedDay < tomorrow) {
+            if (selectedDay < noticeCutoff) {
                 addToast({
                     type: "error",
-                    message: "Requests must begin on a future date.",
-                })
+                    message: `Requests must be submitted at least ${minDaysNotice} day${minDaysNotice !== 1 ? "s" : ""} in advance.`,
+                });
                 setLoadingSubmit(false);
                 return;
             }
@@ -233,6 +253,11 @@ const EmployeeSchedule = () => {
                                         <option value="custom">Custom Date & Time Range</option>
                                     </select>
                                 </div>
+                                {requestType && minDaysNotice !== null && minDaysNotice > 0 && (
+                                    <div className="mb-4 items-center gap-2 bg-amber-50 border border-amber-300 text-amber-800 text-sm font-medium px-4 py-3 rounded">
+                                        Requests must be submitted at least <span className="mx-1 font-semibold">{minDaysNotice}</span> day{minDaysNotice !== 1 && "s"} in advance.
+                                    </div>
+                                )}
                                 <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
 
                                     {requestType && (

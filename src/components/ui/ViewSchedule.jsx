@@ -14,6 +14,7 @@ import {db, storage} from "@/firebase/firebase-config";
 import {formatDisplayDate} from "@/utils/formatters";
 import InfoLink from "@/components/ui/InfoLink.jsx";
 import {useToast} from "@/context/ToastContext";
+import {MdDateRange} from "react-icons/md";
 
 const getStoragePathFromUrl = (url) => {
     const start = url.indexOf("/o/") + 3;
@@ -115,8 +116,8 @@ const ViewSchedule = ({canDelete = false}) => {
                             </button>
                         )}
                     </div>
-                    <p className="my-5 px-4 py-3.5 text-amber-950 bg-amber-50 rounded-md text-sm">
-                        Uploaded on {formatDisplayDate(latestSchedule.uploadedAt)}
+                    <p className="flex gap-2 items-center mt-2 text-subtle-text text-sm">
+                        <MdDateRange /> Uploaded on {formatDisplayDate(latestSchedule.uploadedAt)}
                     </p>
                 </div>
             ) : (
