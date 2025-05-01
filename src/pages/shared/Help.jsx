@@ -67,7 +67,7 @@ export default function Help() {
                             </h2>
                             <div className={sectionContentClasses}>
                                 <p className={"mb-0"}>
-                                    The Dashboard is the landing page for both managers and employees, providing quick access to relevant features and information. It also provides a snapshot of the current (logged in) user's profile. It is the central hub for accessing quick information about <a className={"underline hover:no-underline"} href="#time-off-requests">time-off requests</a>, viewing <a className={"underline hover:no-underline"} href="#time-sensitive-announcements">time-sensitive announcements</a>, and more. Each element on the dashboard has its own documentation below.
+                                    The Dashboard is the landing page for both managers and employees, providing quick access to relevant features and information. It also provides a snapshot of the current (logged in) user's profile. It is the central hub for accessing quick information about <a className={"underline hover:no-underline"} href="#time-off-requests">time-off requests</a>, viewing <a className={"underline hover:no-underline"} href="#announcements">announcements</a>, and more. Each element on the dashboard has its own documentation below.
                                 </p>
                             </div>
                         </section>
@@ -151,7 +151,7 @@ export default function Help() {
                                     Announcements are a way for managers to communicate information to their team members. They can be used to share updates, policy changes, or other relevant information. Announcements can be created to be visible to all team members, or to specific roles within the organization (Employees or Managers).
                                 </p>
                                 <p className={"mb-3"}>
-                                    There are two types of announcements: Time-Sensitive and General. <a className={"underline hover:no-underline"} href="#time-sensitive-announcements">Time-Sensitive Announcements</a> are highlighted when they are displayed. They will appear visually distinct from general announcements, and will always be at the top of the list of announcements. Both announcement types are ordered chronologically by creation date, with the most recent announcements appearing first.
+                                    There are two types of announcements: Time-Sensitive and General. Time-Sensitive Announcements are highlighted when they are displayed. They will appear visually distinct from general announcements, and will always be at the top of the list of announcements. Both announcement types are ordered chronologically by creation date, with the most recent announcements appearing first.
                                 </p>
                                 <h3 className={"font-bold mb-2"}>Creating Announcements:</h3>
                                 <ul className={"list-disc pl-4 mb-3 pt-1"}>
@@ -167,36 +167,6 @@ export default function Help() {
                                 </ul>
                                 <p className={"mb-0"}>
                                     Past announcements can be viewed by management on the Announcements page, where all announcements are listed chronologically. The "View" link displays more information about the announcement, and allows managers to delete any announcement that he or she created.
-                                </p>
-                            </div>
-                        </section>
-
-                        <hr className="border-gray-300" />
-
-                        {/* Time-sensitive announcements */}
-                        <section id="time-sensitive-announcements" className={sectionClasses}>
-                            <h2 className={sectionHeadingClasses}>
-                                Time-Sensitive Announcements
-                                <span
-                                    onClick={() => {
-                                        copyCurrentUrlWithHash('#time-sensitive-announcements');
-                                    }}
-                                    className={sectionLinkClasses}
-                                    aria-label="Copy link to Time Sensitive Announcements"
-                                    title={sectionLinkTitle}
-                                >
-                                    <FaLink className="text-sm"/>
-                                </span>
-                            </h2>
-                            <div className={sectionContentClasses}>
-                                <p className={"mb-3"}>
-                                    The Time Sensitive Announcements section displays important announcements that require immediate attention. These announcements are highlighted to ensure they are not missed by managers and team members.
-                                </p>
-                                <p className={"mb-3"}>
-                                    These announcements are considered time-sensitive because they have an expiration date. Once the expiration date is reached, the announcement will no longer be displayed.
-                                </p>
-                                <p className={"mb-0"}>
-                                    Announcements that do not have an expiration date can be found in the dedicated Announcements page.
                                 </p>
                             </div>
                         </section>
