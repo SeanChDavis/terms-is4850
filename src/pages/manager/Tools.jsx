@@ -17,7 +17,7 @@ export default function SystemTools() {
                 setSettings(snapshot.data());
             } else {
                 setSettings({
-                    timeOffRequestMinDays: 0,
+                    timeOffRequestMinDays: 1,
                 });
             }
             setLoading(false);
