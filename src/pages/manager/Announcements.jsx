@@ -17,6 +17,7 @@ import {formatDisplayDate} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/react';
 import InfoLink from "@/components/ui/InfoLink";
 import {useToast} from "@/context/ToastContext";
+import {useMemo} from "react";
 
 export default function ManagerAnnouncements() {
     const {addToast} = useToast();
@@ -69,6 +70,33 @@ export default function ManagerAnnouncements() {
 
         return () => unsubscribe();
     }, []);
+
+    const managerFeed = useMemo(() => {
+        if (!userData?.uid) return [];
+
+        return announcements
+            .filter(
+                (a) =>
+                    (a.visibleTo === "all" || a.visibleTo === "manager") &&
+                    a.createdBy !== userData.uid
+            )
+            .sort((a, b) => {
+                const aExpires = a.expiresAt
+                    ? (a.expiresAt instanceof Date ? a.expiresAt.getTime() : a.expiresAt.toDate?.().getTime?.() ?? null)
+                    : null;
+
+                const bExpires = b.expiresAt
+                    ? (b.expiresAt instanceof Date ? b.expiresAt.getTime() : b.expiresAt.toDate?.().getTime?.() ?? null)
+                    : null;
+
+                if (aExpires && !bExpires) return -1;
+                if (!aExpires && bExpires) return 1;
+
+                const aCreated = a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
+                const bCreated = b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
+                return bCreated - aCreated;
+            });
+    }, [announcements, userData?.uid]);
 
     const fetchUsers = async () => {
         try {
@@ -197,7 +225,7 @@ export default function ManagerAnnouncements() {
     return (
         <>
             <div className={"max-w-xl mb-8"}>
-                <h2 className={`text-xl font-bold mb-2`}>System Announcements <InfoLink anchor="announcements" /></h2>
+                <h2 className={`text-xl font-bold mb-2`}>System Announcements <InfoLink anchor="announcements"/></h2>
                 <p className={"text-subtle-text"}>
                     Use this page to create announcements that will be visible to all employees. You can post updates,
                     important notices, or general information that needs to be communicated across the organization.
@@ -213,7 +241,8 @@ export default function ManagerAnnouncements() {
                     <div
                         className={"max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
                         <div className="px-4 py-5 sm:px-6">
-                            <h2 className="text-base/7 font-semibold">Create New Announcement <InfoLink anchor="announcements" /></h2>
+                            <h2 className="text-base/7 font-semibold">Create New Announcement <InfoLink
+                                anchor="announcements"/></h2>
                             <p className="mt-1 text-sm/6 text-subtle-text">
                                 Fill out the form below to post a new announcement.
                             </p>
@@ -221,7 +250,8 @@ export default function ManagerAnnouncements() {
                         <div className="px-4 py-5 sm:p-6">
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div>
-                                    <label htmlFor="visibleTo" className="block text-sm/6 font-medium">Visible To</label>
+                                    <label htmlFor="visibleTo" className="block text-sm/6 font-medium">Visible
+                                        To</label>
                                     <select
                                         id="visibleTo"
                                         value={visibleTo}
@@ -283,9 +313,58 @@ export default function ManagerAnnouncements() {
                         </div>
                     </div>
 
+                    {managerFeed.length > 0 && (
+                        <div className="my-12">
+                            <h2 className="text-xl font-bold mb-2">Recent Manager Announcements <InfoLink anchor="announcements"/></h2>
+                            <p className="text-subtle-text mb-4">
+                                These are announcements created by other managers that are visible to you.
+                            </p>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                {managerFeed.map((a) => {
+                                    const isExpiring = Boolean(a.expiresAt);
+                                    const timeLeft = isExpiring
+                                        ? formatDisplayDate(a.expiresAt, { relative: true })
+                                        : null;
+                                    const isNew = userData?.lastSeenAnnouncementsAt &&
+                                        a.createdAt instanceof Date &&
+                                        a.createdAt.getTime() > userData.lastSeenAnnouncementsAt.toMillis();
+
+                                    return (
+                                        <div
+                                            key={a.id}
+                                            className={`rounded-lg h-full flex flex-col ${
+                                                isExpiring
+                                                    ? "p-4 text-amber-950 bg-amber-50"
+                                                    : "p-4 bg-light-gray"
+                                            }`}
+                                        >
+                                            {isNew && (
+                                                <span className="text-xs font-bold text-red-500">New</span>
+                                            )}
+                                            <h3 className="text-lg font-bold mb-2">{a.title}</h3>
+                                            <p className="mb-2.5 whitespace-pre-line">{a.body}</p>
+                                            <p
+                                                className={`text-sm border-t-1 pt-2.5 mt-auto ${
+                                                    isExpiring
+                                                        ? "border-amber-100"
+                                                        : "border-gray-200"
+                                                }`}
+                                            >
+                                                This announcement was posted{" "}
+                                                {formatDisplayDate(a.createdAt, { relative: true })}{". "}
+                                                {isExpiring && `It expires ${formatDisplayDate(a.expiresAt)} (${timeLeft}).`}
+                                            </p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Announcement List */}
                     <div className="mt-10">
-                        <h2 className="text-xl font-semibold mb-0">Past Announcements <InfoLink anchor="announcements" /></h2>
+                        <h2 className="text-xl font-semibold mb-0">Past Announcements <InfoLink anchor="announcements"/>
+                        </h2>
                         <div className="flex justify-between items-center mb-4">
                             <button
                                 onClick={() => setShowMineOnly(prev => !prev)}
@@ -307,8 +386,12 @@ export default function ManagerAnnouncements() {
                                         <thead className="bg-gray-50 border-b border-border-gray">
                                         <tr>
                                             <th className="px-4 py-3 font-semibold" style={{width: "120px"}}>Posted</th>
-                                            <th className="px-4 py-3 font-semibold" style={{width: "150px"}}>Created By</th>
-                                            <th className="px-4 py-3 font-semibold" style={{width: "120px"}}>Visible To</th>
+                                            <th className="px-4 py-3 font-semibold" style={{width: "150px"}}>Created
+                                                By
+                                            </th>
+                                            <th className="px-4 py-3 font-semibold" style={{width: "120px"}}>Visible
+                                                To
+                                            </th>
                                             <th className="px-4 py-3 font-semibold">Title</th>
                                             <th className="px-4 py-3 font-semibold">Expires</th>
                                             <th className="px-4 py-3 font-semibold">Status</th>
@@ -350,8 +433,10 @@ export default function ManagerAnnouncements() {
                                                     <td className="px-4 py-3">
                                                         {a.expiresAt ? (
                                                             expired
-                                                                ? <span className="text-red-600 font-bold">Expired</span>
-                                                                : <span className="text-green-600 font-bold">Active</span>
+                                                                ?
+                                                                <span className="text-red-600 font-bold">Expired</span>
+                                                                :
+                                                                <span className="text-green-600 font-bold">Active</span>
                                                         ) : "—"}
                                                     </td>
                                                     <td className="px-4 py-3 text-right">
@@ -462,7 +547,8 @@ export default function ManagerAnnouncements() {
                                                                                     className="text-green-600 font-semibold">Active</span>
                                                                             )
                                                                         ) : (
-                                                                            <span className="font-semibold">Ongoing</span>
+                                                                            <span
+                                                                                className="font-semibold">Ongoing</span>
                                                                         )}
                                                                     </p>
                                                                 );
@@ -473,10 +559,12 @@ export default function ManagerAnnouncements() {
                                                         </span>
                                                             </p>
                                                             <p className="text-gray-800 whitespace-pre-line mb-4">
-                                                                <strong className={"block"}>Details:</strong> {selectedAnnouncement.body}
+                                                                <strong
+                                                                    className={"block"}>Details:</strong> {selectedAnnouncement.body}
                                                             </p>
                                                         </div>
-                                                        <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row-reverse gap-2">
+                                                        <div
+                                                            className="mt-5 sm:mt-8 flex flex-col sm:flex-row-reverse gap-2">
                                                             {selectedAnnouncement.createdBy === userData?.uid && (
                                                                 <button
                                                                     onClick={async () => {

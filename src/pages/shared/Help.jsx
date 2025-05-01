@@ -74,6 +74,7 @@ export default function Help() {
 
                         <hr className="border-gray-300" />
 
+                        {/* quick-links */}
                         <section id="quick-links" className={sectionClasses}>
                             <h2 className={sectionHeadingClasses}>
                                 Dashboard Quick Links
@@ -104,6 +105,9 @@ export default function Help() {
                                         Unread Messages count with a link to the Messages page
                                     </li>
                                     <li className={"mb-1"}>
+                                        Unread Announcements count with a link to the Announcements page
+                                    </li>
+                                    <li className={"mb-1"}>
                                         Team Members count with a link to the Users page
                                     </li>
                                 </ul>
@@ -114,6 +118,9 @@ export default function Help() {
                                     </li>
                                     <li className={"mb-1"}>
                                         Unread Messages count with a link to the Messages page
+                                    </li>
+                                    <li className={"mb-1"}>
+                                        Unread Announcements count with a link to the Announcements page
                                     </li>
                                     <li className={"mb-1"}>
                                         Pending Time-Off Requests count with a link to the Schedule page
@@ -144,7 +151,7 @@ export default function Help() {
                                     Announcements are a way for managers to communicate information to their team members. They can be used to share updates, policy changes, or other relevant information. Announcements can be created to be visible to all team members, or to specific roles within the organization (Employees or Managers).
                                 </p>
                                 <p className={"mb-3"}>
-                                    There are two types of announcements: Time-Sensitive and General. <a className={"underline hover:no-underline"} href="#time-sensitive-announcements">Time-Sensitive Announcements</a> are displayed prominently on the dashboard and are meant to be viewed immediately, while General announcements can be viewed on the Announcements page.
+                                    There are two types of announcements: Time-Sensitive and General. <a className={"underline hover:no-underline"} href="#time-sensitive-announcements">Time-Sensitive Announcements</a> are highlighted when they are displayed. They will appear visually distinct from general announcements, and will always be at the top of the list of announcements. Both announcement types are ordered chronologically by creation date, with the most recent announcements appearing first.
                                 </p>
                                 <h3 className={"font-bold mb-2"}>Creating Announcements:</h3>
                                 <ul className={"list-disc pl-4 mb-3 pt-1"}>
