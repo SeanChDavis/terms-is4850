@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         // Provide the auth state and methods to the rest of the app!
-        <AuthContext.Provider value={{ user, role, managerApproved, logout }}>
+        <AuthContext.Provider value={{ user, role, managerApproved, logout, loading }}>
             {!loading && children}
         </AuthContext.Provider>
     );

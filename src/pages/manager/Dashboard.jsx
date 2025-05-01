@@ -1,35 +1,21 @@
-import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
-import { db } from "@/firebase/firebase-config";
+import {useEffect, useState} from "react";
+import {NavLink} from "react-router-dom";
+import {db} from "@/firebase/firebase-config";
 import {collection, query, where, getDocs, onSnapshot} from "firebase/firestore";
 import useCurrentUser from "@/hooks/useCurrentUser";
-import { useFilteredAnnouncements } from "@/hooks/useFilteredAnnouncements";
-import { formatDisplayDate } from "@/utils/formatters";
+import {useFilteredAnnouncements} from "@/hooks/useFilteredAnnouncements";
+import {formatDisplayDate} from "@/utils/formatters";
 import InfoLink from "@/components/ui/InfoLink.jsx";
+import useUnreadMessageThreads from "@/hooks/useUnreadMessageThreads.js";
 
 export default function ManagerDashboard() {
-    const { userData, loading } = useCurrentUser();
+    const {userData, loading} = useCurrentUser();
     const announcements = useFilteredAnnouncements(["manager", "all"], 20).filter(a => a.expiresAt);
     const [statsLoading, setStatsLoading] = useState(true);
     const [pendingCount, setPendingCount] = useState(0);
     const [teamMembersCount, setTeamMembersCount] = useState(0);
-    const [ongoingThreadsCount, setOngoingThreadsCount] = useState(0);
     const [unapprovedUsersCount, setUnapprovedUsersCount] = useState(0);
-
-    useEffect(() => {
-        if (!userData?.uid) return;
-
-        const q = query(
-            collection(db, "threads"),
-            where("participants", "array-contains", userData.uid)
-        );
-
-        const unsub = onSnapshot(q, (snapshot) => {
-            setOngoingThreadsCount(snapshot.size);
-        });
-
-        return () => unsub();
-    }, [userData?.uid]);
+    const {unreadThreadIds, totalUnreadThreadCount} = useUnreadMessageThreads();
 
     useEffect(() => {
         async function loadDashboardCounts() {
@@ -62,7 +48,7 @@ export default function ManagerDashboard() {
     return (
         <>
             <div className="max-w-xl mb-4">
-                <h2 className="text-xl font-bold mb-2">Manager Dashboard <InfoLink anchor="user-dashboard" /></h2>
+                <h2 className="text-xl font-bold mb-2">Manager Dashboard <InfoLink anchor="user-dashboard"/></h2>
                 <p className="text-subtle-text">
                     View your account details, key system updates, and access to system tools.
                 </p>
@@ -74,10 +60,12 @@ export default function ManagerDashboard() {
             ) : (
                 <>
                     {/* User Info */}
-                    <div className="my-6 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x">
+                    <div
+                        className="my-6 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x">
                         <div className="p-6 flex-1">
                             <p>
-                                <span className="font-semibold">Preferred Name:</span> {userData?.display_name || `${userData?.first_name || ""} ${userData?.last_name || "—"}`.trim() || "—"}
+                                <span
+                                    className="font-semibold">Preferred Name:</span> {userData?.display_name || `${userData?.first_name || ""} ${userData?.last_name || "—"}`.trim() || "—"}
                             </p>
                             <p>
                                 <span className="font-semibold">First Name:</span> {userData?.first_name || "—"}
@@ -108,9 +96,10 @@ export default function ManagerDashboard() {
                     {/* Quick Links */}
                     <div className={"my-12"}>
                         <div className="max-w-xl mb-4">
-                            <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="quick-links" /></h2>
+                            <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="quick-links"/></h2>
                             <p className="text-subtle-text">
-                                Quickly access important sections of the system, such as managing requests and viewing team members.
+                                Quickly access important sections of the system, such as managing requests and viewing
+                                team members.
                             </p>
                         </div>
                         {statsLoading ? (
@@ -118,8 +107,10 @@ export default function ManagerDashboard() {
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {unapprovedUsersCount > 0 && (
-                                    <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center bg-amber-50">
-                                        <h4 className="text-amber-800 font-bold text-sm mb-1">Users Pending Approval</h4>
+                                    <div
+                                        className="rounded-md border-1 border-border-gray py-5 px-4 text-center bg-amber-50">
+                                        <h4 className="text-amber-800 font-bold text-sm mb-1">Users Pending
+                                            Approval</h4>
                                         <p className="text-2xl font-bold text-amber-900">{unapprovedUsersCount}</p>
                                         <NavLink
                                             to="/manager/users"
@@ -129,8 +120,39 @@ export default function ManagerDashboard() {
                                         </NavLink>
                                     </div>
                                 )}
+                                <div
+                                    className={`rounded-md border-1 border-border-gray py-5 px-4 text-center ${
+                                        totalUnreadThreadCount > 0 ? "bg-blue-50" : ""
+                                    }`}
+                                >
+                                    <h4
+                                        className={`font-bold text-sm mb-1 ${
+                                            totalUnreadThreadCount > 0 ? "text-blue-800" : "text-subtle-text"
+                                        }`}
+                                    >
+                                        Unread Messages
+                                    </h4>
+                                    <p
+                                        className={`text-2xl font-bold ${
+                                            totalUnreadThreadCount > 0 ? "text-blue-900" : ""
+                                        }`}
+                                    >
+                                        {totalUnreadThreadCount}
+                                    </p>
+                                    <NavLink
+                                        to="/manager/messages"
+                                        className={`block max-w-48 mx-auto mt-3 rounded-md px-4 py-2 text-sm font-semibold text-white cursor-pointer ${
+                                            totalUnreadThreadCount > 0
+                                                ? "bg-blue-600 hover:bg-blue-700"
+                                                : "bg-gray-700 hover:bg-gray-800"
+                                        }`}
+                                    >
+                                        View Messages
+                                    </NavLink>
+                                </div>
                                 <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center">
-                                    <h4 className="text-subtle-text font-bold text-sm mb-1">Pending Time-Off Requests</h4>
+                                    <h4 className="text-subtle-text font-bold text-sm mb-1">Pending Time-Off
+                                        Requests</h4>
                                     <p className="text-2xl font-bold">{pendingCount}</p>
                                     <NavLink
                                         to="/manager/schedule"
@@ -149,22 +171,13 @@ export default function ManagerDashboard() {
                                         Manage Users
                                     </NavLink>
                                 </div>
-                                <div className="rounded-md border-1 border-border-gray py-5 px-4 text-center">
-                                    <h4 className="text-subtle-text font-bold text-sm mb-1">Ongoing Conversations</h4>
-                                    <p className="text-2xl font-bold">{ongoingThreadsCount}</p>
-                                    <NavLink
-                                        to="/manager/messages"
-                                        className="block max-w-48 mx-auto mt-3 rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-gray-800"
-                                    >
-                                        View Messages
-                                    </NavLink>
-                                </div>
                             </div>
                         )}
                     </div>
 
                     {/* Time-Sensitive Announcements */}
-                    <h2 className="text-xl font-bold mb-2">Time-Sensitive Announcements <InfoLink anchor="time-sensitive-announcements" /></h2>
+                    <h2 className="text-xl font-bold mb-2">Time-Sensitive Announcements <InfoLink
+                        anchor="time-sensitive-announcements"/></h2>
                     {announcements.length === 0 ? (
                         <p className="text-subtle-text">There are no current announcements.</p>
                     ) : (
@@ -180,7 +193,7 @@ export default function ManagerDashboard() {
                             <div className="my-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 {announcements.map((a) => {
                                     const isExpiring = Boolean(a.expiresAt);
-                                    const timeLeft = isExpiring ? formatDisplayDate(a.expiresAt, { relative: true }) : null;
+                                    const timeLeft = isExpiring ? formatDisplayDate(a.expiresAt, {relative: true}) : null;
 
                                     return (
                                         <div
@@ -191,7 +204,7 @@ export default function ManagerDashboard() {
                                             <div className="mb-2.5 whitespace-pre-line">{a.body}</div>
                                             <p className="text-sm border-t-1 border-amber-100 pt-2.5 mt-auto">
                                                 This announcement was posted{" "}
-                                                {formatDisplayDate(a.createdAt, { relative: true })}{". "}
+                                                {formatDisplayDate(a.createdAt, {relative: true})}{". "}
                                                 {isExpiring && `It expires ${formatDisplayDate(a.expiresAt)} (${timeLeft}).`}
                                             </p>
                                         </div>
