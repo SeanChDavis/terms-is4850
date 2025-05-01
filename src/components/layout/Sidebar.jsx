@@ -1,21 +1,23 @@
-import { NavLink, useLocation } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
+import {NavLink, useLocation} from 'react-router-dom';
+import {useAuth} from '@/context/AuthContext';
+import useUnreadMessageThreads from "@/hooks/useUnreadMessageThreads";
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
-    const { user } = useAuth();
+const Sidebar = ({isOpen, toggleSidebar}) => {
+    const {user} = useAuth();
     const location = useLocation();
     const basePath = location.pathname.startsWith('/manager') ? '/manager' : '/employee';
+    const {totalUnreadThreadCount} = useUnreadMessageThreads();
 
     const navItems = [
-        { name: 'Dashboard', path: 'dashboard' },
-        { name: 'Profile', path: 'profile' },
-        { name: 'Schedule', path: 'schedule' },
-        { name: 'Messages', path: 'messages' },
-        { name: 'Announcements', path: 'announcements' },
+        {name: 'Dashboard', path: 'dashboard'},
+        {name: 'Profile', path: 'profile'},
+        {name: 'Schedule', path: 'schedule'},
+        {name: 'Messages', path: 'messages'},
+        {name: 'Announcements', path: 'announcements'},
         ...(basePath === '/manager'
             ? [
-                { name: 'Users', path: 'users' },
-                { name: 'Tools', path: 'tools' },
+                {name: 'Users', path: 'users'},
+                {name: 'Tools', path: 'tools'},
             ]
             : []),
     ];
@@ -39,22 +41,31 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     <div className="text-sm px-4 pb-6 font-bold text-subtle-text">
                         {basePath === '/manager' ? 'Manager Portal' : 'Employee Portal'}
                     </div>
-                    {navItems.map(({ name, path }) => (
-                        <NavLink
-                            key={path}
-                            to={`${basePath}/${path}`}
-                            onClick={toggleSidebar}
-                            className={({ isActive }) =>
-                                `block py-2 ps-4 pe-3 border-r-4 border-light-gray font-bold hover:text-black 
-                            ${ isActive
-                                    ? 'border-primary bg-light-gray-alt text-black hover:bg-light-gray-alt hover:border-primary'
-                                    : 'text-darker-gray hover:border-light-gray-alt'
-                                }`
-                            }
-                        >
-                            {name}
-                        </NavLink>
-                    ))}
+                    {navItems.map(({name, path}) => {
+                        const showMessagesBadge = name === "Messages" && totalUnreadThreadCount > 0;
+
+                        return (
+                            <NavLink
+                                key={path}
+                                to={`${basePath}/${path}`}
+                                onClick={toggleSidebar}
+                                className={({isActive}) =>
+                                    `flex items-center justify-between py-2 ps-4 pe-3 border-r-4 border-light-gray font-bold hover:text-black 
+                ${isActive
+                                        ? 'border-primary bg-light-gray-alt text-black hover:bg-light-gray-alt hover:border-primary'
+                                        : 'text-darker-gray hover:border-light-gray-alt'
+                                    }`
+                                }
+                            >
+                                <span>{name}</span>
+                                {showMessagesBadge && (
+                                    <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary text-white">
+                                        <span className={"mr-1"}>{totalUnreadThreadCount}</span> unread
+                                    </span>
+                                )}
+                            </NavLink>
+                        );
+                    })}
                 </nav>
             </aside>
         </>

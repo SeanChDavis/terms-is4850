@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
 import Inbox from "@/components/messages/Inbox";
 import ThreadView from "@/components/messages/ThreadView";
-import InfoLink from "@/components/ui/InfoLink.jsx";
+import InfoLink from "@/components/ui/InfoLink";
 import {useParams, useNavigate} from "react-router-dom";
-import {useMessageThread} from "@/context/MessageThreadContext.jsx";
+import {useMessageThread} from "@/context/MessageThreadContext";
 
 export default function EmployeeMessages() {
     const [selectedThread, setSelectedThread] = useState(null);
