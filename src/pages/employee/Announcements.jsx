@@ -2,12 +2,16 @@ import {doc, updateDoc, serverTimestamp} from "firebase/firestore";
 import {db} from "@/firebase/firebase-config";
 import {useFilteredAnnouncements} from "@/hooks/useFilteredAnnouncements";
 import useCurrentUser from "@/hooks/useCurrentUser";
-import {formatDisplayDate} from "@/utils/formatters";
 import InfoLink from "@/components/ui/InfoLink.jsx";
 import {useEffect} from "react";
+import AnnouncementCard from "@/components/ui/AnnouncementCard";
+import {collection, getDocs} from "firebase/firestore";
+import {useState} from "react";
+import {NavLink} from "react-router-dom";
 
 export default function EmployeeAnnouncements() {
     const {userData} = useCurrentUser();
+    const [userMap, setUserMap] = useState({});
     const announcements = useFilteredAnnouncements(["employee", "all"], 20);
 
     useEffect(() => {
@@ -27,6 +31,29 @@ export default function EmployeeAnnouncements() {
         updateLastSeen().catch(console.error);
     }, [userData?.uid]);
 
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const snapshot = await getDocs(collection(db, "users"));
+                const result = {};
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    result[doc.id] = {
+                        display_name: data.display_name,
+                        first_name: data.first_name,
+                        last_name: data.last_name,
+                        email: data.email,
+                    };
+                });
+                setUserMap(result);
+            } catch (err) {
+                console.error("Failed to load user map:", err);
+            }
+        };
+
+        fetchUsers().catch(console.error);
+    }, []);
+
     const sortedAnnouncements = [...announcements].sort((a, b) => {
         if (a.expiresAt && !b.expiresAt) return -1;
         if (!a.expiresAt && b.expiresAt) return 1;
@@ -35,11 +62,11 @@ export default function EmployeeAnnouncements() {
 
     return (
         <>
-            <div className="max-w-3xl pb-4 mb-8">
+            <div className="max-w-2xl pb-4 mb-2">
                 <h2 className="text-xl font-bold mb-2">System Announcements <InfoLink anchor="announcements"/></h2>
                 <p className="text-subtle-text">
-                    Here you can find important announcements and updates from management.
-                    Check back regularly for new information.
+                    Here you can find important announcements and updates from management. Announcements that are
+                    time-sensitive or may expire soon will be highlighted.
                 </p>
             </div>
 
@@ -49,57 +76,31 @@ export default function EmployeeAnnouncements() {
                 </div>
             ) : (
                 <div>
-                    <h2 className="text-xl font-bold mb-2">All Announcements <InfoLink anchor="announcements"/></h2>
                     {sortedAnnouncements.length === 0 ? (
                         <p className="text-gray-500">There are no current announcements.</p>
                     ) : (
                         <>
-                            <p className="max-w-3xl text-subtle-text">
-                                Announcements that are time-sensitive or may expire soon will be highlighted.
+                            <p className="text-subtle-text mb-8">
+                                Questions or concerns about an announcement?{" "}
+                                <NavLink
+                                    to="/employee/messages"
+                                    className="underline hover:no-underline"
+                                >
+                                    Reach out to a manager
+                                </NavLink>.
                             </p>
-                            <div className="my-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 {sortedAnnouncements.map((a) => {
-                                    const isExpiring = Boolean(a.expiresAt);
-                                    const timeLeft = isExpiring
-                                        ? formatDisplayDate(a.expiresAt, {relative: true})
-                                        : null;
                                     const isNew = userData?.lastSeenAnnouncementsAt &&
                                         a.createdAt?.getTime() > userData.lastSeenAnnouncementsAt.toMillis();
 
                                     return (
-                                        <div
+                                        <AnnouncementCard
                                             key={a.id}
-                                            className={`relative rounded-lg h-full flex flex-col ${
-                                                isExpiring
-                                                    ? "p-4 text-amber-950 bg-amber-50"
-                                                    : "p-4 bg-light-gray"
-                                            }`}
-                                        >
-                                            <h3 className="text-lg font-bold mb-2 pr-10">
-                                                {isNew && (
-                                                    <span
-                                                        className={`position absolute right-4 top-5 ml-2 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                                                            isExpiring ? "bg-amber-950 text-white" : "bg-primary text-white"
-                                                        }`}
-                                                    >
-                                                      New
-                                                    </span>
-                                                )}{" "}
-                                                {a.title}
-                                            </h3>
-                                            <p className="mb-2.5 whitespace-pre-line">{a.body}</p>
-                                            <p
-                                                className={`text-sm border-t-1 pt-2.5 mt-auto ${
-                                                    isExpiring
-                                                        ? "border-amber-100"
-                                                        : "border-gray-200"
-                                                }`}
-                                            >
-                                                This announcement was posted{" "}
-                                                {formatDisplayDate(a.createdAt, {relative: true})}{". "}
-                                                {isExpiring && `It expires ${formatDisplayDate(a.expiresAt)} (${timeLeft}).`}
-                                            </p>
-                                        </div>
+                                            announcement={a}
+                                            isNew={isNew}
+                                            creator={userMap[a.createdBy]}
+                                        />
                                     );
                                 })}
                             </div>
