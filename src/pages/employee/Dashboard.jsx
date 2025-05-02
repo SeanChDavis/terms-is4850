@@ -89,7 +89,7 @@ export default function EmployeeDashboard() {
     return (
         <>
             <div className="max-w-xl mb-4">
-                <h2 className="text-2xl font-bold mb-2">Employee Dashboard <InfoLink anchor="user-dashboard"/></h2>
+                <h2 className="text-xl font-bold mb-2">Employee Dashboard <InfoLink anchor="user-dashboard"/></h2>
                 <p className="text-subtle-text">
                     View your account information, request status updates, and important system announcements.
                 </p>
@@ -102,7 +102,7 @@ export default function EmployeeDashboard() {
                 <>
                     {/* Account Overview */}
                     <div
-                        className="mt-6 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x mb-10">
+                        className="mt-8 mb-10 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x">
                         <div className="p-6 flex-1">
                             <p><span
                                 className="font-semibold">Preferred Name:</span> {userData?.display_name || `${userData?.first_name || ""} ${userData?.last_name || "—"}`.trim() || "—"}
@@ -153,8 +153,8 @@ export default function EmployeeDashboard() {
                                     </div>
                                 )}
                                 <div
-                                    className={`rounded-md border-1 border-primary-light-border py-5 px-4 text-center ${
-                                        totalUnreadThreadCount > 0 ? "bg-primary-light-bg" : ""
+                                    className={`rounded-md border-1 py-5 px-4 text-center ${
+                                        totalUnreadThreadCount > 0 ? "bg-primary-light-bg border-primary-light-border" : "border-border-gray"
                                     }`}
                                 >
                                     <h4
@@ -183,8 +183,8 @@ export default function EmployeeDashboard() {
                                     </NavLink>
                                 </div>
                                 <div
-                                    className={`rounded-md border-1 border-primary-light-border py-5 px-4 text-center ${
-                                        unreadAnnouncementCount > 0 ? "bg-primary-light-bg" : ""
+                                    className={`rounded-md border-1 py-5 px-4 text-center ${
+                                        unreadAnnouncementCount > 0 ? "bg-primary-light-bg border-primary-light-border" : "border-border-gray"
                                     }`}
                                 >
                                     <h4

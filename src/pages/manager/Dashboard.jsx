@@ -70,7 +70,7 @@ export default function ManagerDashboard() {
                 <>
                     {/* User Info */}
                     <div
-                        className="my-6 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x">
+                        className="mt-8 mb-10 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x">
                         <div className="p-6 flex-1">
                             <p>
                                 <span
@@ -160,8 +160,8 @@ export default function ManagerDashboard() {
                                     </NavLink>
                                 </div>
                                 <div
-                                    className={`rounded-md border-1 border-primary-light-border py-5 px-4 text-center ${
-                                        totalUnreadThreadCount > 0 ? "bg-primary-light-bg" : ""
+                                    className={`rounded-md border-1 py-5 px-4 text-center ${
+                                        totalUnreadThreadCount > 0 ? "bg-primary-light-bg border-primary-light-border" : "border-border-gray"
                                     }`}
                                 >
                                     <h4
@@ -190,8 +190,8 @@ export default function ManagerDashboard() {
                                     </NavLink>
                                 </div>
                                 <div
-                                    className={`rounded-md border-1 border-primary-light-border py-5 px-4 text-center ${
-                                        unreadAnnouncementCount > 0 ? "bg-primary-light-bg" : ""
+                                    className={`rounded-md border-1 py-5 px-4 text-center ${
+                                        unreadAnnouncementCount > 0 ? "bg-primary-light-bg border-primary-light-border" : "border-border-gray"
                                     }`}
                                 >
                                     <h4

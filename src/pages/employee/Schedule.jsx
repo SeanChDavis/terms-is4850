@@ -216,7 +216,7 @@ const EmployeeSchedule = () => {
 
     return (
         <>
-            <div className={"max-w-xl pb-4 mb-8"}>
+            <div className={"max-w-xl pb-4 mb-4"}>
                 <h2 className={`text-xl font-bold mb-2`}>Work Schedule Information <InfoLink anchor="work-schedule-information" /></h2>
                 <p className={"text-subtle-text"}>View, manage, or submit requests to be excluded from the work
                     schedule.</p>

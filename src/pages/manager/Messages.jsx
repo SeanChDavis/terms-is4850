@@ -43,7 +43,7 @@ export default function ManagerMessages() {
 
     return (
         <>
-            <div className="max-w-xl pb-4 mb-8">
+            <div className="max-w-xl pb-4 mb-6">
                 <h2 className="text-xl font-bold mb-2">
                     Messages <InfoLink anchor="messages"/>
                 </h2>
