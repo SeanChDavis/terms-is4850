@@ -71,7 +71,7 @@ const Profile = () => {
     return (
         <>
             <div
-                className={"max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
+                className={"sm:max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
                 <div className="px-4 py-5 sm:px-6">
                     <h2 className="text-base/7 font-semibold">Edit Your Profile</h2>
                     <p className="mt-1 text-sm/6 text-subtle-text">

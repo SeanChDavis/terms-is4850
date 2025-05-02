@@ -143,7 +143,7 @@ export default function UserNotes({userId}) {
 
             {/* Add Note Form */}
             <div
-                className="max-w-md divide-y divide-border-gray overflow-hidden border border-border-gray rounded-md bg-white">
+                className="sm:max-w-md divide-y divide-border-gray overflow-hidden border border-border-gray rounded-md bg-white">
                 <div className="px-4 py-5 sm:px-6">
                     <h2 className="text-base font-semibold">Create New Note <InfoLink anchor="notes"/></h2>
                     <p className="mt-1 text-sm text-subtle-text">
