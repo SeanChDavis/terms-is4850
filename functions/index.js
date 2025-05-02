@@ -3,12 +3,15 @@ const admin = require('firebase-admin');
 const nodemailer = require('nodemailer');
 admin.initializeApp();
 
+const smtpEmail = functions.config().smtp.email;
+const smtpPass = functions.config().smtp.password;
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: process.env.GMAIL_EMAIL,
-        pass: process.env.GMAIL_PASSWORD
-    }
+        user: smtpEmail,
+        pass: smtpPass,
+    },
 });
 
 exports.sendNotificationEmail = functions.firestore
@@ -43,16 +46,16 @@ exports.sendNotificationEmail = functions.firestore
 
         // 3. Format content
         const emailBody = template.body
-            .replace(/{recipient_name}/g, recipient.firstName || 'User')
-            .replace(/{sender_name}/g, sender?.firstName || 'Someone')
-            .replace(/{link}/g, `https://your-app-domain.com${link}`);
+            .replace(/{recipient_first_name}/g, recipient.firstName || 'User')
+            .replace(/{sender_first_name}/g, sender?.firstName || 'Someone')
+            .replace(/{messages_link}/g, `https://your-app-domain.com${link}`);
 
         // 4. Send email
         await transporter.sendMail({
-            from: 'TERMS <noreply@yourdomain.com>',
+            from: `"TERMS" <${smtpEmail}>`,
             to: recipient.email,
             subject: template.subject
-                .replace(/{sender_name}/g, sender?.firstName || 'Someone'),
+                .replace(/{sender_first_name}/g, sender?.firstName || 'Someone'),
             text: emailBody
         });
 

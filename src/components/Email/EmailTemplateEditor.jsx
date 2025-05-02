@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import {db} from "@/firebase/firebase-config";
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { useToast } from '../../context/ToastContext';
-
+import { useToast } from '@/context/ToastContext';
 
 const EmailTemplateEditor = ({ templateId }) => {
     const { addToast } = useToast();

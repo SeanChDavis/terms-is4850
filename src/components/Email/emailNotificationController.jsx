@@ -6,7 +6,7 @@ export default function useEmailNotification() {
     const sendMessageNotification = async (threadId, senderId, recipientId) => {
         try {
             await addDoc(collection(db, 'notifications'), {
-                type: 'new_message',
+                type: 'newMessage',
                 recipientId,
                 link: `/messages/${threadId}`,
                 contextData: { senderId },
