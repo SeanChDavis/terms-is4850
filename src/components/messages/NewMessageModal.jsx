@@ -11,6 +11,7 @@ import {
     setDoc,
 } from "firebase/firestore";
 import {useAuth} from "@/context/AuthContext";
+import useEmailNotification from '@/components/Email/useEmailNotification';
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 import {useToast} from "@/context/ToastContext";
 
@@ -20,6 +21,7 @@ export default function NewMessageModal({isOpen, onClose, onSelect, recipientRol
     const [employees, setEmployees] = useState([]);
     const [selected, setSelected] = useState("");
     const [initialMessage, setInitialMessage] = useState("");
+    const { sendMessageNotification } = useEmailNotification();
 
     useEffect(() => {
         const fetchRecipients = async () => {
@@ -67,6 +69,9 @@ export default function NewMessageModal({isOpen, onClose, onSelect, recipientRol
                     timestamp: serverTimestamp(),
                     readBy: [user.uid],
                 });
+
+                // Trigger notification for new conversation
+                await sendMessageNotification(threadId, user.uid, selected);
             }
 
             onClose();
