@@ -11,7 +11,7 @@ import {
     setDoc,
 } from "firebase/firestore";
 import {useAuth} from "@/context/AuthContext";
-import useEmailNotification from '@/components/Email/useEmailNotification';
+import useEmailNotification from "@/components/Email/emailNotificationController.jsx";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 import {useToast} from "@/context/ToastContext";
 
@@ -72,6 +72,7 @@ export default function NewMessageModal({isOpen, onClose, onSelect, recipientRol
 
                 // Trigger notification for new conversation
                 await sendMessageNotification(threadId, user.uid, selected);
+
             }
 
             onClose();
