@@ -2,7 +2,8 @@ import {useState} from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import {Outlet} from 'react-router-dom';
-import {useAuth} from "@/context/AuthContext.jsx";
+import {useAuth} from "@/context/AuthContext";
+import NotificationBell from "@/components/ui/NotificationBell";
 
 const MainLayout = () => {
     const {user} = useAuth();
@@ -26,9 +27,17 @@ const MainLayout = () => {
                 <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>
 
                 {/* Main content */}
-                <main className="flex-1 overflow-y-auto bg-white p-6 md:p-8 xl:ps-10">
-                    <Outlet/>
-                </main>
+                <div className="flex-1 overflow-y-auto bg-white">
+                    <div className="block md:hidden">
+                        <div className={"bg-light-gray border-border-gray py-2.5 px-6 md:px-8 flex items-center justify-between"}>
+                            <span className={"text-sm text-subtle-text font-semibold"}>Notifications:</span>
+                            <NotificationBell />
+                        </div>
+                    </div>
+                    <main className="bg-white p-6 md:p-8 xl:ps-10">
+                        <Outlet/>
+                    </main>
+                </div>
             </div>
         </div>
     );
