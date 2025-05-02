@@ -61,7 +61,7 @@ export function ToastProvider({children}) {
                     <div
                         key={pos}
                         className={`md:w-full absolute ${
-                            pos === 'top-right' ? 'top-14 right-8' : 'bottom-8 right-8'
+                            pos === 'top-right' ? 'top-14 right-4 sm:top-14 sm:right-8' : 'bottom-4 right-4 sm:bottom-8 sm:right-8'
                         } flex flex-col items-end space-y-4`}
                     >
                         {toasts

@@ -3,12 +3,14 @@ import {db} from "@/firebase/firebase-config";
 import {collection, query, where, orderBy, onSnapshot} from "firebase/firestore";
 import {useAuth} from "@/context/AuthContext";
 import {getAllUsers} from "@/firebase/firestore";
+import useUnreadMessageThreads from "@/hooks/useUnreadMessageThreads";
 
 export default function Inbox({onSelect, selectedThreadId}) {
     const {user} = useAuth();
     const [loadingUsers, setLoadingUsers] = useState(true);
     const [threads, setThreads] = useState([]);
     const [userMap, setUserMap] = useState({});
+    const {unreadThreadIds} = useUnreadMessageThreads();
 
     // Get threads for the current user
     useEffect(() => {
@@ -59,19 +61,25 @@ export default function Inbox({onSelect, selectedThreadId}) {
                     const otherUserId = thread.participants.find((id) => id !== user.uid);
                     const recipientName = userMap[otherUserId] || otherUserId;
                     const isActive = selectedThreadId === thread.id;
+                    const isUnread = unreadThreadIds.includes(thread.id);
                     return (
                         <div
                             key={thread.id}
                             onClick={() => onSelect(thread.id)}
-                            className={`cursor-pointer py-3 px-4 last:border-b-1 last:border-b-border-gray ${
+                            className={`cursor-pointer py-3 px-4 last:border-b-1 last:border-b-border-gray flex justify-between items-center ${
                                 isActive
                                     ? "bg-light-gray border-r-4 border-r-border-gray"
                                     : "hover:bg-light-gray"
                             }`}
                         >
                             <div className="font-bold text-sm">
-                                <span className={""}>{recipientName}</span>
+                                <span>{recipientName}</span>
                             </div>
+                            {isUnread && (
+                                <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary text-white md:bg-light-gray-alt md:text-primary">
+                                    New
+                                </span>
+                            )}
                         </div>
                     );
                 })

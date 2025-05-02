@@ -1,15 +1,16 @@
 import {useEffect, useMemo, useState} from "react";
-import { NavLink } from "react-router-dom";
-import { db } from "@/firebase/firebase-config";
+import {NavLink} from "react-router-dom";
+import {db} from "@/firebase/firebase-config";
 import {collection, query, where, getDocs, orderBy, limit, onSnapshot} from "firebase/firestore";
 import useCurrentUser from "@/hooks/useCurrentUser";
-import { useFilteredAnnouncements } from "@/hooks/useFilteredAnnouncements";
-import { formatDisplayDate } from "@/utils/formatters";
-import InfoLink from "@/components/ui/InfoLink.jsx";
+import {useFilteredAnnouncements} from "@/hooks/useFilteredAnnouncements";
+import {formatDisplayDate} from "@/utils/formatters";
+import InfoLink from "@/components/ui/InfoLink";
+import useUnreadMessageThreads from "@/hooks/useUnreadMessageThreads";
 
 export default function EmployeeDashboard() {
-    const { userData, loading } = useCurrentUser();
-    const rawAnnouncements = useFilteredAnnouncements(["employee", "all"], 20);
+    const {userData, loading} = useCurrentUser();
+    const rawAnnouncements = useFilteredAnnouncements(["employee", "all"]);
     const announcements = useMemo(() => {
         return rawAnnouncements.filter(a => a.expiresAt);
     }, [rawAnnouncements]);
@@ -17,6 +18,15 @@ export default function EmployeeDashboard() {
     const [statsLoading, setStatsLoading] = useState(true);
     const [latestScheduleUrl, setLatestScheduleUrl] = useState(null);
     const [latestScheduleDate, setLatestScheduleDate] = useState(null);
+    const {unreadThreadIds, totalUnreadThreadCount} = useUnreadMessageThreads();
+    const unreadAnnouncementCount = useMemo(() => {
+        if (!userData?.lastSeenAnnouncementsAt) return 0;
+
+        return rawAnnouncements.filter((a) =>
+            a.createdAt instanceof Date &&
+            a.createdAt.getTime() > userData.lastSeenAnnouncementsAt.toMillis()
+        ).length;
+    }, [rawAnnouncements, userData?.lastSeenAnnouncementsAt]);
 
     useEffect(() => {
         const q = query(
@@ -79,7 +89,7 @@ export default function EmployeeDashboard() {
     return (
         <>
             <div className="max-w-xl mb-4">
-                <h2 className="text-2xl font-bold mb-2">Employee Dashboard <InfoLink anchor="user-dashboard" /></h2>
+                <h2 className="text-xl font-bold mb-2">Employee Dashboard <InfoLink anchor="user-dashboard"/></h2>
                 <p className="text-subtle-text">
                     View your account information, request status updates, and important system announcements.
                 </p>
@@ -91,9 +101,12 @@ export default function EmployeeDashboard() {
             ) : (
                 <>
                     {/* Account Overview */}
-                    <div className="mt-6 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x mb-10">
+                    <div
+                        className="mt-8 mb-10 divide-y divide-border-gray bg-white rounded-md border border-border-gray lg:flex lg:divide-y-0 lg:divide-x">
                         <div className="p-6 flex-1">
-                            <p><span className="font-semibold">Preferred Name:</span> {userData?.display_name || `${userData?.first_name || ""} ${userData?.last_name || "—"}`.trim() || "—"}</p>
+                            <p><span
+                                className="font-semibold">Preferred Name:</span> {userData?.display_name || `${userData?.first_name || ""} ${userData?.last_name || "—"}`.trim() || "—"}
+                            </p>
                             <p><span className="font-semibold">First Name:</span> {userData?.first_name || "—"}</p>
                             <p><span className="font-semibold">Last Name:</span> {userData?.last_name || "—"}</p>
                             <p><span className="font-semibold">Email:</span> {userData?.email || "—"}</p>
@@ -114,8 +127,8 @@ export default function EmployeeDashboard() {
 
                     {/* Quick Links */}
                     <div className={"my-12"}>
-                        <div className="max-w-xl mb-4">
-                            <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="quick-links" /></h2>
+                        <div className="max-w-xl mb-6">
+                            <h2 className={"text-xl font-bold mb-2"}>Quick Links <InfoLink anchor="quick-links"/></h2>
                             <p className="text-subtle-text">
                                 Quickly access information about your pending time-off requests and more.
                             </p>
@@ -126,7 +139,8 @@ export default function EmployeeDashboard() {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {latestScheduleUrl && latestScheduleDate && (
                                     <div className="rounded-md border-1 border-border-gray p-4 text-center">
-                                        <h4 className="text-subtle-text font-bold text-sm mb-1">Latest Schedule Upload</h4>
+                                        <h4 className="text-subtle-text font-bold text-sm mb-1">Latest Schedule
+                                            Upload</h4>
                                         <p className="text-2xl font-bold mb-4">{formatDisplayDate(latestScheduleDate)}</p>
                                         <a
                                             href={latestScheduleUrl}
@@ -138,8 +152,69 @@ export default function EmployeeDashboard() {
                                         </a>
                                     </div>
                                 )}
+                                <div
+                                    className={`rounded-md border-1 py-5 px-4 text-center ${
+                                        totalUnreadThreadCount > 0 ? "bg-primary-light-bg border-primary-light-border" : "border-border-gray"
+                                    }`}
+                                >
+                                    <h4
+                                        className={`font-bold text-sm mb-1 ${
+                                            totalUnreadThreadCount > 0 ? "text-primary-darkest" : "text-subtle-text"
+                                        }`}
+                                    >
+                                        Unread Messages
+                                    </h4>
+                                    <p
+                                        className={`text-2xl font-bold ${
+                                            totalUnreadThreadCount > 0 ? "text-primary-darkest" : ""
+                                        }`}
+                                    >
+                                        {totalUnreadThreadCount}
+                                    </p>
+                                    <NavLink
+                                        to="/employee/messages"
+                                        className={`block max-w-48 mx-auto mt-3 rounded-md px-4 py-2 text-sm font-semibold text-white cursor-pointer ${
+                                            totalUnreadThreadCount > 0
+                                                ? "bg-primary hover:bg-primary-dark"
+                                                : "bg-gray-700 hover:bg-gray-800"
+                                        }`}
+                                    >
+                                        View Messages
+                                    </NavLink>
+                                </div>
+                                <div
+                                    className={`rounded-md border-1 py-5 px-4 text-center ${
+                                        unreadAnnouncementCount > 0 ? "bg-primary-light-bg border-primary-light-border" : "border-border-gray"
+                                    }`}
+                                >
+                                    <h4
+                                        className={`font-bold text-sm mb-1 ${
+                                            unreadAnnouncementCount > 0 ? "text-primary-darkest" : "text-subtle-text"
+                                        }`}
+                                    >
+                                        Unread Announcements
+                                    </h4>
+                                    <p
+                                        className={`text-2xl font-bold ${
+                                            unreadAnnouncementCount > 0 ? "text-primary-darkest" : ""
+                                        }`}
+                                    >
+                                        {unreadAnnouncementCount}
+                                    </p>
+                                    <NavLink
+                                        to="/employee/announcements"
+                                        className={`block max-w-48 mx-auto mt-3 rounded-md px-4 py-2 text-sm font-semibold text-white cursor-pointer ${
+                                            unreadAnnouncementCount > 0
+                                                ? "bg-primary hover:bg-primary-dark"
+                                                : "bg-gray-700 hover:bg-gray-800"
+                                        }`}
+                                    >
+                                        View Announcements
+                                    </NavLink>
+                                </div>
                                 <div className="rounded-md border-1 border-border-gray p-4 text-center">
-                                    <h4 className="text-subtle-text font-bold text-sm mb-1">Pending Time-Off Requests</h4>
+                                    <h4 className="text-subtle-text font-bold text-sm mb-1">Pending Time-Off
+                                        Requests</h4>
                                     <p className="text-2xl font-bold">{pendingRequestsCount}</p>
                                     <NavLink
                                         to="/employee/schedule"
@@ -151,44 +226,6 @@ export default function EmployeeDashboard() {
                             </div>
                         )}
                     </div>
-
-                    {/* Time-Sensitive Announcements */}
-                    <h2 className="text-xl font-bold mb-2">Time-Sensitive Announcements <InfoLink anchor="time-sensitive-announcements" /></h2>
-                    {announcements.length === 0 ? (
-                        <p className="text-subtle-text">There are no current announcements.</p>
-                    ) : (
-                        <>
-                            <p className="max-w-xl text-subtle-text mb-4">
-                                These announcements are time-sensitive and may expire soon. Please read them carefully and check
-                                back regularly for updates. To view all announcements, visit the{" "}
-                                <NavLink to="/employee/announcements" className="underline hover:no-underline">
-                                    Announcements
-                                </NavLink>{" "}
-                                page.
-                            </p>
-                            <div className="my-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                {announcements.map((a) => {
-                                    const isExpiring = Boolean(a.expiresAt);
-                                    const timeLeft = isExpiring ? formatDisplayDate(a.expiresAt, { relative: true }) : null;
-
-                                    return (
-                                        <div
-                                            key={a.id}
-                                            className="p-4 text-amber-950 rounded-lg bg-amber-50 h-full flex flex-col"
-                                        >
-                                            <h3 className="text-lg font-bold mb-2">{a.title}</h3>
-                                            <div className="mb-2.5 whitespace-pre-line">{a.body}</div>
-                                            <p className="text-sm border-t-1 border-amber-100 pt-2.5 mt-auto">
-                                                This announcement was posted{" "}
-                                                {formatDisplayDate(a.createdAt, { relative: true })}{". "}
-                                                {isExpiring && `It expires ${formatDisplayDate(a.expiresAt)} (${timeLeft}).`}
-                                            </p>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </>
-                    )}
                 </>
             )}
         </>

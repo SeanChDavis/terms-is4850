@@ -52,7 +52,7 @@ const AppRoutes = () => {
                 <Route path="profile" element={<UserProfile />} />
                 <Route path="schedule" element={<EmployeeSchedule />} />
                 <Route path="announcements" element={<EmployeeAnnouncements />} />
-                <Route path="messages" element={<EmployeeMessages />} />
+                <Route path="messages/:threadId?" element={<EmployeeMessages />} />
             </Route>
 
             {/* Protected Manager Routes */}

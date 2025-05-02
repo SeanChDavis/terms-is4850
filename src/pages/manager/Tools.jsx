@@ -1,53 +1,85 @@
-import React from 'react';
-import InfoLink from "@/components/ui/InfoLink.jsx";
-import ToastTester from "@/utils/ToastTester.jsx";
-import {Tab} from "@headlessui/react";
-import EmailBlastSender from "@/components/Email/EmailBlastSender.jsx";
-import EmailTemplateEditor from "@/components/Email/EmailTemplateEditor.jsx";
+import { useEffect, useState } from "react";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import { db } from "@/firebase/firebase-config";
+import { useToast } from "@/context/ToastContext";
+import InfoLink from "@/components/ui/InfoLink";
 
 export default function SystemTools() {
+    const { addToast } = useToast();
+    const [settings, setSettings] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+
+    useEffect(() => {
+        const docRef = doc(db, "tools", "settings");
+        const unsubscribe = onSnapshot(docRef, (snapshot) => {
+            if (snapshot.exists()) {
+                setSettings(snapshot.data());
+            } else {
+                setSettings({
+                    timeOffRequestMinDays: 1,
+                });
+            }
+            setLoading(false);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const handleChange = (key, value) => {
+        setSettings((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    const saveSettings = async () => {
+        if (!settings) return;
+        setSaving(true);
+        try {
+            const docRef = doc(db, "tools", "settings");
+            await setDoc(docRef, settings, { merge: true });
+            addToast({ type: "success", message: "Settings updated!", duration: 3000 });
+        } catch (err) {
+            addToast({ type: "error", message: "Failed to update settings." });
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    if (loading) return <div className="text-sm text-subtle-text">Loading...</div>;
+
     return (
-        <>
-            <div className={"max-w-xl mb-8"}>
-                <h2 className={`text-xl font-bold mb-2`}>System Tools <InfoLink anchor="tools" /></h2>
-                <p className={"text-subtle-text"}>
-                    This section provides access to various system tools that help manage and maintain TERMS.
+        <div className="max-w-xl space-y-8">
+            <div>
+                <h2 className="text-xl font-bold mb-2">
+                    System Tools <InfoLink anchor="tools" />
+                </h2>
+                <p className="text-subtle-text">
+                    Manage app-wide configurations. These settings affect how TERMS behaves across the system.
                 </p>
             </div>
 
+            {/* Setting: Minimum time-off request notice */}
+            <div>
+                <label className="block font-medium mb-1">
+                    Minimum Days Notice for Time-Off Requests
+                </label>
+                <input
+                    type="number"
+                    min={1}
+                    value={settings.timeOffRequestMinDays || 1}
+                    onChange={(e) => handleChange("timeOffRequestMinDays", parseInt(e.target.value, 10))}
+                    className="w-32 p-2 border border-gray-300 rounded"
+                />
+            </div>
 
-            <Tab.Group>
-                <Tab.List className="flex space-x-1 rounded-lg bg-gray-100 p-1">
-                    <Tab className={({ selected }) =>
-                        `w-full rounded-md py-2 text-sm font-medium leading-5 ${selected
-                            ? 'bg-white shadow'
-                            : 'text-gray-600 hover:bg-white/[0.12] hover:text-gray-800'
-                        }`
-                    }>
-                        Email Blast
-                    </Tab>
-                    <Tab className={({ selected }) =>
-                        `w-full rounded-md py-2 text-sm font-medium leading-5 ${selected
-                            ? 'bg-white shadow'
-                            : 'text-gray-600 hover:bg-white/[0.12] hover:text-gray-800'
-                        }`
-                    }>
-                        Email Templates
-                    </Tab>
-                </Tab.List>
-
-                <Tab.Panels className="mt-4">
-                    <Tab.Panel className="rounded-lg bg-white p-4 shadow">
-                        <EmailBlastSender />
-                    </Tab.Panel>
-                    <Tab.Panel className="rounded-lg bg-white p-4 shadow">
-                        <EmailTemplateEditor templateId="message-notification" />
-                    </Tab.Panel>
-                </Tab.Panels>
-            </Tab.Group>
-
-
-            {/*<ToastTester />*/}
-        </>
+            <button
+                onClick={saveSettings}
+                disabled={saving}
+                className="px-4 py-2 text-sm bg-primary text-white font-semibold rounded-md cursor-pointer hover:bg-primary-dark disabled:opacity-50"
+            >
+                {saving ? "Saving..." : "Save Changes"}
+            </button>
+        </div>
     );
 }

@@ -14,7 +14,7 @@ import {useAuth} from "@/context/AuthContext";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/react";
 import {useToast} from "@/context/ToastContext";
 
-export default function NewMessageModal({isOpen, onClose, onSelect}) {
+export default function NewMessageModal({isOpen, onClose, onSelect, recipientRole}) {
     const {user} = useAuth();
     const {addToast} = useToast();
     const [employees, setEmployees] = useState([]);
@@ -23,14 +23,23 @@ export default function NewMessageModal({isOpen, onClose, onSelect}) {
 
     useEffect(() => {
         const fetchRecipients = async () => {
-            const q = query(collection(db, "users")); // no role filter
+            let q = query(collection(db, "users"));
+            if (recipientRole) {
+                q = query(collection(db, "users"), where("role", "==", recipientRole));
+            }
             const snapshot = await getDocs(q);
             const users = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-            const filtered = users.filter((u) => u.id !== user.uid); // don't list yourself
+            const filtered = users.filter((u) => u.id !== user.uid);
             setEmployees(filtered);
         };
 
         if (isOpen) fetchRecipients().catch(console.error);
+
+        if (isOpen) {
+            fetchRecipients().catch(console.error);
+            setSelected("");
+            setInitialMessage("");
+        }
     }, [isOpen]);
 
     const startConversation = async () => {

@@ -67,13 +67,14 @@ export default function Help() {
                             </h2>
                             <div className={sectionContentClasses}>
                                 <p className={"mb-0"}>
-                                    The Dashboard is the landing page for both managers and employees, providing quick access to relevant features and information. It also provides a snapshot of the current (logged in) user's profile. It is the central hub for accessing quick information about <a className={"underline hover:no-underline"} href="#time-off-requests">time-off requests</a>, viewing <a className={"underline hover:no-underline"} href="#time-sensitive-announcements">time-sensitive announcements</a>, and more. Each element on the dashboard has its own documentation below.
+                                    The Dashboard is the landing page for both managers and employees, providing quick access to relevant features and information. It also provides a snapshot of the current (logged in) user's profile. It is the central hub for accessing quick information about <a className={"underline hover:no-underline"} href="#time-off-requests">time-off requests</a>, viewing <a className={"underline hover:no-underline"} href="#announcements">announcements</a>, and more. Each element on the dashboard has its own documentation below.
                                 </p>
                             </div>
                         </section>
 
                         <hr className="border-gray-300" />
 
+                        {/* quick-links */}
                         <section id="quick-links" className={sectionClasses}>
                             <h2 className={sectionHeadingClasses}>
                                 Dashboard Quick Links
@@ -95,22 +96,31 @@ export default function Help() {
                                 <h3 className={"font-bold mb-2"}>Managers:</h3>
                                 <ul className={"list-disc pl-4 mb-3 pt-1"}>
                                     <li className={"mb-1"}>
-                                        Users Pending Approval count with a link to the Users page
+                                        Users Pending Approval count with a link to the Users page (hidden if no pending users)
                                     </li>
                                     <li className={"mb-1"}>
                                         Pending Time-Off Requests count with a link to the Schedule page
                                     </li>
                                     <li className={"mb-1"}>
-                                        Team Members count with a link to the Users page
+                                        Unread Messages count with a link to the Messages page
                                     </li>
                                     <li className={"mb-1"}>
-                                        Ongoing Conversations count with a link to the Messages page
+                                        Unread Announcements count with a link to the Announcements page
+                                    </li>
+                                    <li className={"mb-1"}>
+                                        Team Members count with a link to the Users page
                                     </li>
                                 </ul>
                                 <h3 className={"font-bold mb-2"}>Employees:</h3>
                                 <ul className={"list-disc pl-4 mb-0 pt-1"}>
                                     <li className={"mb-1"}>
-                                        Latest Uploaded Schedule (if it exists) with a link to view or download the schedule
+                                        Latest Uploaded Schedule with a link to view or download the schedule (hidden if no schedule is uploaded)
+                                    </li>
+                                    <li className={"mb-1"}>
+                                        Unread Messages count with a link to the Messages page
+                                    </li>
+                                    <li className={"mb-1"}>
+                                        Unread Announcements count with a link to the Announcements page
                                     </li>
                                     <li className={"mb-1"}>
                                         Pending Time-Off Requests count with a link to the Schedule page
@@ -141,7 +151,7 @@ export default function Help() {
                                     Announcements are a way for managers to communicate information to their team members. They can be used to share updates, policy changes, or other relevant information. Announcements can be created to be visible to all team members, or to specific roles within the organization (Employees or Managers).
                                 </p>
                                 <p className={"mb-3"}>
-                                    There are two types of announcements: Time-Sensitive and General. <a className={"underline hover:no-underline"} href="#time-sensitive-announcements">Time-Sensitive Announcements</a> are displayed prominently on the dashboard and are meant to be viewed immediately, while General announcements can be viewed on the Announcements page.
+                                    There are two types of announcements: Time-Sensitive and General. Time-Sensitive Announcements are highlighted when they are displayed. They will appear visually distinct from general announcements, and will always be at the top of the list of announcements. Both announcement types are ordered chronologically by creation date, with the most recent announcements appearing first.
                                 </p>
                                 <h3 className={"font-bold mb-2"}>Creating Announcements:</h3>
                                 <ul className={"list-disc pl-4 mb-3 pt-1"}>
@@ -157,36 +167,6 @@ export default function Help() {
                                 </ul>
                                 <p className={"mb-0"}>
                                     Past announcements can be viewed by management on the Announcements page, where all announcements are listed chronologically. The "View" link displays more information about the announcement, and allows managers to delete any announcement that he or she created.
-                                </p>
-                            </div>
-                        </section>
-
-                        <hr className="border-gray-300" />
-
-                        {/* Time-sensitive announcements */}
-                        <section id="time-sensitive-announcements" className={sectionClasses}>
-                            <h2 className={sectionHeadingClasses}>
-                                Time-Sensitive Announcements
-                                <span
-                                    onClick={() => {
-                                        copyCurrentUrlWithHash('#time-sensitive-announcements');
-                                    }}
-                                    className={sectionLinkClasses}
-                                    aria-label="Copy link to Time Sensitive Announcements"
-                                    title={sectionLinkTitle}
-                                >
-                                    <FaLink className="text-sm"/>
-                                </span>
-                            </h2>
-                            <div className={sectionContentClasses}>
-                                <p className={"mb-3"}>
-                                    The Time Sensitive Announcements section displays important announcements that require immediate attention. These announcements are highlighted to ensure they are not missed by managers and team members.
-                                </p>
-                                <p className={"mb-3"}>
-                                    These announcements are considered time-sensitive because they have an expiration date. Once the expiration date is reached, the announcement will no longer be displayed.
-                                </p>
-                                <p className={"mb-0"}>
-                                    Announcements that do not have an expiration date can be found in the dedicated Announcements page.
                                 </p>
                             </div>
                         </section>
@@ -431,10 +411,10 @@ export default function Help() {
                                 <h3 className={"font-bold mb-2"}>Important Details:</h3>
                                 <ul className={"list-disc pl-4 mb-0 pt-1"}>
                                     <li className={"mb-1"}>
-                                        Only one "conversation" can exist between two users
+                                        Only one "conversation" can exist between two users.
                                     </li>
                                     <li className={"mb-1"}>
-                                        Only managers can initiate new conversations with team members
+                                        All team members can initiate new conversations, but employees can only message managers, while managers can message any team member.
                                     </li>
                                     <li className={"mb-1"}>
                                         Massages are privately visible to the participants in the conversation, but all messages are logged in the system for compliance and auditing purposes.
@@ -571,6 +551,12 @@ export default function Help() {
                                 <p className={"mb-3"}>
                                     The System Tools section provides access to various tools that help manage and maintain the system. These tools are available to managers only.
                                 </p>
+                                <h3 className={"font-bold mb-2"}>Available Tools:</h3>
+                                <ul className={"list-disc pl-4 mb-0 pt-1"}>
+                                    <li className={"mb-1"}>
+                                        <span className={"font-bold"}>Minimum Days Notice for Time-Off Requests</span> - This tool allows managers to set a minimum number of days notice required for team members to submit time-off requests. This helps ensure that managers have enough time to plan for absences. With a number value saved, team members will see a notice when submitting a time-off request that they must provide at least that many days notice before the requested time off. At least 1 day is required.
+                                    </li>
+                                </ul>
                             </div>
                         </section>
 

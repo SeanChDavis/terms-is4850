@@ -13,7 +13,11 @@ const Header = ({toggleSidebar, light = false, logoText = ''}) => {
         try {
             await logout();
             navigate('/login');
-            addToast({type: 'success', message: 'Logged out successfully.'});
+            addToast({
+                type: 'success',
+                message: 'Logged out successfully.',
+                duration: 3000,
+            });
         } catch (error) {
             console.error('Logout failed:', error);
         }

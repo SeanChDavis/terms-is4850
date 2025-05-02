@@ -58,7 +58,9 @@ const Login = () => {
 
             addToast({
                 type: 'success',
-                message: 'Logged in successfully!'
+                message: 'Logged in successfully!',
+                duration: 3000,
+                position: 'bottom-right'
             });
 
             // Redirect based on role
@@ -92,7 +94,9 @@ const Login = () => {
             }
             addToast({
                 type: 'success',
-                message: 'Logged in with Google successfully!'
+                message: 'Logged in with Google successfully!',
+                duration: 3000,
+                position: 'bottom-right'
             });
 
             // Redirect based on role
