@@ -84,7 +84,7 @@ export default function NotificationBell({ className = "" }) {
                 >
                     <div className="divide-y divide-gray-200">
                         <div className="p-3">
-                            <p className="font-semibold mb-1">Notifications</p>
+                            <p className="hidden md:block font-semibold mb-1">Notifications</p>
                             <p className="text-sm text-gray-500">
                                 Keep up with the latest updates and messages.
                             </p>
