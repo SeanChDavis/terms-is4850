@@ -11,64 +11,32 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-exports.sendEmailBlast = functions.firestore
-    .document('emailBlasts/{blastId}')
+exports.sendNotificationEmail = functions.firestore
+    .document('notifications/{notificationId}')
     .onCreate(async (snap, context) => {
-        try {
-            const { templateId, recipients, variables } = snap.data();
+        const { type, recipientId, link, contextData } = snap.data();
 
-            // Validate input
-            if (!templateId || !recipients || !variables) {
-                throw new Error('Missing required fields in email blast');
-            }
+        // 1. Get recipient email
+        const userSnap = await admin.firestore()
+            .collection('users').doc(recipientId).get();
+        const recipient = userSnap.data();
 
-            // Get template from Firestore
-            const templateSnap = await admin.firestore()
-                .collection('emailTemplates')
-                .doc(templateId)
-                .get();
+        // 2. Get template based on type
+        const templateSnap = await admin.firestore()
+            .collection('emailTemplates').doc(type).get();
+        const template = templateSnap.data();
 
-            if (!templateSnap.exists) {
-                throw new Error(`Template ${templateId} not found`);
-            }
+        // 3. Format content
+        const emailBody = template.body
+            .replace(/{recipient_name}/g, recipient.firstName)
+            .replace(/{link}/g, link)
+            .replace(/{context}/g, contextData?.message || '');
 
-            const template = templateSnap.data();
-
-            // Process each recipient with error handling per email
-            const promises = recipients.map(async recipient => {
-                try {
-                    let emailBody = template.body;
-
-                    // Replace variables
-                    for (const [key, value] of Object.entries(variables)) {
-                        emailBody = emailBody.replace(new RegExp(`{${key}}`, 'g'), value);
-                    }
-
-                    // Replace recipient-specific variables
-                    emailBody = emailBody
-                        .replace(/{recipient_first_name}/g, recipient.firstName || '')
-                        .replace(/{recipient_email}/g, recipient.email);
-
-                    const mailOptions = {
-                        from: 'TERMS <noreply@yourdomain.com>',
-                        to: recipient.email,
-                        subject: template.subject,
-                        text: emailBody
-                    };
-
-                    await transporter.sendMail(mailOptions);
-                    functions.logger.log(`Email sent to ${recipient.email}`);
-                } catch (error) {
-                    functions.logger.error(`Failed to send to ${recipient.email}:`, error);
-                    // Continue with other emails even if one fails
-                }
-            });
-
-            await Promise.all(promises);
-            await snap.ref.update({ status: 'completed', completedAt: admin.firestore.FieldValue.serverTimestamp() });
-        } catch (error) {
-            functions.logger.error('Email blast failed:', error);
-            await snap.ref.update({ status: 'failed', error: error.message });
-            throw error;
-        }
+        // 4. Send
+        await transporter.sendMail({
+            from: 'TERMS <noreply@yourdomain.com>',
+            to: recipient.email,
+            subject: template.subject,
+            text: emailBody
+        });
     });
