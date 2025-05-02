@@ -237,80 +237,81 @@ export default function ManagerAnnouncements() {
                 <div className="text-sm text-subtle-text">Loading...</div>
             ) : (
                 <>
-
-                    {/* Announcement Form */}
-                    <div
-                        className={"max-w-md divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
-                        <div className="px-4 py-5 sm:px-6">
-                            <h2 className="text-base/7 font-semibold">Create New Announcement <InfoLink
-                                anchor="announcements"/></h2>
-                            <p className="mt-1 text-sm/6 text-subtle-text">
-                                Fill out the form below to post a new announcement.
-                            </p>
-                        </div>
-                        <div className="px-4 py-5 sm:p-6">
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <label htmlFor="visibleTo" className="block text-sm/6 font-medium">Visible
-                                        To</label>
-                                    <select
-                                        id="visibleTo"
-                                        value={visibleTo}
-                                        onChange={(e) => setVisibleTo(e.target.value)}
-                                        className="block w-full rounded-md bg-light-gray px-3 py-2 text-base cursor-pointer text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
+                        {/* Announcement Form */}
+                        <div
+                            className={"divide-y divide-border-gray overflow-hidden border-1 border-border-gray rounded-md bg-white"}>
+                            <div className="px-4 py-5 sm:px-6">
+                                <h2 className="text-base/7 font-semibold">Create New Announcement <InfoLink
+                                    anchor="announcements"/></h2>
+                                <p className="mt-1 text-sm/6 text-subtle-text">
+                                    Fill out the form below to post a new announcement.
+                                </p>
+                            </div>
+                            <div className="px-4 py-5 sm:p-6">
+                                <form onSubmit={handleSubmit} className="space-y-4">
+                                    <div>
+                                        <label htmlFor="visibleTo" className="block text-sm/6 font-medium">Visible
+                                            To</label>
+                                        <select
+                                            id="visibleTo"
+                                            value={visibleTo}
+                                            onChange={(e) => setVisibleTo(e.target.value)}
+                                            className="block w-full rounded-md bg-light-gray px-3 py-2 text-base cursor-pointer text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                        >
+                                            <option value="all">All Team Members</option>
+                                            <option value="employee">Employees Only</option>
+                                            <option value="manager">Managers Only</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="title" className="block text-sm/6 font-medium text-gray-700">
+                                            Title <span className={"text-red-600"}>*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="title"
+                                            value={title}
+                                            placeholder={"E.g. Holiday Hours"}
+                                            onChange={(e) => setTitle(e.target.value)}
+                                            className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="body" className="block text-sm/6 font-medium">
+                                            Message <span className={"text-red-600"}>*</span>
+                                        </label>
+                                        <textarea
+                                            id="body"
+                                            value={body}
+                                            placeholder={"E.g. We will be closed on December 25th for the holidays. Enjoy your time off!"}
+                                            onChange={(e) => setBody(e.target.value)}
+                                            rows={4}
+                                            className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="expiresAt" className="block text-sm/6 font-medium">Expiration Date
+                                            (optional)</label>
+                                        <input
+                                            type="date"
+                                            id="expiresAt"
+                                            value={expiresAt}
+                                            onChange={(e) => setExpiresAt(e.target.value)}
+                                            className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        disabled={submitting}
+                                        className="mt-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                                     >
-                                        <option value="all">All Team Members</option>
-                                        <option value="employee">Employees Only</option>
-                                        <option value="manager">Managers Only</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label htmlFor="title" className="block text-sm/6 font-medium text-gray-700">
-                                        Title <span className={"text-red-600"}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="title"
-                                        value={title}
-                                        placeholder={"E.g. Holiday Hours"}
-                                        onChange={(e) => setTitle(e.target.value)}
-                                        className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="body" className="block text-sm/6 font-medium">
-                                        Message <span className={"text-red-600"}>*</span>
-                                    </label>
-                                    <textarea
-                                        id="body"
-                                        value={body}
-                                        placeholder={"E.g. We will be closed on December 25th for the holidays. Enjoy your time off!"}
-                                        onChange={(e) => setBody(e.target.value)}
-                                        rows={4}
-                                        className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="expiresAt" className="block text-sm/6 font-medium">Expiration Date
-                                        (optional)</label>
-                                    <input
-                                        type="date"
-                                        id="expiresAt"
-                                        value={expiresAt}
-                                        onChange={(e) => setExpiresAt(e.target.value)}
-                                        className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    disabled={submitting}
-                                    className="mt-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                                >
-                                    {submitting ? "Posting..." : "Post Announcement"}
-                                </button>
-                            </form>
+                                        {submitting ? "Posting..." : "Post Announcement"}
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
 

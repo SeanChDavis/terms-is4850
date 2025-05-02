@@ -141,39 +141,41 @@ export default function UserNotes({userId}) {
                 </p>
             </div>
 
-            {/* Add Note Form */}
-            <div
-                className="sm:max-w-md divide-y divide-border-gray overflow-hidden border border-border-gray rounded-md bg-white">
-                <div className="px-4 py-5 sm:px-6">
-                    <h2 className="text-base font-semibold">Create New Note <InfoLink anchor="notes"/></h2>
-                    <p className="mt-1 text-sm text-subtle-text">
-                        Add a new internal note regarding this user.
-                    </p>
-                </div>
-                <div className="px-4 py-5 sm:p-6">
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label htmlFor="content" className="block text-sm font-medium">
-                                Note <span className="text-red-600">*</span>
-                            </label>
-                            <textarea
-                                id="content"
-                                value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                                rows={4}
-                                className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-                                placeholder="Write your note here..."
-                                required
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={!content.trim()}
-                            className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus:outline-2 focus:outline-offset-2 focus:outline-primary"
-                        >
-                            Save Note
-                        </button>
-                    </form>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
+                {/* Add Note Form */}
+                <div
+                    className="divide-y divide-border-gray overflow-hidden border border-border-gray rounded-md bg-white">
+                    <div className="px-4 py-5 sm:px-6">
+                        <h2 className="text-base font-semibold">Create New Note <InfoLink anchor="notes"/></h2>
+                        <p className="mt-1 text-sm text-subtle-text">
+                            Add a new internal note regarding this user.
+                        </p>
+                    </div>
+                    <div className="px-4 py-5 sm:p-6">
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label htmlFor="content" className="block text-sm font-medium">
+                                    Note <span className="text-red-600">*</span>
+                                </label>
+                                <textarea
+                                    id="content"
+                                    value={content}
+                                    onChange={(e) => setContent(e.target.value)}
+                                    rows={4}
+                                    className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
+                                    placeholder="Write your note here..."
+                                    required
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={!content.trim()}
+                                className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-primary-dark focus:outline-2 focus:outline-offset-2 focus:outline-primary"
+                            >
+                                Save Note
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
