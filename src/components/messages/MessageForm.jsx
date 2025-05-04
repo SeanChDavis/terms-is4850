@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/firebase/firebase-config";
-import useEmailNotification from "@/components/Email/emailNotificationController.jsx";
 import { addDoc, collection, serverTimestamp, updateDoc, doc } from "firebase/firestore";
 
 export default function MessageForm({ threadId, recipientId }) {
     const { user } = useAuth();
     const [text, setText] = useState("");
-    const { sendMessageNotification } = useEmailNotification();
 
     const handleSend = async (e) => {
         e.preventDefault();
@@ -28,10 +26,6 @@ export default function MessageForm({ threadId, recipientId }) {
                 lastMessage: text.trim(),
                 lastUpdated: serverTimestamp(),
             });
-
-            // 3. Trigger email notification
-            await sendMessageNotification(threadId, user.uid, recipientId);
-
             setText("");
         } catch (error) {
             console.error("Error sending message:", error);
