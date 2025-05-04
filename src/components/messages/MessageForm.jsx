@@ -21,16 +21,31 @@ export default function MessageForm({ threadId, recipientId }) {
         };
 
         try {
+            // 1. Save message
             await addDoc(collection(db, "messages"), newMessage);
+
+            // 2. Update thread
             await updateDoc(doc(db, "threads", threadId), {
                 lastMessage: text.trim(),
                 lastUpdated: serverTimestamp(),
             });
+
+            // 3. Create notification to trigger email
+            await addDoc(collection(db, "notifications"), {
+                type: "new_message",
+                recipientId,
+                link: `/messages/${threadId}`,
+                contextData: { senderId: user.uid },
+                createdAt: serverTimestamp(),
+                status: "pending"
+            });
+
             setText("");
         } catch (error) {
-            console.error("Error sending message:", error);
+            console.error("Error:", error);
         }
     };
+
 
     return (
         <form onSubmit={handleSend} className="flex flex-col gap-3 pt-4">
