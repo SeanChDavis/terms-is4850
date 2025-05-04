@@ -112,18 +112,18 @@ const Register = () => {
             await auth.currentUser?.getIdToken(true);
 
             // Notify all managers
-            // const usersSnapshot = await getDocs(collection(db, "users"));
-            // usersSnapshot.forEach((userDoc) => {
-            //     const userData = userDoc.data();
-            //     if (userData.role === "manager") {
-            //         addDoc(collection(db, "notifications"), {
-            //             type: "newUserPendingApproval",
-            //             recipientId: userDoc.id,
-            //             link: "/manager/users",
-            //             createdAt: new Date()
-            //         });
-            //     }
-            // });
+            const usersSnapshot = await getDocs(collection(db, "users"));
+            usersSnapshot.forEach((userDoc) => {
+                const userData = userDoc.data();
+                if (userData.role === "manager") {
+                    addDoc(collection(db, "notifications"), {
+                        type: "newUserPendingApproval",
+                        recipientId: userDoc.id,
+                        link: "/manager/users",
+                        createdAt: new Date()
+                    });
+                }
+            });
 
             // Force redirect to the pending approval page
             window.location.href = "/pending-approval";
