@@ -10,15 +10,38 @@ const smtpPassword = defineSecret("SMTP_PASSWORD");
 admin.initializeApp();
 const db = admin.firestore();
 
-// Local templates with generic phrasing
+// Plain text email templates
 const TEMPLATES = {
     newMessage: {
-        subject: "You have a new message in TERMS",
-        body: `A new message has been posted in your TERMS inbox.
+        subject: "New message in TERMS",
+        body: `You have a new message in your TERMS inbox.
 
-View it here: https://terms-is4850.netlify.app{link}`
+To view your message, log in and go to your Messages page:
+https://terms-is4850.netlify.app{link}
+
+Thank you,
+Management`
     },
-    // Future templates go here
+    scheduleUploaded: {
+        subject: "New schedule posted in TERMS",
+        body: `A new work schedule is now available in TERMS.
+
+Log in to view it here:
+https://terms-is4850.netlify.app{link}
+
+Thank you,
+Management`
+    },
+    timeOffRequestSubmitted: {
+        subject: "New time-off request submitted",
+        body: `A new time-off request has been submitted and is pending review.
+
+Log in to view all requests:
+https://terms-is4850.netlify.app{link}
+
+Thank you,
+Management`
+    },
 };
 
 exports.sendNotificationEmail = onDocumentCreated(

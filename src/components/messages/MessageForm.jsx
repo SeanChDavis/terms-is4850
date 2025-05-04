@@ -1,13 +1,18 @@
 import {useState} from "react";
 import {useAuth} from "@/context/AuthContext";
 import {db} from "@/firebase/firebase-config";
-import {addDoc, collection, serverTimestamp, updateDoc, doc} from "firebase/firestore";
-import useEmailNotification from "@/hooks/useEmailNotification";
+import {
+    addDoc,
+    collection,
+    serverTimestamp,
+    updateDoc,
+    doc,
+    getDoc
+} from "firebase/firestore";
 
 export default function MessageForm({threadId, recipientId}) {
-    const {user} = useAuth();
+    const {user, role} = useAuth();
     const [text, setText] = useState("");
-    const {sendMessageNotification} = useEmailNotification();
 
     const handleSend = async (e) => {
         e.preventDefault();
@@ -22,13 +27,28 @@ export default function MessageForm({threadId, recipientId}) {
             readBy: [user.uid],
         };
 
+        const recipientDoc = await getDoc(doc(db, "users", recipientId));
+        const recipientRole = recipientDoc.exists() ? recipientDoc.data().role || "employee" : "employee";
+
         try {
+            // 1. Add message
             await addDoc(collection(db, "messages"), newMessage);
+
+            // 2. Update thread
             await updateDoc(doc(db, "threads", threadId), {
                 lastMessage: text.trim(),
                 lastUpdated: serverTimestamp(),
             });
-            await sendMessageNotification(threadId, user.uid, recipientId);
+
+            // 3. Create notification
+            await addDoc(collection(db, "notifications"), {
+                type: "newMessage",
+                recipientId,
+                link: `/${recipientRole}/messages/${threadId}`,
+                contextData: {senderId: user.uid},
+                createdAt: new Date(),
+            });
+
             setText("");
         } catch (error) {
             console.error("Error sending message:", error);
@@ -55,4 +75,3 @@ export default function MessageForm({threadId, recipientId}) {
         </form>
     );
 }
-
