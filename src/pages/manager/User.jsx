@@ -146,6 +146,15 @@ export default function ManagerUserView() {
             await updateDoc(doc(db, "requests", id), {
                 status: newStatus,
             });
+
+            // Send email notification to the user
+            await addDoc(collection(db, "notifications"), {
+                type: "timeOffRequestDecision",
+                recipientId: selectedRequest.userId,
+                link: `/employee/schedule/`,
+                createdAt: new Date(),
+            });
+
             addToast({
                 type: "success",
                 message: `Request ${newStatus} successfully.`

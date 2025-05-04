@@ -164,6 +164,9 @@ export default function Help() {
                                     <li className={"mb-1"}>
                                         Announcements must have a title and content. Optionally, managers can set an expiration date for the announcement, after which it will no longer be displayed. <span className={"italic"}>Providing an expiration date makes the announcement time-sensitive</span> and it will have a status of either Active (before it expires) or Expired.
                                     </li>
+                                    <li className={"mb-1"}>
+                                        Managers can also choose broadcast a new announcement, which will send an email notification to all team members that the announcement is visible to. This is useful for important announcements that require immediate attention.
+                                    </li>
                                 </ul>
                                 <p className={"mb-0"}>
                                     Past announcements can be viewed by management on the Announcements page, where all announcements are listed chronologically. The "View" link displays more information about the announcement, and allows managers to delete any announcement that he or she created.
@@ -276,6 +279,9 @@ export default function Help() {
                                 <p className={"mb-3"}>
                                     Additional details can be provided in the request, such as a reason for the time off, which can help managers understand the context of the request.
                                 </p>
+                                <p className={"mb-3"}>
+                                    An email will be sent to all system managers when a new time-off request is submitted, notifying them of the pending request. This allows managers to quickly review and respond to requests.
+                                </p>
                                 <p className={"mb-0"}>
                                     You may view your own time-off request history, including past requests and their statuses. Any pending requests can be deleted by the requester until they are approved or denied by a manager, at which point they become read-only.
                                 </p>
@@ -309,7 +315,7 @@ export default function Help() {
                                 <h3 className={"font-bold mb-2"}>Actions:</h3>
                                 <ul className={"list-disc pl-4 mb-0 pt-1"}>
                                     <li className={"mb-1"}>
-                                        The "Decide" link next to each request allows managers to quickly approve or deny the request. Clicking "Decide" will open a modal where the manager can see more information about the request and confirm their decision.
+                                        The "Decide" link next to each request allows managers to quickly approve or deny the request. Clicking "Decide" will open a modal where the manager can see more information about the request and confirm their decision. An email will be sent to the requester notifying them of the decision.
                                     </li>
                                 </ul>
                             </div>
@@ -375,7 +381,7 @@ export default function Help() {
                                 <h3 className={"font-bold mb-2"}>Important Details:</h3>
                                 <ul className={"list-disc pl-4 mb-0 pt-1"}>
                                     <li className={"mb-1"}>
-                                        Only one schedule file can be uploaded at a time. If a new file is uploaded, it will replace the existing one.
+                                        Only one schedule file can be uploaded at a time. If a new file is uploaded, it will replace the existing one. Uploading a new schedule will send an email notification to all team members that a new schedule is available.
                                     </li>
                                     <li className={"mb-1"}>
                                         If the current schedule file is deleted, no schedule will be displayed to team members until a new file is uploaded. Older uploaded schedules will not re-appear.
@@ -419,6 +425,9 @@ export default function Help() {
                                     <li className={"mb-1"}>
                                         Massages are privately visible to the participants in the conversation, but all messages are logged in the system for compliance and auditing purposes.
                                     </li>
+                                    <li className={"mb-1"}>
+                                        An email notification is sent to the recipient when a new message is sent, notifying them of the new message.
+                                    </li>
                                 </ul>
                             </div>
                         </section>
@@ -448,7 +457,7 @@ export default function Help() {
                                     Displayed in a table format, the Users page provides an overview of all users, including their name, email address, and role.
                                 </p>
                                 <p className={"mb-3"}>
-                                    If a user is an employee and has not yet been approved by a manager, they will be highlighted in yellow to indicate that they are pending approval. Managers can click on the "View" link for a pending user to view their details and approve or deny their access to the system.
+                                    If a user is an employee and has not yet been approved by a manager, they will be highlighted in yellow to indicate that they are pending approval. Managers can click on the "View" link for a pending user to view their details and approve or deny their access to the system. An email notification will be sent to the user when their access is approved. They will not be notified if their access is denied.
                                 </p>
                                 <h3 className={"font-bold mb-2"}>Actions:</h3>
                                 <ul className={"list-disc pl-4 mb-3 pt-1"}>
