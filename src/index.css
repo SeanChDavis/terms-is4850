@@ -11,7 +11,12 @@
     /* Colors */
     --color-primary: #2129BB;
     --color-primary-light: #4D56D1;
+    --color-primary-light-bg: #EFF6FF;
+    --color-primary-light-border: #ADC3E1;
     --color-primary-dark: #1A2199;
+    --color-primary-darker: #0f146a;
+    --color-primary-darkest: #070a42;
+    --color-primary-subtle-text: #C5C7EA;
     --color-primary-gray: #f4f4ff;
     --color-black: #000000;
     --color-light-gray: #F6F6F6;
@@ -30,3 +35,4 @@ body {
 a {
     transition: all 0.2s ease;
 }
+

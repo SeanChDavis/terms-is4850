@@ -2,10 +2,15 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithPopup,
+    sendPasswordResetEmail as firebaseSendPasswordResetEmail
 } from "firebase/auth";
 
-import { auth } from "../firebase-config";
+import { auth } from "./firebase-config.js";
+
+const googleProvider = new GoogleAuthProvider();
 
 // Create a new user
 export const signUp = (email, password) => {
@@ -25,4 +30,12 @@ export const logout = () => {
 // Listen to auth state changes
 export const onAuthChange = (callback) => {
     return onAuthStateChanged(auth, callback);
+};
+
+// Sign in with Google
+export const signInWithGoogle = () => {
+    return signInWithPopup(auth, googleProvider);
+};
+export const sendPasswordResetEmail = (email) => {
+    return firebaseSendPasswordResetEmail(auth, email);
 };

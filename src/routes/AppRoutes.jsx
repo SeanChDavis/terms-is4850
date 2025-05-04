@@ -1,15 +1,32 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from '../pages/auth/Login';
-import Register from '../pages/auth/Register';
-import MainLayout from '../components/layout/MainLayout';
-import EmployeeDashboard from '../pages/employee/Dashboard';
-import ManagerDashboard from '../pages/manager/Dashboard';
-import RoleProtectedRoute from '../components/auth/RoleProtectedRoute';
-import EmployeeSchedule from "../pages/employee/Schedule.jsx";
-import ManagerSchedule from "../pages/manager/Schedule.jsx";
-import EmployeeProfile from "../pages/employee/Profile.jsx";
-import ManagerProfile from "../pages/manager/Profile.jsx";
-import ManagerUserView from "../pages/manager/User.jsx";
+import MainLayout from '@/components/layout/MainLayout';
+import RoleProtectedRoute from '@/routes/RoleProtectedRoute.jsx';
+
+{/* Auth Pages */}
+import Login from '@/pages/auth/Login';
+import Register from '@/pages/auth/Register';
+import ResetPassword from '@/pages/auth/ResetPassword';
+import PendingApproval from "@/pages/auth/PendingApproval.jsx";
+
+{/* Employee Pages */}
+import EmployeeDashboard from '@/pages/employee/Dashboard';
+import EmployeeSchedule from "@/pages/employee/Schedule";
+import EmployeeAnnouncements from "@/pages/employee/Announcements";
+import EmployeeMessages from "@/pages/employee/Messages";
+
+{/* Manager Pages */}
+import ManagerDashboard from '@/pages/manager/Dashboard';
+import ManagerAnnouncements from "@/pages/manager/Announcements";
+import ManagerSchedule from "@/pages/manager/Schedule";
+import ManagerUserView from "@/pages/manager/User";
+import TimeOffSummary from "@/pages/manager/TimeOffSummary";
+import ManagerMessages from "@/pages/manager/Messages";
+import Users from "@/pages/manager/Users";
+import SystemTools from "@/pages/manager/Tools";
+
+{/* Shared Pages */}
+import UserProfile from "@/pages/shared/UserProfile";
+import Help from "@/pages/shared/Help.jsx";
 
 const AppRoutes = () => {
     return (
@@ -18,6 +35,8 @@ const AppRoutes = () => {
             {/* Public Auth Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/pending-approval" element={<PendingApproval />} />
 
             {/* Protected Employee Routes */}
             <Route
@@ -30,9 +49,10 @@ const AppRoutes = () => {
             >
                 <Route index element={<Navigate to="dashboard" replace />} />
                 <Route path="dashboard" element={<EmployeeDashboard />} />
-                <Route path="profile" element={<EmployeeProfile />} />
+                <Route path="profile" element={<UserProfile />} />
                 <Route path="schedule" element={<EmployeeSchedule />} />
-                <Route path="messages" element={<div>Employee Messages Page</div>} />
+                <Route path="announcements" element={<EmployeeAnnouncements />} />
+                <Route path="messages/:threadId?" element={<EmployeeMessages />} />
             </Route>
 
             {/* Protected Manager Routes */}
@@ -46,13 +66,18 @@ const AppRoutes = () => {
             >
                 <Route index element={<Navigate to="dashboard" replace />} />
                 <Route path="dashboard" element={<ManagerDashboard />} />
-                <Route path="/manager/users/:id" element={<ManagerUserView />} />
-                <Route path="profile" element={<ManagerProfile />} />
+                <Route path="users" element={<Users />} />
+                <Route path="users/:id" element={<ManagerUserView />} />
+                <Route path="profile" element={<UserProfile />} />
                 <Route path="schedule" element={<ManagerSchedule />} />
-                <Route path="messages" element={<div>Manager Messages Page</div>} />
-                <Route path="announcements" element={<div>Manager Announcements Page</div>} />
-                <Route path="tools" element={<div>Manager System Tools Page</div>} />
+                <Route path="schedule/time-off-summary" element={<TimeOffSummary />} />
+                <Route path="messages/:threadId?" element={<ManagerMessages />} />
+                <Route path="announcements" element={<ManagerAnnouncements />} />
+                <Route path="tools" element={<SystemTools />} />
             </Route>
+
+            {/* Shared Routes */}
+            <Route path="/help" element={<Help />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/login" />} />
