@@ -1,5 +1,6 @@
 import ProfileForm from "@/components/ui/ProfileForm";
 import InfoLink from "@/components/ui/InfoLink";
+import {Link} from "react-router-dom";
 
 const UserProfile = () => {
 
@@ -10,8 +11,11 @@ const UserProfile = () => {
                 <p className={"text-subtle-text"}>
                     View or update your profile below.
                 </p>
+
             </div>
             <ProfileForm />
+
+
         </>
     );
 };

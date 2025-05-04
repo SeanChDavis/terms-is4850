@@ -3,10 +3,12 @@ import {doc, getDoc, setDoc} from "firebase/firestore";
 import {useAuth} from "@/context/AuthContext";
 import {db} from "@/firebase/firebase-config";
 import {useToast} from "@/context/ToastContext";
+import {Link} from "react-router-dom";
 
 const Profile = () => {
     const {user} = useAuth();
     const {addToast} = useToast();
+    const {role} = useAuth();
 
     const [form, setForm] = useState({
         first_name: "",
@@ -120,6 +122,16 @@ const Profile = () => {
                                     className="block mb-4 w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
                                 />
                             </div>
+                            <div>
+                                <Link
+                                    to={`/${role}/update-email`}
+                                    className="text-primary hover:underline"
+                                >
+                                    Change Email Address
+                                </Link>
+                            </div>
+
+
                             <button
                                 type="submit"
                                 disabled={savingProfile}

@@ -75,3 +75,6 @@ export const getUserNotes = async (userId) => {
 export const deleteUserNote = async (noteId) => {
     await deleteDoc(doc(db, "notes", noteId));
 };
+export const updateUserDocument = async (userId, data) => {
+    await setDoc(doc(db, 'users', userId), data, { merge: true });
+};
