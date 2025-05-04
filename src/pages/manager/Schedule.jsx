@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {collection, getDocs, query, orderBy, doc, updateDoc} from "firebase/firestore";
+import {collection, getDocs, query, orderBy, doc, updateDoc, addDoc} from "firebase/firestore";
 import {db} from "@/firebase/firebase-config";
 import {formatDisplayDate, formatTime} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/react';
@@ -74,6 +74,14 @@ const ManagerSchedule = () => {
             if (!showAll) {
                 setRequests(prev => prev.filter(req => req.id !== id));
             }
+
+            // Send email notification to the user
+            await addDoc(collection(db, "notifications"), {
+                type: "timeOffRequestDecision",
+                recipientId: selectedRequest.userId,
+                link: `/employee/schedule/`,
+                createdAt: new Date(),
+            });
 
             // Make sure to fetch the updated requests after updating the status
             await fetchRequests();

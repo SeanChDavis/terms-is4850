@@ -42,6 +42,26 @@ https://terms-is4850.netlify.app{link}
 Thank you,
 Management`
     },
+    timeOffRequestDecision: {
+        subject: "Your time-off request has been updated",
+        body: `Your time-off request has been approved or denied.
+
+Log in to view the decision:
+https://terms-is4850.netlify.app{link}
+
+Thank you,
+Management`
+    },
+    announcementPosted: {
+        subject: "New announcement in TERMS",
+        body: `A new announcement has been posted.
+
+Log in to view all announcements:
+https://terms-is4850.netlify.app{link}
+
+Thank you,
+Management`
+    }
 };
 
 exports.sendNotificationEmail = onDocumentCreated(

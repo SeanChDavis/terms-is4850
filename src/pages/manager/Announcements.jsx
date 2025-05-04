@@ -34,6 +34,7 @@ export default function ManagerAnnouncements() {
     const [title, setTitle] = useState("");
     const [visibleTo, setVisibleTo] = useState("all");
     const [body, setBody] = useState("");
+    const [sendEmail, setSendEmail] = useState(false);
     const [expiresAt, setExpiresAt] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
@@ -148,7 +149,7 @@ export default function ManagerAnnouncements() {
                 visibleTo,
                 createdAt: serverTimestamp(),
                 createdBy: userData?.uid,
-                emailSent: false, // Placeholder for future email support
+                emailSent: sendEmail,
                 ...(expiresAt && {
                     expiresAt: (() => {
                         const [year, month, day] = expiresAt.split("-").map(Number);
@@ -157,10 +158,31 @@ export default function ManagerAnnouncements() {
                 })
             });
 
+            // If email notification is enabled, send notifications to relevant users
+            if (sendEmail) {
+                const usersSnapshot = await getDocs(collection(db, "users"));
+                usersSnapshot.forEach((userDoc) => {
+                    const user = userDoc.data();
+                    if (
+                        (visibleTo === "all" || visibleTo === user.role) &&
+                        user.email &&
+                        user.uid !== userData?.uid
+                    ) {
+                        addDoc(collection(db, "notifications"), {
+                            type: "announcementPosted",
+                            recipientId: userDoc.id,
+                            link: `/${user.role}/announcements`,
+                            createdAt: new Date()
+                        });
+                    }
+                });
+            }
+
             setTitle("");
             setBody("");
             setVisibleTo("all");
             setExpiresAt("");
+            setSendEmail(false);
 
             addToast({
                 type: "success",
@@ -302,6 +324,18 @@ export default function ManagerAnnouncements() {
                                             onChange={(e) => setExpiresAt(e.target.value)}
                                             className="block w-full rounded-md bg-light-gray px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
                                         />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            id="sendEmail"
+                                            checked={sendEmail}
+                                            onChange={() => setSendEmail(!sendEmail)}
+                                            className="mr-2"
+                                        />
+                                        <label htmlFor="sendEmail" className="text-sm text-gray-700">
+                                            Send email notification to {visibleTo === "employee" ? "employees" : visibleTo === "manager" ? "managers" : "everyone"}{"."}
+                                        </label>
                                     </div>
                                     <button
                                         type="submit"
