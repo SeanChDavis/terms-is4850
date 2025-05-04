@@ -7,6 +7,7 @@ import Login from '@/pages/auth/Login';
 import Register from '@/pages/auth/Register';
 import ResetPassword from '@/pages/auth/ResetPassword';
 import PendingApproval from "@/pages/auth/PendingApproval.jsx";
+import UpdateEmail from "@/pages/auth/UpdateEmail";
 
 {/* Employee Pages */}
 import EmployeeDashboard from '@/pages/employee/Dashboard';
@@ -37,6 +38,7 @@ const AppRoutes = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/pending-approval" element={<PendingApproval />} />
+            <Route path="update-email" element={<UpdateEmail />} />
 
             {/* Protected Employee Routes */}
             <Route
