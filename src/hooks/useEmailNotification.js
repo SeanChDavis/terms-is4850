@@ -1,8 +1,9 @@
-import {useEffect} from 'react';
-import {db} from '@/firebase/firebase-config';
+import {db} from '@/firebase/firebase-config.js';
 import {collection, addDoc} from 'firebase/firestore';
 
 export default function useEmailNotification() {
+
+    // Send a message notification
     const sendMessageNotification = async (threadId, senderId, recipientId) => {
         try {
             await addDoc(collection(db, 'notifications'), {
@@ -17,5 +18,10 @@ export default function useEmailNotification() {
         }
     };
 
-    return {sendMessageNotification};
+    // More notification functions
+
+    return {
+        sendMessageNotification
+        // More notification functions
+    };
 }

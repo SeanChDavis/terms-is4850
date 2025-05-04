@@ -3,12 +3,23 @@ const { defineSecret } = require("firebase-functions/params");
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
 
-// Define secrets (set these with: firebase functions:secrets:set SMTP_EMAIL / SMTP_PASSWORD)
+// Define secrets
 const smtpEmail = defineSecret("SMTP_EMAIL");
 const smtpPassword = defineSecret("SMTP_PASSWORD");
 
 admin.initializeApp();
 const db = admin.firestore();
+
+// Local templates with generic phrasing
+const TEMPLATES = {
+    newMessage: {
+        subject: "You have a new message in TERMS",
+        body: `A new message has been posted in your TERMS inbox.
+
+View it here: https://terms-is4850.netlify.app{link}`
+    },
+    // Future templates go here
+};
 
 exports.sendNotificationEmail = onDocumentCreated(
     {
@@ -20,32 +31,23 @@ exports.sendNotificationEmail = onDocumentCreated(
         const snap = event.data;
         if (!snap) return;
 
-        const { type, recipientId, link, contextData } = snap.data();
+        const { type, recipientId, link } = snap.data();
 
-        // Fetch recipient and sender
-        const [recipientSnap, senderSnap] = await Promise.all([
-            db.collection("users").doc(recipientId).get(),
-            contextData?.senderId
-                ? db.collection("users").doc(contextData.senderId).get()
-                : Promise.resolve(null),
-        ]);
-
+        const recipientSnap = await db.collection("users").doc(recipientId).get();
         if (!recipientSnap.exists) {
             console.error("Recipient not found");
             return;
         }
 
         const recipient = recipientSnap.data();
-        const sender = senderSnap?.exists ? senderSnap.data() : null;
-
-        // Fetch email template
-        const templateSnap = await db.collection("emailTemplates").doc(type).get();
-        if (!templateSnap.exists) {
+        const template = TEMPLATES[type];
+        if (!template) {
             console.error(`Template not found for type: ${type}`);
             return;
         }
 
-        const template = templateSnap.data();
+        const subject = template.subject;
+        const textBody = template.body.replace(/{link}/g, link || "");
 
         const transporter = nodemailer.createTransport({
             service: "gmail",
@@ -54,15 +56,6 @@ exports.sendNotificationEmail = onDocumentCreated(
                 pass: smtpPassword.value(),
             },
         });
-
-        const subject = template.subject.replace(
-            /{sender_first_name}/g,
-            sender?.firstName || "Someone"
-        );
-        const textBody = template.body
-            .replace(/{recipient_first_name}/g, recipient.firstName || "User")
-            .replace(/{sender_first_name}/g, sender?.firstName || "Someone")
-            .replace(/{messages_link}/g, `https://your-app-domain.com${link}`);
 
         await transporter.sendMail({
             from: `"TERMS" <${smtpEmail.value()}>`,

@@ -2,7 +2,7 @@ import {useState} from "react";
 import {useAuth} from "@/context/AuthContext";
 import {db} from "@/firebase/firebase-config";
 import {addDoc, collection, serverTimestamp, updateDoc, doc} from "firebase/firestore";
-import useEmailNotification from "@/components/email/emailNotificationController";
+import useEmailNotification from "@/hooks/useEmailNotification";
 
 export default function MessageForm({threadId, recipientId}) {
     const {user} = useAuth();
