@@ -4,9 +4,10 @@ import {signUp, signInWithGoogle} from '@/firebase/auth';
 import {useToast} from '@/context/ToastContext';
 import {createUserDocument, getUserDocument} from '@/firebase/firestore';
 import SiteLogo from "@/components/ui/SiteLogo";
-import {auth} from "@/firebase/firebase-config";
+import {auth, db} from "@/firebase/firebase-config";
 import GoogleAuthButton from "@/components/ui/GoogleAuthButton.jsx";
 import {useAuth} from "@/context/AuthContext";
+import {addDoc, collection, getDocs} from "firebase/firestore";
 
 const Register = () => {
     const {user, role, managerApproved} = useAuth();
@@ -44,7 +45,6 @@ const Register = () => {
             const userCredential = await signUp(email, password);
             const uid = userCredential.user.uid;
 
-
             // Save to Firestore and new field
             await createUserDocument(uid, {
                 email,
@@ -52,13 +52,27 @@ const Register = () => {
                 managerApproved: false,
             });
 
+            // Notify all managers
+            const usersSnapshot = await getDocs(collection(db, "users"));
+            usersSnapshot.forEach((userDoc) => {
+                const userData = userDoc.data();
+                if (userData.role === "manager") {
+                    addDoc(collection(db, "notifications"), {
+                        type: "newUserPendingApproval",
+                        recipientId: userDoc.id,
+                        link: "/manager/users",
+                        createdAt: new Date()
+                    });
+                }
+            });
+
+            // Force redirect to the pending approval page
+            navigate("/pending-approval");
+
             addToast({
                 type: 'success',
                 message: 'Registered successfully!',
             });
-
-            // Redirect
-            navigate('/employee/dashboard');
         } catch (err) {
             const errorMsg = 'This account is already registered. Please log in instead.';
             addToast({
@@ -78,7 +92,7 @@ const Register = () => {
             const existingUser = await getUserDocument(uid);
             if (existingUser) {
                 const errorMsg = 'This account is already registered. Please log in instead.';
-                addToast({  // Add this toast
+                addToast({
                     type: 'error',
                     message: errorMsg,
                     duration: 5000
@@ -89,17 +103,36 @@ const Register = () => {
 
             await createUserDocument(uid, {
                 email,
-                role: 'employee', // Default all new users to employee
+                role: 'employee',
                 managerApproved: false,
             });
 
-            addToast({  // Add this toast
+            // Force AuthContext to re-evaluate after Firestore write
+            // This is necessary to ensure the user gets hit with pending approval logic
+            await auth.currentUser?.getIdToken(true);
+
+            // Notify all managers
+            // const usersSnapshot = await getDocs(collection(db, "users"));
+            // usersSnapshot.forEach((userDoc) => {
+            //     const userData = userDoc.data();
+            //     if (userData.role === "manager") {
+            //         addDoc(collection(db, "notifications"), {
+            //             type: "newUserPendingApproval",
+            //             recipientId: userDoc.id,
+            //             link: "/manager/users",
+            //             createdAt: new Date()
+            //         });
+            //     }
+            // });
+
+            // Force redirect to the pending approval page
+            window.location.href = "/pending-approval";
+
+            addToast({
                 type: 'success',
                 message: 'Registered with Google successfully!',
                 duration: 3000
             });
-
-            navigate('/employee/dashboard');
         } catch (err) {
             setError(err.message);
         }

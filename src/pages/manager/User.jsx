@@ -11,7 +11,7 @@ import {
     doc,
     getDoc,
     setDoc,
-    serverTimestamp
+    serverTimestamp, addDoc
 } from "firebase/firestore";
 import {getUserDocument, updateUserRole} from "@/firebase/firestore";
 import { db } from "@/firebase/firebase-config";
@@ -111,6 +111,36 @@ export default function ManagerUserView() {
         });
     };
 
+    const handleApproveUser = async () => {
+        try {
+            if (!user) return;
+
+            await updateDoc(doc(db, "users", user.uid), {
+                managerApproved: true
+            });
+
+            await addDoc(collection(db, "notifications"), {
+                type: "userApproved",
+                recipientId: user.uid,
+                link: "/login",
+                createdAt: new Date(),
+            });
+
+            setUser(prev => ({ ...prev, managerApproved: true }));
+
+            addToast({
+                type: "success",
+                message: "User approved successfully. They have been notified."
+            });
+        } catch (err) {
+            console.error("Error approving user:", err);
+            addToast({
+                type: "error",
+                message: "Failed to approve user. Check console for details."
+            });
+        }
+    };
+
     const handleStatusUpdate = async (id, newStatus) => {
         try {
             await updateDoc(doc(db, "requests", id), {
@@ -153,16 +183,7 @@ export default function ManagerUserView() {
                             </div>
                             <div className="flex flex-col sm:flex-row gap-2">
                                 <button
-                                    onClick={async () => {
-                                        await updateDoc(doc(db, "users", user.uid), {
-                                            managerApproved: true
-                                        });
-                                        setUser(prev => ({ ...prev, managerApproved: true }));
-                                        addToast({
-                                            type: "success",
-                                            message: "User approved successfully. You may now perform actions on this user."
-                                        });
-                                    }}
+                                    onClick={handleApproveUser}
                                     className="text-sm px-4 py-2 bg-amber-600 text-white font-semibold rounded-md cursor-pointer hover:bg-amber-700"
                                 >
                                     Approve User

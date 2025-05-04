@@ -61,6 +61,26 @@ https://terms-is4850.netlify.app{link}
 
 Thank you,
 Management`
+    },
+    newUserPendingApproval: {
+        subject: "New user awaiting approval in TERMS",
+        body: `A new employee has registered and is awaiting approval.
+
+Log in to approve or deny their registration:
+https://terms-is4850.netlify.app{link}
+
+Thank you,
+Management`
+    },
+    userApproved: {
+        subject: "TERMS access granted",
+        body: `Your TERMS account has been approved by a manager.
+
+You may now log in and access the system at:
+https://terms-is4850.netlify.app/login
+
+Thank you,
+Management`
     }
 };
 
