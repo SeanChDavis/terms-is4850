@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
-import { db } from "@/firebase/firebase-config";
-import { useToast } from "@/context/ToastContext";
+import {useEffect, useState} from "react";
+import {doc, onSnapshot, setDoc} from "firebase/firestore";
+import {db} from "@/firebase/firebase-config";
+import {useToast} from "@/context/ToastContext";
 import InfoLink from "@/components/ui/InfoLink";
 
 export default function SystemTools() {
-    const { addToast } = useToast();
+    const {addToast} = useToast();
     const [settings, setSettings] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -37,10 +37,10 @@ export default function SystemTools() {
         setSaving(true);
         try {
             const docRef = doc(db, "tools", "settings");
-            await setDoc(docRef, settings, { merge: true });
-            addToast({ type: "success", message: "Settings updated!", duration: 3000 });
+            await setDoc(docRef, settings, {merge: true});
+            addToast({type: "success", message: "Settings updated!", duration: 3000});
         } catch (err) {
-            addToast({ type: "error", message: "Failed to update settings." });
+            addToast({type: "error", message: "Failed to update settings."});
         } finally {
             setSaving(false);
         }
@@ -49,28 +49,34 @@ export default function SystemTools() {
     if (loading) return <div className="text-sm text-subtle-text">Loading...</div>;
 
     return (
-        <div className="max-w-xl space-y-8">
-            <div>
+        <>
+            <div className={"max-w-xl mb-8"}>
                 <h2 className="text-xl font-bold mb-2">
-                    System Tools <InfoLink anchor="tools" />
+                    System Tools <InfoLink anchor="tools"/>
                 </h2>
                 <p className="text-subtle-text">
                     Manage app-wide configurations. These settings affect how TERMS behaves across the system.
                 </p>
             </div>
 
-            {/* Setting: Minimum time-off request notice */}
-            <div>
-                <label className="block font-medium mb-1">
-                    Minimum Days Notice for Time-Off Requests
-                </label>
-                <input
-                    type="number"
-                    min={1}
-                    value={settings.timeOffRequestMinDays || 1}
-                    onChange={(e) => handleChange("timeOffRequestMinDays", parseInt(e.target.value, 10))}
-                    className="w-32 p-2 border border-gray-300 rounded"
-                />
+            <div className={"divide-y divide-border-gray max-w-2xl border border-border-gray rounded-lg mb-6"}>
+
+                {/* Setting: Minimum time-off request notice */}
+                <div className={"p-4 md:p-6"}>
+                    <label className="block font-semibold mb-1">
+                        Minimum Days Notice for Time-Off Requests
+                    </label>
+                    <p className="text-subtle-text mb-4">
+                        Employees must provide at least this many days' notice when requesting time off.
+                    </p>
+                    <input
+                        type="number"
+                        min={1}
+                        value={settings.timeOffRequestMinDays || 1}
+                        onChange={(e) => handleChange("timeOffRequestMinDays", parseInt(e.target.value, 10))}
+                        className="w-32 p-2 border border-gray-300 rounded"
+                    />
+                </div>
             </div>
 
             <button
@@ -80,6 +86,6 @@ export default function SystemTools() {
             >
                 {saving ? "Saving..." : "Save Changes"}
             </button>
-        </div>
+        </>
     );
 }
