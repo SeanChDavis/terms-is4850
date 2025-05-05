@@ -20,17 +20,15 @@ const Login = () => {
 
         const currentPath = location.pathname;
 
-        if (role === 'employee' && managerApproved === false) {
-            if (currentPath !== '/pending-approval') {
-                navigate('/pending-approval');
+        if (!userData?.isActive) {
+            if (currentPath !== '/retired') {
+                navigate('/retired');
             }
-        } else {
-            const target = `/${role}/dashboard`;
-            if (currentPath !== target) {
-                navigate(target);
-            }
+            return;
         }
-    }, [user, role, managerApproved, location.pathname, navigate]);
+
+
+    }, [user, role, managerApproved, userData?.isActive, location.pathname, navigate]);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
