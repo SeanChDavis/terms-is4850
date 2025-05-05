@@ -31,7 +31,7 @@ import UserProfile from "@/pages/shared/UserProfile";
 import Help from "@/pages/shared/Help.jsx";
 
 const AppRoutes = () => {
-    const { role, managerApproved, loading } = useAuth();
+    const { role, managerApproved, loading,userData } = useAuth();
     if (loading) return null;
 
     return (

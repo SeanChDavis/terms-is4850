@@ -9,7 +9,7 @@ import GoogleAuthButton from "@/components/ui/GoogleAuthButton";
 import {useAuth} from "@/context/AuthContext";
 
 const Login = () => {
-    const {user, role, managerApproved} = useAuth();
+    const {user, role, managerApproved, userData} = useAuth();
     const {addToast} = useToast();
     const navigate = useNavigate();
     const location = useLocation();
@@ -20,10 +20,8 @@ const Login = () => {
 
         const currentPath = location.pathname;
 
-        if (!userData?.isActive) {
-            if (currentPath !== '/retired') {
-                navigate('/retired');
-            }
+        if (userData && !userData?.isActive) {
+            navigate('/retired');
             return;
         }
 

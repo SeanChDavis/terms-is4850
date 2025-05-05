@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     const [role, setRole] = useState(null);
     const [managerApproved, setManagerApproved] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [userData, setUserData] = useState(null);
 
     useEffect(() => {
         const unsubscribe = onAuthChange(async (firebaseUser) => {
@@ -22,6 +23,7 @@ export const AuthProvider = ({ children }) => {
                 const userDoc = await getUserDocument(firebaseUser.uid);
                 setRole(userDoc?.role || 'employee');
                 setManagerApproved(userDoc?.managerApproved ?? true);
+                setUserData(userDoc);
             } else {
                 setRole(null);
                 setManagerApproved(null);
@@ -41,7 +43,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         // Provide the auth state and methods to the rest of the app!
-        <AuthContext.Provider value={{ user, role, managerApproved, logout, loading }}>
+        <AuthContext.Provider value={{ user, role, managerApproved, logout, loading,userData }}>
             {!loading && children}
         </AuthContext.Provider>
     );
