@@ -31,8 +31,7 @@ export default function PendingApproval() {
 
             <h1 className="text-2xl font-bold mb-2">Account Pending Approval</h1>
             <p className="max-w-lg text-center text-md mb-4">
-                Your account has been created but is awaiting approval from a manager before you can access the system.
-                You will receive access once approved. You may close this tab or log out and return later.
+                Your account has been created but is awaiting manager approval. Once approved, you'll receive an email letting you know that you can log in and begin using TERMS.
             </p>
 
             <button

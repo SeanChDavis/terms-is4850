@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {collection, getDocs, query, orderBy, doc, updateDoc} from "firebase/firestore";
+import {collection, getDocs, query, orderBy, doc, updateDoc, addDoc} from "firebase/firestore";
 import {db} from "@/firebase/firebase-config";
 import {formatDisplayDate, formatTime} from "@/utils/formatters";
 import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/react';
@@ -74,6 +74,14 @@ const ManagerSchedule = () => {
             if (!showAll) {
                 setRequests(prev => prev.filter(req => req.id !== id));
             }
+
+            // Send email notification to the user
+            await addDoc(collection(db, "notifications"), {
+                type: "timeOffRequestDecision",
+                recipientId: selectedRequest.userId,
+                link: `/employee/schedule/`,
+                createdAt: new Date(),
+            });
 
             // Make sure to fetch the updated requests after updating the status
             await fetchRequests();
@@ -270,7 +278,14 @@ const ManagerSchedule = () => {
                                                 </DialogTitle>
                                                 <div className="space-y-2 mb-4">
                                                     <p className={"mb-0"}><strong>Submitted
-                                                        by:</strong> {userMap[selectedRequest.userId]?.display_name || `${userMap[selectedRequest.userId]?.first_name || ''} ${userMap[selectedRequest.userId]?.last_name || ''}`.trim() || userMap[selectedRequest.userId]?.email || "—"}
+                                                        by:</strong> {userMap[selectedRequest.userId]?.display_name || `${userMap[selectedRequest.userId]?.first_name || ''} ${userMap[selectedRequest.userId]?.last_name || ''}`.trim() || userMap[selectedRequest.userId]?.email || "—"}{" "}
+                                                        (<Link
+                                                            to={`/manager/users/${selectedRequest.userId}`}
+                                                            className="text-primary cursor-pointer underline hover:no-underline"
+                                                            target={"_blank"}
+                                                        >
+                                                            user details
+                                                        </Link>)
                                                     </p>
                                                     <p className={"mb-0 capitalize"}>
                                                         <strong>Posted:</strong> {formatDisplayDate(selectedRequest.submittedAt, {relative: true})}

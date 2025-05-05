@@ -7,7 +7,8 @@ import {
     getDocs,
     query,
     where,
-    writeBatch
+    writeBatch,
+    doc
 } from "firebase/firestore";
 import {storage, db} from "@/firebase/firebase-config";
 import {useAuth} from "@/context/AuthContext";
@@ -33,22 +34,22 @@ const ManagerUploadSchedule = () => {
         setUploading(true);
 
         try {
-            // Deactivate any previously active schedules
+            // === 1. Deactivate any previously active schedules ===
             const activeQuery = query(collection(db, "schedules"), where("status", "==", "active"));
             const snapshot = await getDocs(activeQuery);
-            const batch = writeBatch(db);
+            const batchDeactivate = writeBatch(db);
             snapshot.forEach((doc) => {
-                batch.update(doc.ref, {status: "inactive"});
+                batchDeactivate.update(doc.ref, { status: "inactive" });
             });
-            await batch.commit();
+            await batchDeactivate.commit();
 
-            // Upload file
+            // === 2. Upload file ===
             const timestamp = Date.now();
             const fileRef = ref(storage, `schedules/${timestamp}_${file.name}`);
             await uploadBytes(fileRef, file);
             const fileUrl = await getDownloadURL(fileRef);
 
-            // Save metadata
+            // === 3. Save schedule metadata ===
             await addDoc(collection(db, "schedules"), {
                 label: label || file.name,
                 fileUrl,
@@ -58,12 +59,30 @@ const ManagerUploadSchedule = () => {
                 status: "active"
             });
 
-            // Reset form
-            document.getElementById("view-schedule-box")?.scrollIntoView({behavior: "smooth"});
+            // === 4. Notify users ===
+            const usersSnapshot = await getDocs(collection(db, "users"));
+            const batchNotify = writeBatch(db);
+
+            usersSnapshot.forEach((userDoc) => {
+                // if (userDoc.id !== "GmDiOZU8hSS00uDM8T3j13wptgs1") return; // TEMP: only notify yourself
+                const userData = userDoc.data();
+                const recipientRole = userData.role || "employee";
+                const notificationRef = doc(collection(db, "notifications"));
+
+                batchNotify.set(notificationRef, {
+                    type: "scheduleUploaded",
+                    recipientId: userDoc.id,
+                    link: `/${recipientRole}/schedule`,
+                    createdAt: new Date()
+                });
+            });
+
+            await batchNotify.commit();
+
+            // === 5. UI cleanup and confirmation ===
+            document.getElementById("view-schedule-box")?.scrollIntoView({ behavior: "smooth" });
             setLabel("");
-            if (fileInputRef.current) {
-                fileInputRef.current.value = "";
-            }
+            if (fileInputRef.current) fileInputRef.current.value = "";
             setFile(null);
             addToast({
                 type: "success",

@@ -7,7 +7,7 @@ import {
     addDoc,
     serverTimestamp,
     deleteDoc,
-    doc
+    doc, getDocs
 } from "firebase/firestore";
 import {useEffect, useState} from "react";
 import {db} from "@/firebase/firebase-config";
@@ -17,7 +17,6 @@ import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from "@headlessui/reac
 import ViewSchedule from "@/components/ui/ViewSchedule";
 import InfoLink from "@/components/ui/InfoLink.jsx";
 import {useToast} from "@/context/ToastContext";
-import {MdInfoOutline} from "react-icons/md";
 
 const EmployeeSchedule = () => {
     const {addToast} = useToast();
@@ -168,7 +167,20 @@ const EmployeeSchedule = () => {
             }
 
             // Now add the request to Firestore
+            // 1. Add time-off request
             await addDoc(collection(db, "requests"), payload);
+
+            // 2. Trigger notification for managers
+            const managersSnapshot = await getDocs(query(collection(db, "users"), where("role", "==", "manager")));
+            for (const manager of managersSnapshot.docs) {
+                await addDoc(collection(db, "notifications"), {
+                    type: "timeOffRequestSubmitted",
+                    recipientId: manager.id,
+                    link: "/manager/schedule",
+                    createdAt: new Date(),
+                });
+            }
+
             resetForm();
             addToast({
                 type: "success",

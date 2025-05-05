@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import RoleProtectedRoute from '@/routes/RoleProtectedRoute.jsx';
+import { useAuth } from '@/context/AuthContext';
 
 {/* Auth Pages */}
 import Login from '@/pages/auth/Login';
@@ -29,8 +30,27 @@ import UserProfile from "@/pages/shared/UserProfile";
 import Help from "@/pages/shared/Help.jsx";
 
 const AppRoutes = () => {
+    const { role, managerApproved, loading } = useAuth();
+    if (loading) return null;
+
     return (
         <Routes>
+
+            {/* Early redirect for unapproved employees */}
+            {role === "employee" && managerApproved === null ? null : (
+                <Route
+                    path="/employee/*"
+                    element={
+                        <RoleProtectedRoute requiredRole="employee">
+                            {managerApproved === false ? (
+                                <Navigate to="/pending-approval" replace />
+                            ) : (
+                                <MainLayout />
+                            )}
+                        </RoleProtectedRoute>
+                    }
+                />
+            )}
 
             {/* Public Auth Routes */}
             <Route path="/login" element={<Login />} />
