@@ -6,10 +6,11 @@ import {
     GoogleAuthProvider,
     signInWithPopup,
     sendPasswordResetEmail as firebaseSendPasswordResetEmail,
-    updateEmail as firebaseUpdateEmail,
-    sendEmailVerification,
-    reauthenticateWithCredential as firebaseReauthenticateWithCredential,
-    EmailAuthProvider
+    reauthenticateWithCredential,
+    EmailAuthProvider,
+    sendEmailVerification as _sendEmailVerification,
+    verifyBeforeUpdateEmail as _verifyBeforeUpdateEmail,
+    updateEmail as _updateEmail, getAuth,
 } from "firebase/auth";
 
 import { auth } from "./firebase-config.js";
@@ -28,6 +29,7 @@ export const login = (email, password) => {
 
 // Log out the current user
 export const logout = () => {
+    const auth = getAuth();
     return signOut(auth);
 };
 
@@ -45,29 +47,27 @@ export const sendPasswordResetEmail = (email) => {
     return firebaseSendPasswordResetEmail(auth, email);
 };
 
-export const verifyEmail = async () => {
-    if (!auth.currentUser) {
-        throw new Error('No user is currently signed in');
-    }
-    return sendEmailVerification(auth.currentUser);
-};
+// 1) verifyEmail must accept the user
+export function verifyEmail(user) {
+    if (!user) throw new Error('No user to verify');
+    return _sendEmailVerification(user);
+}
 
-export const reauthenticateUser = async (password) => {
-    if (!auth.currentUser || !auth.currentUser.email) {
-        throw new Error('No authenticated user');
-    }
+// 2) updateUserEmail must accept user + newEmail
+export function updateUserEmail(user, newEmail) {
+    if (!user) throw new Error('No user to update');
+    return _updateEmail(user, newEmail);
+}
 
-    const credential = EmailAuthProvider.credential(
-        auth.currentUser.email,
-        password
-    );
 
-    return firebaseReauthenticateWithCredential(auth.currentUser, credential);
-};
+// 3) reauthenticateUser must accept user + password
+export function reauthenticateUser(user, password) {
+    if (!user) throw new Error('No user to reauthenticate');
+    const credential = EmailAuthProvider.credential(user.email, password);
+    return reauthenticateWithCredential(user, credential);
+}
 
-export const updateUserEmail = async (newEmail) => {
-    if (!auth.currentUser) {
-        throw new Error('No user is currently signed in');
-    }
-    return firebaseUpdateEmail(auth.currentUser, newEmail);
-};
+export function verifyBeforeUpdateEmail(user, newEmail) {
+    if (!user) throw new Error('No user to update');
+    return _verifyBeforeUpdateEmail(user, newEmail);
+}
