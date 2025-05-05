@@ -278,7 +278,14 @@ const ManagerSchedule = () => {
                                                 </DialogTitle>
                                                 <div className="space-y-2 mb-4">
                                                     <p className={"mb-0"}><strong>Submitted
-                                                        by:</strong> {userMap[selectedRequest.userId]?.display_name || `${userMap[selectedRequest.userId]?.first_name || ''} ${userMap[selectedRequest.userId]?.last_name || ''}`.trim() || userMap[selectedRequest.userId]?.email || "—"}
+                                                        by:</strong> {userMap[selectedRequest.userId]?.display_name || `${userMap[selectedRequest.userId]?.first_name || ''} ${userMap[selectedRequest.userId]?.last_name || ''}`.trim() || userMap[selectedRequest.userId]?.email || "—"}{" "}
+                                                        (<Link
+                                                            to={`/manager/users/${selectedRequest.userId}`}
+                                                            className="text-primary cursor-pointer underline hover:no-underline"
+                                                            target={"_blank"}
+                                                        >
+                                                            user details
+                                                        </Link>)
                                                     </p>
                                                     <p className={"mb-0 capitalize"}>
                                                         <strong>Posted:</strong> {formatDisplayDate(selectedRequest.submittedAt, {relative: true})}
