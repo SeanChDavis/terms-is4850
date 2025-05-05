@@ -31,9 +31,9 @@ firestore.indexes.json
 firestore.rules
 storage.rules
 
-functions/node_modules
-functions/.env
-functions/.runtimeconfig.json
+functions-v2/node_modules
+functions-v2/.env
+functions-v2/.runtimeconfig.json
 
 # System files
 Thumbs.db
