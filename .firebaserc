@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "terms-is4850"
-  }
+    "default": "terms-is4850",
+    "prod": "terms-prod"
+  },
+  "targets": {},
+  "etags": {}
 }
