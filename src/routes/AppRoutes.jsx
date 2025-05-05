@@ -24,6 +24,7 @@ import TimeOffSummary from "@/pages/manager/TimeOffSummary";
 import ManagerMessages from "@/pages/manager/Messages";
 import Users from "@/pages/manager/Users";
 import SystemTools from "@/pages/manager/Tools";
+import UpdateEmail from "@/pages/auth/UpdateEmail";
 
 {/* Shared Pages */}
 import UserProfile from "@/pages/shared/UserProfile";
@@ -73,6 +74,7 @@ const AppRoutes = () => {
                 <Route path="schedule" element={<EmployeeSchedule />} />
                 <Route path="announcements" element={<EmployeeAnnouncements />} />
                 <Route path="messages/:threadId?" element={<EmployeeMessages />} />
+                <Route path="update-email" element={<UpdateEmail />} />
             </Route>
 
             {/* Protected Manager Routes */}
@@ -94,6 +96,7 @@ const AppRoutes = () => {
                 <Route path="messages/:threadId?" element={<ManagerMessages />} />
                 <Route path="announcements" element={<ManagerAnnouncements />} />
                 <Route path="tools" element={<SystemTools />} />
+                <Route path="update-email" element={<UpdateEmail />} />
             </Route>
 
             {/* Shared Routes */}
