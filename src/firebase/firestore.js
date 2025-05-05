@@ -16,9 +16,11 @@ import {db} from './firebase-config.js';
 // Create or overwrite a user document
 export const createUserDocument = async (uid, data) => {
     const userRef = doc(db, 'users', uid);
-    await setDoc(userRef, data);
+    await setDoc(userRef, {
+        isActive: true,  // Add this line
+        ...data
+    });
 };
-
 // Fetch a user document
 export const getUserDocument = async (uid) => {
     const userRef = doc(db, 'users', uid);
@@ -75,3 +77,4 @@ export const getUserNotes = async (userId) => {
 export const deleteUserNote = async (noteId) => {
     await deleteDoc(doc(db, "notes", noteId));
 };
+

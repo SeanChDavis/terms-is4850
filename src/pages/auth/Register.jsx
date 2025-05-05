@@ -50,6 +50,7 @@ const Register = () => {
                 email,
                 role: 'employee',
                 managerApproved: false,
+                isActive: true,  // Add this line
             });
 
             // Notify all managers
