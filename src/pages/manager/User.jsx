@@ -23,6 +23,7 @@ import UserNotes from "@/components/manager/UserNotes";
 import InfoLink from "@/components/ui/InfoLink.jsx";
 import {useToast} from "@/context/ToastContext";
 
+
 export default function ManagerUserView() {
     const {userData: currentUser} = useCurrentUser();
     const {addToast} = useToast();
@@ -169,6 +170,20 @@ export default function ManagerUserView() {
         }
     };
 
+    //  toggle function
+    const toggleActiveStatus = async () => {
+        if (!user) return;
+        const newStatus = !user.isActive;
+        await updateDoc(doc(db, "users", user.uid), {
+            isActive: newStatus
+        });
+        setUser(prev => ({...prev, isActive: newStatus}));
+        addToast({
+            type: "success",
+            message: `User ${newStatus ? "reactivated" : "retired"} successfully.`
+        });
+    };
+
     return (
         <>
             <div className={"max-w-xl mb-8"}>
@@ -256,6 +271,17 @@ export default function ManagerUserView() {
                                             className="text-sm px-4 py-2 bg-emerald-700 text-white font-semibold rounded-md cursor-pointer hover:bg-emerald-900"
                                         >
                                             Message User
+                                        </button>
+
+                                        <button
+                                            onClick={toggleActiveStatus}
+                                            className={`text-sm px-4 py-2 ${
+                                                user.isActive
+                                                    ? "bg-red-600 hover:bg-red-700"
+                                                    : "bg-green-600 hover:bg-green-700"
+                                            } text-white font-semibold rounded-md`}
+                                        >
+                                            {user.isActive ? "Retire User" : "Reactivate User"}
                                         </button>
                                     </div>
                                 </>
