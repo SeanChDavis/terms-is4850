@@ -8,6 +8,7 @@ import Login from '@/pages/auth/Login';
 import Register from '@/pages/auth/Register';
 import ResetPassword from '@/pages/auth/ResetPassword';
 import PendingApproval from "@/pages/auth/PendingApproval.jsx";
+import Retired from "@/pages/auth/Retired.jsx";
 
 {/* Employee Pages */}
 import EmployeeDashboard from '@/pages/employee/Dashboard';
@@ -37,12 +38,14 @@ const AppRoutes = () => {
         <Routes>
 
             {/* Early redirect for unapproved employees */}
-            {role === "employee" && managerApproved === null ? null : (
+            {role === "employee" && (managerApproved === null || !userData?.isActive) ? null : (
                 <Route
                     path="/employee/*"
                     element={
                         <RoleProtectedRoute requiredRole="employee">
-                            {managerApproved === false ? (
+                            {!userData?.isActive ? (
+                                <Navigate to="/retired" replace />
+                            ) : managerApproved === false ? (
                                 <Navigate to="/pending-approval" replace />
                             ) : (
                                 <MainLayout />
@@ -57,6 +60,7 @@ const AppRoutes = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/pending-approval" element={<PendingApproval />} />
+            <Route path="/retired" element={<Retired />} />
 
             {/* Protected Employee Routes */}
             <Route
