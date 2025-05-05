@@ -114,7 +114,7 @@ export default function UpdateEmail() {
         setError("");
 
         try {
-            // Replace changeEmailWithVerification with verifyBeforeUpdateEmail
+
             await verifyBeforeUpdateEmail(user, newEmail);
 
             addToast({
@@ -123,7 +123,7 @@ export default function UpdateEmail() {
                 duration: 5000,
             });
 
-            // Log out and redirect (as per your example)
+            // Log out and redirect
             await logout();
             navigate("/login");
         } catch (err) {
@@ -132,7 +132,7 @@ export default function UpdateEmail() {
                 setError("Please re-enter your password before changing your email.");
                 return setStep("reauthenticate");
             }
-            // Add other error handling as needed
+
             setError(err.message);
             addToast({ type: "error", message: err.message, duration: 5000 });
         } finally {
@@ -186,7 +186,7 @@ export default function UpdateEmail() {
                 </div>
             )}
 
-            {/* Reauthentication Step */}
+            {/* Re-authentication Step */}
             {step === 'reauthenticate' && (
                 <form onSubmit={handleReauthenticate} className="space-y-4">
                     <p className="text-gray-700">
