@@ -6,7 +6,10 @@ import {
     GoogleAuthProvider,
     signInWithPopup,
     sendPasswordResetEmail as firebaseSendPasswordResetEmail,
-    updateEmail,
+    updateEmail as firebaseUpdateEmail,
+    sendEmailVerification,
+    reauthenticateWithCredential as firebaseReauthenticateWithCredential,
+    EmailAuthProvider
 } from "firebase/auth";
 
 import { auth } from "./firebase-config.js";
@@ -37,14 +40,34 @@ export const onAuthChange = (callback) => {
 export const signInWithGoogle = () => {
     return signInWithPopup(auth, googleProvider);
 };
+
 export const sendPasswordResetEmail = (email) => {
     return firebaseSendPasswordResetEmail(auth, email);
 };
 
-// Update user email
-export const updateUserEmail = (newEmail) => {
+export const verifyEmail = async () => {
     if (!auth.currentUser) {
         throw new Error('No user is currently signed in');
     }
-    return updateEmail(auth.currentUser, newEmail);
+    return sendEmailVerification(auth.currentUser);
+};
+
+export const reauthenticateUser = async (password) => {
+    if (!auth.currentUser || !auth.currentUser.email) {
+        throw new Error('No authenticated user');
+    }
+
+    const credential = EmailAuthProvider.credential(
+        auth.currentUser.email,
+        password
+    );
+
+    return firebaseReauthenticateWithCredential(auth.currentUser, credential);
+};
+
+export const updateUserEmail = async (newEmail) => {
+    if (!auth.currentUser) {
+        throw new Error('No user is currently signed in');
+    }
+    return firebaseUpdateEmail(auth.currentUser, newEmail);
 };
