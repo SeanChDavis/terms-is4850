@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
@@ -16,12 +15,6 @@ const UpdateEmail = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        // Check if the new email is the same as the current email
-        if (newEmail === user.email) {
-            setError('The new email address must be different from the current email.');
-            return;
-        }
-
         setIsLoading(true);
 
         try {

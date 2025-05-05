@@ -10,8 +10,6 @@ import {
     addDoc,
     deleteDoc,
     serverTimestamp,
-    sendPasswordResetEmail as firebaseSendPasswordResetEmail,
-    updateEmail,
 } from 'firebase/firestore';
 import {db} from './firebase-config.js';
 
@@ -76,9 +74,6 @@ export const getUserNotes = async (userId) => {
 // Delete a note by ID
 export const deleteUserNote = async (noteId) => {
     await deleteDoc(doc(db, "notes", noteId));
-};
-export const sendPasswordResetEmail = (email) => {
-    return firebaseSendPasswordResetEmail(auth, email);
 };
 
 export const updateUserDocument = async (userId, data) => {

@@ -5,7 +5,8 @@ import {
     onAuthStateChanged,
     GoogleAuthProvider,
     signInWithPopup,
-    sendPasswordResetEmail as firebaseSendPasswordResetEmail
+    sendPasswordResetEmail as firebaseSendPasswordResetEmail,
+    updateEmail,
 } from "firebase/auth";
 
 import { auth } from "./firebase-config.js";
@@ -38,4 +39,12 @@ export const signInWithGoogle = () => {
 };
 export const sendPasswordResetEmail = (email) => {
     return firebaseSendPasswordResetEmail(auth, email);
+};
+
+// Update user email
+export const updateUserEmail = (newEmail) => {
+    if (!auth.currentUser) {
+        throw new Error('No user is currently signed in');
+    }
+    return updateEmail(auth.currentUser, newEmail);
 };
