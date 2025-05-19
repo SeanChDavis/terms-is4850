@@ -4,13 +4,7 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAgxbdspyxhna9S4NTOoPiuQINbA3gTN48",
-    authDomain: "terms-is4850.firebaseapp.com",
-    projectId: "terms-is4850",
-    storageBucket: "terms-is4850.firebasestorage.app",
-    messagingSenderId: "594746110719",
-    appId: "1:594746110719:web:e6b1a768bb852277d2d2ca",
-    measurementId: "G-Y3RBDJ9HQZ"
+    // Project retired
 };
 
 const app = initializeApp(firebaseConfig);

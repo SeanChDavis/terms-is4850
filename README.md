@@ -1,11 +1,13 @@
-# TERMS
+# TERMS (Retired)
 **(T)eam 2 - (E)mployee (R)elationship (M)anagement (S)ystem**
 
 A project by Sean Davis, Oladimeji Bada, Jaleah Carrawell, Joseph Huynh, and Jason Peters. Spring 2025 - Information Systems 4850 at University of Missouri - St. Louis.
 
+**_=== This project has been retired and is no longer being actively developed. The code is provided for reference only._**
+
 #### View Live Application (deployed on Netlify)
-- [Main branch](https://terms-is4850.netlify.app/login) - latest stable version
-- [Staging branch](https://staging--terms-is4850.netlify.app/login) - features in development
+- ~~[Main branch](https://terms-is4850.netlify.app/login) - latest stable version~~
+- ~~[Staging branch](https://staging--terms-is4850.netlify.app/login) - features in development~~
 
 ## The Stack
 [Vite](https://vite.dev/) + [React](https://react.dev/) + [Google Firebase](https://firebase.google.com/) + [TailwindCSS](https://tailwindcss.com/)
